@@ -9,16 +9,15 @@ Fundamental keyboard layout changes; e.g. language, space, backspace, ...
 */
 
 /**
-For example, you can use the space bar both as a normal Space bar and as a Shift. 
+@Title: ShiftSpace
+@Desc: For example, you can use the space bar both as a normal Space bar and as a Shift.
 Intuitively, it'll be a Space when you want a whitespace, and a Shift when you want it to act as a shift. 
 I.e. when you simply press and release it, it is the usual space,  
 but when you press other keys, say X, Y and Z, while holding down the space, 
 then they will be treated as ⇧ Shift plus X, Y and Z.
 @Ref.: https://autohotkey.com/board/topic/57344-spacebar-as-space-and-as-shift/
 */
-
 Critical, On
-; Title: ShiftSpace 
 ~LShift::
 	; with * operator typing feels more responsive
 	Input, SingleKey, V B L1, {BS}{DEL} ; removing EndKeys makes even fast/simultanious combinations like Shift+i work,
@@ -33,7 +32,7 @@ Critical, On
 		; because windows autofires after a configurable delay, if this happens the new input stops Input command automatically
 return
 ;Critical, Off
-LShift up::
+~LShift up::
 	; #note if you leave up through with ~, then is doesn't get fast Shift+keys and makes also a space.
 	;; furthermore without * it is faster 
 	Input

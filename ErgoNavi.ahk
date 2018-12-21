@@ -166,19 +166,21 @@ Browser back and forward, thus moving back or forth
 ;~RButton & z::
 ~RButton & 3::
 ~LButton & 9::
-<^<+3::Browser_Back
+<^<+3::
+    !{Left}
 return
 
 ;~RButton & y::
 ~RButton & 4::
 ~LButton & 8::
-<^<+4::Browser_Forward
+<^<+4::
+    !{Right}
 return
 ; in chrome <^<!c:: previous tab
 
 
 /*
-;------F123-RowF ;Deactivate Windows Snap suggestion for that to work satisfying     
+;------F123-RowF ;Deactivate Windows Snap suggestion for that to work satisfying
 <^F1::  
 	KeyWait, F1, T0.3                        
 	If ErrorLevel {  
@@ -287,7 +289,10 @@ $<^u::
 	key := SubStr(A_ThisHotkey, 9) ;e.g. A_ThisHotkey is "Space & r" 
 	;MsgBox %key%
 	KeyWait, %key%, T0.4                        
-	If ErrorLevel
+
+
+
+	If ErrorLevel
 		SendInput !{F4}
 	Else        
 		SendInput ^w
