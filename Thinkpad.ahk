@@ -1,8 +1,6 @@
-
-
-/**
-Device specific for Thinkpad 
-
+/*
+    @Title: Thinkpad
+    @Desc: adapt Thinkpads default behavior
 */
 
 

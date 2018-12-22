@@ -1,7 +1,7 @@
-
-/**
-On long press of key writes german AltGr counterpart (char that is normally on that key on german querty layout).
-To remove lag it always writes normal char at first and deletes it if pressed longer, hence swaps it with altgr char.
+/*
+    @Title: AltGrify
+    @Desc: On long press of key writes german AltGr counterpart (char that is normally on that key on german querty layout).
+        To remove lag it always writes normal char at first and deletes it if pressed longer, hence swaps it with altgr char.
 */
 
 $2::OnLongPress(SubStr(A_ThisHotkey, 2), "U+00B2") ; U+00B2 = "²"
@@ -19,6 +19,7 @@ $q::OnLongPress(SubStr(A_ThisHotkey, 2), "@")
 $sc035::OnLongPress(SubStr(A_ThisHotkey, 2), "U+2014") ; sc035 = - | ; {U+2014} = "—"
 $1::OnLongPress(SubStr(A_ThisHotkey, 2), "U+27a4") ; {u+27a4} = "➤"
 
+; #note: guess could also work without backspace by using Input command
 OnLongPress(PressedKey, CharToWrite) {
 	SendInput {%PressedKey%}
 	KeyWait, %PressedKey%, T0.3

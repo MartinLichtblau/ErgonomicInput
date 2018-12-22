@@ -1,6 +1,13 @@
+/*
+    @Title: PimpFN
+    @Desc: personalizing F-key functions by combining some of the default ones and some of FN modified
+*/
 
 
-ESC::ESC
+ESC up::
+    SendInput {Esc}
+return
+
 
 F1::Volume_Mute
 ESC & F1::
@@ -8,7 +15,7 @@ ESC & F1::
 Return
 
 
-F2::Volume_Down
+$F2::Volume_Down
 ESC & F2::
 	SendInput {F2}
 Return
@@ -19,6 +26,7 @@ ESC & F3::
 	SendInput {Volume_Up}
 Return
 
+
 F4::F2
 
 
@@ -27,10 +35,12 @@ ESC & F9::
 	SendInput {F9}
 Return
 
+
 F10::Media_Play_Pause
 ESC & F10::
 	SendInput {F10}
 Return
+
 
 F11::Media_Next
 ESC & F11::

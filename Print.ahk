@@ -1,9 +1,12 @@
-
-
+/*
+    @Title: Print
+    @Desc: prints current website as .pdf in certain folder
+*/
 #Include WinClipAPI.ahk
 #Include WinClip.ahk
 wc := new WinClip
 clipTemp := ""
+
 
 ;---------------------------------Chrome: Print to Article---------------------------------------------------------
 $^p::

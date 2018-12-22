@@ -1,71 +1,36 @@
-Process, priority,, Realtime
-
-;in chrome searching tabs with <^<!w
 /*
-~RButton Up::
-	If (A_TimeSincePriorHotkey <= 200) {
-		Click,,right
-	}
-	; if WinExist("Task Switching") {
-		; SendInput {Alt Up}
-	; }
-return
-
-~RButton::
-	Keywait,~RButton,T0.20  ;Safety feature, so that space doesn't fire by mistake
-	IF (!ErrorLevel && A_PriorKey = "~RButton") {
-		Click,,right
-	}
-return
-~RButton up::
-	if WinExist("Task Switching") {
-		SendInput {Alt Up}
-	}
-return
-
-
-RButton::
-	;Tooltip down1 %ErrorLevel%
-	Input, SingleKey, T0.3 V B L1, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-	; can add T0.3 to only let fast clicks through and laggard ones not
-	;Tooltip down2 %ErrorLevel%
-	;KeyWait RButton
-return
-RButton up::
-	Input
-	;whenever Input command is used without params, the ErrorLevel will be just 0 or 1
-	; depending if another Input was running already
-	if (ErrorLevel == 0) {
-		Click,,right
-		;SendInput {RButton}
-	}
-	;Tooltip up %ErrorLevel%
-	
-	;just so that Wintab works
-	if WinExist("Task Switching") {
-		SendInput {Alt Up}
-	}
-return
+    @Title: ErgoNavi
+    @Desc: bring all frequently used commands together for better ergonomic navigation
 */
-
-; #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
-$*RButton::
-	KeyWait, RButton, T0.2
-	if (!ErrorLevel && A_PriorHotkey == "$*RButton") {
-		Click,,right,,
-	}
-return
-$*RButton Up::
-	if WinExist("Task Switching") {
-		SendInput {Alt Up}
-	}
-return
+;Process, priority,, Realtime
 
 
 /*
-Chrome extension searching tab and jumping back 
+    @Title: TabLeft
+    @Desc: switch one tab left
 */
-;TabSearch
+~RButton & f::
+~LButton & k::
+<^<+f::
+	Send ^{PgUp}
+	;SendInput +^{Tab}
+Return
+/*
+    @Title: TabRight
+    @Desc: switch one tab right
+*/
+~RButton & p::
+~LButton & m::
+<^<+p::
+	Send ^{PgDn}
+	;SendInput ^{Tab}
+Return
+
+
+/*
+    @Title: TabSearch
+    @Desc: Opening Chrome extension for searching tabs, history and bookmarks
+*/
 ; ~RButton & 1::
 ; ^+1::
 ; ~RButton & 2::
@@ -74,73 +39,83 @@ Chrome extension searching tab and jumping back
 ; ~LButton & sc00c:: ;sc00c = ß
 ; ~LButton & sc00d:: ;sc00d = ´
 ; ~LButton & sc019:: ;sc019 = ö
-~LButton & b::
+~LButton & o::
 ~RButton & w::
 	Send ^+w
 return
-
-;TabJumpBack
+/*
+    @Title: TabPrevious
+    @Desc: Jumping back to last visited tab
+*/
 ; ~LButton & x::
 ; ~LButton & j::
 ; ~RButton & c::
-~LButton & sc019:: ;sc019 = ö
+~LButton & j::
 ~RButton & q::
 ^+q::
 	Send !z ; #note can' t set ^+q in chrome as extension shortcut, hence it's mapped on x
 return
 
-/*
-Switching tabs: moving left or right
-*/
-;TabLeft
-~RButton & f::
-~LButton & l::
-<^<+f::
-	Send ^{PgUp}
-	;SendInput +^{Tab}
-Return
-
-;TabRight
-~RButton & p::
-~LButton & u::
-<^<+p::		
-	Send ^{PgDn}
-	;SendInput ^{Tab}
-Return	
-
 
 /*
+    @Title: BrowserBack
+    @Desc: jump backward in history
 */
-;WinView
-~RButton & a::
-~LButton & o:: ;sc028 = ä
-<^<+a::
-	Send #{Tab}
+;~RButton & z::
+~RButton & 3::
+~LButton & i::
+<^<+3::
+    Send !{Left}
+return
+/*
+    @Title: BrowserForward
+    @Desc: jump forward in history
+*/
+;~RButton & y::
+~RButton & 4::
+~LButton & e::
+<^<+4::
+    Send !{Right}
 return
 
 
 /*
-Desktop navigation: moving to left or right desktop
+    @Title: DesktopLeft
+    @Desc: switch one desktop to the left
 */
-;DeskLeft
 ~RButton & r::
-~LButton & e::
+~LButton & ,::
 <^<+r::
 	Send {LCtrl Down}{LWin Down}{Left}{LWin Up}{LCtrl Up}
 return
-
+/*
+    @Title: DesktopRight
+    @Desc: switch one desktop to the right
+*/
 ~RButton & s::
-~LButton & i::
+~LButton & .::
 <^<+s::
 	Send {LCtrl Down}{LWin Down}{Right}{LWin Up}{LCtrl Up}
 return
 
 
 /*
-Window navigation: change to previous one
+    @Title: WinView
+    @Desc: Opening overview showing all desktop and open windows
 */
-;MButton & x::AltTab ;AltTab only works with ~, hence without letting it pass through
-~LButton & h::
+~RButton & a::
+~LButton & sc035:: ; sc035 = -
+<^<+a::
+	Send #{Tab}
+return
+
+
+/*
+    @Title: AltTab
+    @Desc: switch to previously focused window
+    @note: integrated AltTab function only works without ~, hence without letting the modifier pass through.
+*/
+~LButton & x::
 ~RButton & t::
 <+<^t::
 	if WinExist("Task Switching") { ; in german if WinExist("Programmumschaltung")
@@ -161,25 +136,6 @@ return
 
 
 /*
-Browser back and forward, thus moving back or forth
-*/
-;~RButton & z::
-~RButton & 3::
-~LButton & 9::
-<^<+3::
-    !{Left}
-return
-
-;~RButton & y::
-~RButton & 4::
-~LButton & 8::
-<^<+4::
-    !{Right}
-return
-; in chrome <^<!c:: previous tab
-
-
-/*
 ;------F123-RowF ;Deactivate Windows Snap suggestion for that to work satisfying
 <^F1::  
 	KeyWait, F1, T0.3                        
@@ -196,7 +152,7 @@ Return
 	If ErrorLevel {  
 		WinMaximize, A
 		;SendInput {LWin Down}{Up}{LWin Up}
-	}Else
+	}Elsen
 		SendInput {LWin Down}{Right}{LWin Up}
 	KeyWait, F2, 
 Return

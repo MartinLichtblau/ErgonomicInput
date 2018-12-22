@@ -1,9 +1,12 @@
-#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-SetBatchLines -1
-ListLines Off
+/*
+    @Title: BrowserTricks
+    @Desc: expand and adapt browser functions
+*/
+
 
 ; -----------------------------------Open link in same tab------------------------------------
 /*
+; #note: intended for google Keep to open keep links quickly from within current keep tab/session
 <^q::
 	KeyWait, q,
 	cliptemp := clipboard
@@ -26,8 +29,8 @@ Return
 	KeyWait,w
 Return
 
-; -----------------------------------Ergonomic easier *Open last closed tab*------------------------------------
 
+; -----------------------------------Ergonomic easier *Open last closed tab*------------------------------------
 <^n::
 	KeyWait, n, T0.3                       	 ; Wait no more than 0.5 sec for key release (also suppress auto-repeat)
 	If ErrorLevel   								; Delete function
@@ -38,7 +41,7 @@ Return
 Return 
 
 
-/** 
+/*
 ;new combined with new tab translate
 ; #remember It is all about timing! So add more sleep if it does not work.
 */
@@ -76,7 +79,7 @@ $<^t::
 Return 
 
 ; ---------------------------Opening new tab with currently marked text-------------------------------------
-/**
+/*
 ;Closed: Better do it with ctrl + t, which is already used for opening new tab
 <^c::
 	cliptemp := clipboard
