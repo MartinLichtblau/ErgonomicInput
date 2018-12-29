@@ -9,13 +9,13 @@
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
-#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
+;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 ;#MaxThreadsBuffer On
 ;#InstallKeybdHook ;important, oterwise
 ;#InstallMouseHook
 ;#UseHook
 ;#MaxHotkeysPerInterval 200
-SetKeyDelay 0 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
+SetKeyDelay -1 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
 	; but then in some scripts you need to add delays manually (mostly if interacts with UI)
 ;SetMouseDelay, 0
 
@@ -70,16 +70,16 @@ return
 
 #Include TypeArrow.ahk
 
-#Include AltGrify.ahk
-
-#Include PimpFN.ahk
-
 ;#Include Thinkpad.ahk
 
 #Include Trackpad.ahk
 
+#Include AltGrify.ahk
+
+#Include PimpFN.ahk
+
 #Include BrowserTricks.ahk
 
-#Include Print.ahk
+;#Include Print.ahk
 
 ;#Include Misc.ahk

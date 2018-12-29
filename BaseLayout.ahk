@@ -8,6 +8,8 @@ Process, priority,, Realtime
 /*
     1. My COLEMAK-based keyboard layout
 */
+$a::p
+$p::a
 
 /*
     @Title: ShiftSpace
@@ -26,7 +28,7 @@ Process, priority,, Realtime
 	; old 	Input, SingleKey, V B L1, {LControl}{RControl}{LAlt}{RAlt}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
 	; removed from EndKeys  {LShift}{RShift}
 	; if (ErrorLevel == "NewInput") { ;If it was interupted by the release of LShift, it means nothing else happend in between
-		; SendInput {Space}
+		; Send {Space}
 	; }
 	;Tooltip down %ErrorLevel% ;keep for debug
 	;Keywait,LShift, L ;don't use this and don't use a time limit to produce a space (to allow release when reconsidering),
