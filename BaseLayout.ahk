@@ -2,7 +2,7 @@
     @Title: BaseLayout
     @Desc: fundamental changes of layout; e.g. language, space, backspace, ...
 */
-;Process, priority,, Realtime
+Process, priority,, Realtime
 
 
 /*

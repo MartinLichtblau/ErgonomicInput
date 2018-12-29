@@ -2,7 +2,7 @@
     @Title: Trackpad
     @Desc: change trackpad buttons behavior
 */
-;Process, priority,, Realtime
+Process, priority,, Realtime
 
 
 $*MButton::

@@ -2,6 +2,7 @@
     @Title: Thinkpad
     @Desc: adapt Thinkpads default behavior
 */
+Process, priority,, Realtime
 
 
 { ; PrtSc::AppsKey

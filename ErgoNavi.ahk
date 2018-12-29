@@ -2,7 +2,7 @@
     @Title: ErgoNavi
     @Desc: bring all frequently used commands together for better ergonomic navigation
 */
-;Process, priority,, Realtime
+Process, priority,, Realtime
 
 
 /*

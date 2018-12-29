@@ -5,7 +5,7 @@
 */
 #Include  %A_ScriptDir% ;First things first, to set directoy for all other includes
 #SingleInstance force
-Process, priority,, Realtime
+;Process, priority,, Realtime
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
