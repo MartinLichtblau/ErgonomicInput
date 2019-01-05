@@ -3,12 +3,12 @@
     @Desc: main script to bring all else together
     #note: run authotkey as admin
 */
-#Include  %A_ScriptDir% ;First things first, to set directoy for all other includes
+SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
-;Process, priority,, Realtime
-#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-SetBatchLines -1
-ListLines Off
+Process, priority,, Realtime
+;#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
+;SetBatchLines -1
+;ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 ;#MaxThreadsBuffer On
 ;#InstallKeybdHook ;important, oterwise
@@ -64,22 +64,23 @@ return
     @Title: IncludeScripts
     @Desc: include all other scripts
 */
-#Include BaseLayout.ahk
+#Include %A_ScriptDir%/scripts/BaseLayout.ahk
 
-#Include ErgoNavi.ahk
+#Include %A_ScriptDir%/scripts/ErgoNavi.ahk
 
-#Include TypeArrow.ahk
+#Include %A_ScriptDir%/scripts/TypeArrow.ahk
 
-;#Include Thinkpad.ahk
+;#Include %A_ScriptDir%/scripts/Thinkpad.ahk
 
-#Include Trackpad.ahk
+#Include %A_ScriptDir%/scripts/Trackpad.ahk
 
-#Include AltGrify.ahk
+#Include %A_ScriptDir%/scripts/AltGrify.ahk
 
-#Include PimpFN.ahk
+#Include %A_ScriptDir%/scripts/PimpFN.ahk
 
-#Include BrowserTricks.ahk
+#Include %A_ScriptDir%/scripts/BrowserTricks.ahk
 
-;#Include Print.ahk
+#Include %A_ScriptDir%/scripts/print/Print.ahk
 
-;#Include Misc.ahk
+;#Include %A_ScriptDir%/scripts/Misc.ahk
+

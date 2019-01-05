@@ -8,8 +8,7 @@ Process, priority,, Realtime
 /*
     1. My COLEMAK-based keyboard layout
 */
-$a::p
-$p::a
+
 
 /*
     @Title: ShiftSpace

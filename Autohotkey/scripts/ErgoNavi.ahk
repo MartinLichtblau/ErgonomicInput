@@ -6,6 +6,42 @@ Process, priority,, Realtime
 
 
 /*
+    @Title: Test
+    @Desc:
+*/
+~RButton & x::
+  	Send ^n
+return
+
+~RButton & v::
+  	Send ^t
+return
+
+~RButton & c::
+  	Send ^w
+return
+
+~RButton & y::
+  	Send ^l
+return
+
+~RButton & z::
+  	Send ^w
+return
+
+~RButton & d::
+	KeyWait, d, T0.4
+	If ErrorLevel
+		SendInput !{F4}
+	Else
+		SendInput ^w
+	KeyWait,d
+return
+
+
+
+
+/*
     @Title: TabLeft
     @Desc: switch one tab left
 */
