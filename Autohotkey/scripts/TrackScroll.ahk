@@ -22,34 +22,32 @@ TrackScroll_Setup:
 return
 
 
-; state-1  = down | stat-0 = up
 MButtonEvent(state) {
-	; ToolTip % "State: " state ; #note does not show tooltip in temp zombie script of after reload
 	if(state){
         AHI.SendMouseButtonEvent(11, 0, 1) ; LButton down
-        Tooltip MButton down
+        ;Tooltip MButton down
 	}
     else {
         AHI.SendMouseButtonEvent(11, 0, 0) ; LButton up
-        Tooltip MButton up
+        ;Tooltip MButton up
     }
 }
-
-; state-1  = down | stat-0 = up
 RButtonEvent(state) {
     if(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
+        /*
         If (WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
             ;Tooltip MouseScroll running
             PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
             ;PostMessage,0x111,65307,,,MouseScroll.ahk
         }
+        */
     }
 }
-/*
 
+/*
 ; state-1  = down | stat-0 = up
 RButtonEvent(state) {
 	; ToolTip % "State: " state
@@ -78,35 +76,19 @@ RButtonEvent(state) {
 }
 */
 
-; state-1  = down | stat-0 = up
 LButtonEvent(state) {
-	; ToolTip % "State: " state
 	if(state) {
         AHI.SendMouseButtonEvent(11, 1, 1) ; RButton down
-        Tooltip LButton down
+        ;Tooltip LButton down
 	} else {
 	    AHI.SendMouseButtonEvent(11, 1, 0) ; RButton up
+	    /*
 	    if WinExist("Task Switching")
 	        SendInput {Alt Up}
-        Tooltip LButton up
+	        */
+        ;Tooltip LButton up
 	}
 }
-
-
-
-/*
-    @Title SwapLMButton
-    @Desc: MButton behaves like LButton
-    ; #bug in some cases left-click is not recognized and only the real LButton (defined by windows) works
-        ; e.g. windows security prompt, ahk keyhistory
-*/
-/*
-$*MButton::
-	Click, down,
-	Keywait,MButton,
-	Click, up,
-return
-*/
 
 
 
@@ -128,58 +110,18 @@ $*MButton::
     }
 return
 
-/*
-$*LButton::
-	KeyWait, LButton, T0.2
-	if (ErrorLevel) {
-		;ScrollWithMouse("LButton")
-	} else if (A_PriorHotkey == "$*LButton") {
-		Click,down,Middle,,
-		Sleep 10 ; because some software doesn't get fast clicks
-		Click,up,Middle,,
-	}
-return
-*/
-/* #Alternative scroll like with default MButton
-$*LButton::
-    Click,down,Middle,,
-    Keywait, LButton,
-	Click,up,Middle,,
-return
-*/
-
 
 /*
     @Title RButtonScroll
     @Desc: hold Rbutton to scroll by moving mouse
     #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
         after reboot all ok
-
-    $*RButton::
-        KeyWait, RButton, T0.2
-        if (ErrorLevel) {
-           run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1" %trackpadId%
-        } else if (A_PriorHotkey == "$*RButton") {
-            SendInput {RButton}
-        }
-    return
 */
-
-
-
-
-
-/*
-    @Title: EasyScroll
-    @Desc: scroll by press- and holding h with middle-finger while controlling trackpoint with index-finger
-    #note: any other key could be used. Even alternative ones to allow changing positions
-
-    *h::
-        KeyWait, h, T0.15
-    	if (ErrorLevel) {
-        	ScrollWithMouse("h")
-        } else {
-            SendInput {blind}h
-        }
-    return
-*/
+$*RButton::
+    KeyWait, RButton, T0.2
+    if (ErrorLevel) {
+       run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1" %trackpadId%
+    } else if (A_PriorHotkey == "$*RButton") {
+        Send {RButton}
+    }
+return
