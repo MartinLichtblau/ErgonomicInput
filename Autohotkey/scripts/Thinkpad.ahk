@@ -4,10 +4,10 @@
 */
 #SingleInstance force
 #Persistent
-;Process,priority,,Realtime
+return
 
 
-f
+
 
 /*
     @Title: KeyChanges

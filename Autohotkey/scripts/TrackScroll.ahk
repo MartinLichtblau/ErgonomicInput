@@ -11,8 +11,9 @@ TrackScroll_Setup:
     #SingleInstance force
     #Persistent
     Process,priority,,Realtime
+
+	DetectHiddenWindows, on
     SetTitleMatchMode, 2
-    DetectHiddenWindows On
 
     AHI := new AutoHotInterception()
     trackpadId := AHI.GetMouseId(0x0000, 0x0000)
@@ -20,6 +21,8 @@ TrackScroll_Setup:
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 0, true, Func("LButtonEvent"))
 return
+
+
 
 
 MButtonEvent(state) {
@@ -37,7 +40,8 @@ RButtonEvent(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
-        /*
+        /* Wait in case the script is just starting
+        Sleep 50
         If (WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
             ;Tooltip MouseScroll running
             PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
@@ -46,36 +50,6 @@ RButtonEvent(state) {
         */
     }
 }
-
-/*
-; state-1  = down | stat-0 = up
-RButtonEvent(state) {
-	; ToolTip % "State: " state
-	if(state){
-        Input, UserInput, L1 T0.2, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-        	if (ErrorLevel == "Timeout"){
-                run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "2" %trackpadId%
-        		; Tooltip MouseScroll
-        	} else {
-        		; Tooltip NewInput: %UserInput% %ErrorLevel%
-        	}
-	} else {
-        If (WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
-            ;Tooltip MouseScroll running
-            PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
-            ;PostMessage,0x111,65307,,,MouseScroll.ahk
-        }
-	    Input
-	    if !ErrorLevel {
-	             AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
-	             Sleep 50
-                  AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
-
-	    }
-    }
-}
-*/
-
 LButtonEvent(state) {
 	if(state) {
         AHI.SendMouseButtonEvent(11, 1, 1) ; RButton down
@@ -85,25 +59,33 @@ LButtonEvent(state) {
 	    /*
 	    if WinExist("Task Switching")
 	        SendInput {Alt Up}
-	        */
+        */
+
+        ; THE ONLY surefire way to kill the run script (in case it's stuck in between)
+         Sleep 100
+         If (WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
+             ;Tooltip MouseScroll running
+             PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
+             ;PostMessage,0x111,65307,,,MouseScroll.ahk
+         }
         ;Tooltip LButton up
 	}
 }
 
 
-
 /*
-    @Title LButtonScroll + SwapLMButton
+    @Title LButtonScroll
     @Desc:
         - hold Lbutton to scroll by moving mouse
         - LButton makes MButton click
     @Reason: like this the right hand can scroll easily and the MButton-key is good enough for left clicks
 */
 $*MButton::
-    KeyWait, MButton, T0.2
+    KeyWait, MButton, T0.15
     if (ErrorLevel) {
        run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "2" %trackpadId%
-    } else if (A_PriorHotkey == "$*MButton") {
+    } else if (A_PriorKey == "MButton") {
+        Tooltip
         Send {MButton down}
         Sleep 50
         Send {MButton up}
@@ -118,10 +100,11 @@ return
         after reboot all ok
 */
 $*RButton::
-    KeyWait, RButton, T0.2
+    KeyWait, RButton, T0.15
     if (ErrorLevel) {
        run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1" %trackpadId%
-    } else if (A_PriorHotkey == "$*RButton") {
+    } else if (A_PriorKey == "RButton") { ; A_PriorHotkey does not seem to work
+        ;Tooltip %A_PriorKey% %A_PriorHotkey%
         Send {RButton}
     }
 return

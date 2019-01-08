@@ -7,7 +7,7 @@ SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
 #Persistent
 Process, priority,, Realtime
-;#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 ;SetBatchLines -1
 ;ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
@@ -37,7 +37,6 @@ GoSub, TrackScroll_Setup
 #Include %A_ScriptDir%/ErgoNavi.ahk
 #Include %A_ScriptDir%/PimpFN.ahk
 #Include %A_ScriptDir%/BiSpace.ahk
-#Include %A_ScriptDir%/TypeArrow.ahk
 ;#Include %A_ScriptDir%/Thinkpad.ahk
 #Include %A_ScriptDir%/BrowserTricks.ahk
 #Include %A_ScriptDir%/print/Print.ahk

@@ -4,44 +4,106 @@
 */
 #SingleInstance force
 #Persistent
-;Process,priority,,Realtime
-
+Process,priority,,Realtime
 #Include %A_ScriptDir%/lib/Functions.ahk
+return
 
 
 
 
-/*
-    @Title:
-    @Desc:
-*/
-/* For other unoccupied keys
-~RButton & x::LongPressCommand("x", "^n", "+^n")
-~RButton & v::LongPressCommand("v", "^t", "+^t") ; perhaps extend with OpenNewTabWithSelection()
-~RButton & c::
-~RButton & y::
-~RButton & z::
-*/
-~RButton & d::LongPressCommand("d", "^w", "!{F4}")
+;---------------------------------LeftHand--------------------------------
+;--------------------------------------------F-Row
+;--------------------------------------------Number-Row
+;--------------------------------------------TopLetter-Row
+    ~RButton & w:: gosub PreviousTab
+    $^+w:: gosub PreviousTab
+    ~RButton & q:: gosub TabSearch
+    $^+q:: gosub TabSearch
+    ~RButton & f:: gosub TabLeft
+    <^<+f:: gosub TabLeft
+    ~RButton & a:: gosub TabRight
+    <^<+a:: gosub TabRight
+
+;--------------------------------------------Home-Row
+    ~RButton & p:: gosub WinView
+    <^<+p:: gosub WinView
+    ~RButton & r:: gosub DesktopLeft
+    <^<+r:: gosub DesktopLeft
+    ~RButton & s:: gosub DesktopRight
+    <^<+s:: gosub DesktopRight
+    ~RButton & t:: gosub AltTab
+    <+<^t:: gosub AltTab
+    ~RButton & d::LongPressCommand("d", "^w", "!{F4}")
+
+;--------------------------------------------LowerLetter-Row
+    ~RButton & c::LongPressCommand("c", "^w", "!{F4}")
+    ~RButton & v::LongPressCommand("v", "^t", "+^t") ; perhaps extend with OpenNewTabWithSelection()
+    ~RButton & x::LongPressCommand("x", "^n", "+^n")
+
+;--------------------------------------------MISC
+    $*RButton Up:: gosub AltTabRelease
+    $~*LCtrl up:: gosub AltTabRelease
 
 
+
+
+
+
+
+
+;---------------------------------RightHand--------------------------------
+;--------------------------------------------F-Row
+;--------------------------------------------Number-Row
+;--------------------------------------------TopLetter-Row
+~MButton & j:: gosub PreviousTab
+~MButton & l:: gosub Up
+~MButton & u:: gosub Right
+; b
+~MButton & sc019:: gosub Home ; sc019 = ö
+~MButton & sc01A:: gosub End ; sc01A = ü
+; +
+
+;--------------------------------------------Home-Row
+~MButton & h:: gosub Left
+~MButton & n:: gosub Down
+; e
+; i
+~MButton & o:: gosub TabSearch
+~MButton & sc028:: gosub WinOrganizeLeft ; sc028 = ä
+~MButton & sc02B:: gosub WinOrganizeRight ; sc02B = #
+
+;--------------------------------------------LowerLetter-Row
+~MButton & x:: gosub AltTab
+~MButton & k:: gosub TabLeft
+~MButton & m:: gosub TabRight
+~MButton & ,:: gosub DesktopLeft
+~MButton & .:: gosub DesktopRight
+~MButton & sc035:: gosub WinView ; sc035 = -
+
+;--------------------------------------------MISC
+$*MButton Up:: gosub AltTabRelease
+
+
+
+
+
+
+; ---------------------------------Functions--------------------------------
 /*
     @Title: TabLeft
     @Desc: switch one tab left
 */
-~RButton & f::
-~LButton & k::
-<^<+f::
+TabLeft:
 	SendInput ^{PgUp}
 	;SendInput +^{Tab}
 Return
+
+
 /*
     @Title: TabRight
     @Desc: switch one tab right
 */
-~RButton & a::
-~LButton & m::
-<^<+a::
+TabRight:
 	Send ^{PgDn}
 	;SendInput ^{Tab}
 Return
@@ -51,52 +113,17 @@ Return
     @Title: TabSearch
     @Desc: Opening Chrome extension for searching tabs, history and bookmarks
 */
-; ~RButton & 1::
-; ^+1::
-; ~RButton & 2::
-; ^+2::
-; ~LButton & 0::
-; ~LButton & sc00c:: ;sc00c = ß
-; ~LButton & sc00d:: ;sc00d = ´
-; ~LButton & sc019:: ;sc019 = ö
-~LButton & o::
-~RButton & q::
-$^+q::
+TabSearch:
 	Send ^+w
 return
+
+
 /*
-    @Title: TabPrevious
+    @Title: PreviousTab
     @Desc: Jumping back to last visited tab
 */
-; ~LButton & x::
-; ~LButton & j::
-; ~RButton & c::
-~LButton & j::
-~RButton & w::
-$^+w::
+PreviousTab:
 	Send !z ; #note can' t set ^+q in chrome as extension shortcut, hence it's mapped on x
-return
-
-
-/*
-    @Title: BrowserBack
-    @Desc: jump backward in history
-*/
-;~RButton & z::
-~RButton & 3::
-~LButton & i::
-<^<+3::
-    Send !{Left}
-return
-/*
-    @Title: BrowserForward
-    @Desc: jump forward in history
-*/
-;~RButton & y::
-~RButton & 4::
-~LButton & e::
-<^<+4::
-    Send !{Right}
 return
 
 
@@ -104,18 +131,16 @@ return
     @Title: DesktopLeft
     @Desc: switch one desktop to the left
 */
-~RButton & r::
-~LButton & ,::
-<^<+r::
+DesktopLeft:
 	Send {LCtrl Down}{LWin Down}{Left}{LWin Up}{LCtrl Up}
 return
+
+
 /*
     @Title: DesktopRight
     @Desc: switch one desktop to the right
 */
-~RButton & s::
-~LButton & .::
-<^<+s::
+DesktopRight:
 	Send {LCtrl Down}{LWin Down}{Right}{LWin Up}{LCtrl Up}
 return
 
@@ -124,10 +149,8 @@ return
     @Title: WinView
     @Desc: Opening overview showing all desktop and open windows
 */
-~RButton & p::
-~LButton & sc035:: ; sc035 = -
-<^<+p::
-	Send #{Tab}
+WinView:
+    Send #{Tab}
 return
 
 
@@ -136,171 +159,78 @@ return
     @Desc: switch to previously focused window
     @note: integrated AltTab function only works without ~, hence without letting the modifier pass through.
 */
-~LButton & x::
-~RButton & t::
-<+<^t::
+AltTab:
 	if WinExist("Task Switching") { ; in german if WinExist("Programmumschaltung")
-			;Tooltip "just tab"
-			Send {Tab}
+        ;Tooltip "just tab"
+        Send {Tab}
 	} else {
 		;Tooltip "Open menu"
 		Send {Alt Down}{Tab}
 	}
 return
-;~LShift & ~LCtrl Up::
-;~LCtrl & ~LShift Up::
-;$*LButton Up::
-;$*RButton Up::
-~*LCtrl up::
+AltTabRelease:
 	if WinExist("Task Switching")
 		SendInput {Alt Up}
 return
 
 
 /*
-;------F123-RowF ;Deactivate Windows Snap suggestion for that to work satisfying
-<^F1::  
-	KeyWait, F1, T0.3                        
-	If ErrorLevel {  
-		WinMaximize, A   
-		;SendInput {LWin Down}{Down}{LWin Up}
-	}Else
-		SendInput {LWin Down}{Left}{LWin Up}
-	KeyWait, F1,
-Return
-
-<^F2:: 	
-	KeyWait, F2, T0.3                          
-	If ErrorLevel {  
-		WinMaximize, A
-		;SendInput {LWin Down}{Up}{LWin Up}
-	}Else
-		SendInput {LWin Down}{Right}{LWin Up}
-	KeyWait, F2, 
-Return
-
-;--------------------------------------------12345-Row     
-;Moves windows with arrow up and down around on the screen
-WinUpDown(key)
-{
-	if (key = "2" or key = "SC00B")
-	{
-		SendInput {LWin Down}{Up}{LWin Up}
-	}
-	else if (key = "1" or key = "SC00C")
-	{
-		SendInput {LWin Down}{Down}{LWin Up}
-	}
-Return	
-}
-
-<^sc029:: 
-<^SC00D:: ;"´"
-	SendInput {LWin Down}{Shift Down}{Left}{Shift Up}{LWin  Up}
-	Sleep 30
-	WinMaximize, A
-Return
-
-<^1::
-<^SC00B:: ;"0"
-	key := SubStr(A_ThisHotkey, 3)
-	KeyWait, %key%, T0.3
-	If ErrorLevel {  
-		WinUpDown(key)
-	}Else
-		SendInput {LWin Down}{Left}{LWin Up}
-	KeyWait, %key%, 
-Return
-
-<^2::
-<^SC00C:: ;"ß"
-	key := SubStr(A_ThisHotkey, 3)
-	;MsgBox %key%
-	KeyWait, %key%, T0.3               
-	If ErrorLevel {  
-		WinUpDown(key)
-	}Else
-		SendInput {LWin Down}{Right}{LWin Up}
-	KeyWait,%key%, 
-Return
-
-<^3:: 
-<^9::
-	SendInput !{Left}
-Return
-
-<^4::
-<^8:: 
-	SendInput !{Right}            
-Return
-;Space & 5:: 6  7 ...............
-
-;------------------------------------------QWERT-Row
-$^q::
-;$^p::
-	;MsgBox %A_ThisHotkey%
-	key := SubStr(A_ThisHotkey, 3)
-	KeyWait, %key%, T0.4                         	
-	If ErrorLevel			
-		SendInput ^n
-	Else
-		SendInput ^r
-	KeyWait,q
-Return
-
-$<^w:: 
-$<^i::
-	SendInput ^+{tab} ;alternative SendInput ^{PgUp}
-	KeyWait,w
-Return
-
-^o::
-^e::
-	SendInput ^{tab} ;^{tab} ;alternative SendInput ^{PgDn}
-	KeyWait,e
-Return
-
- 
-
-$<^r::
-$<^u::
-	key := SubStr(A_ThisHotkey, 9) ;e.g. A_ThisHotkey is "Space & r" 
-	;MsgBox %key%
-	KeyWait, %key%, T0.4                        
-
-
-
-	If ErrorLevel
-		SendInput !{F4}
-	Else        
-		SendInput ^w
-	KeyWait,%key%
-Return
-
-<^t::
-	KeyWait, t, T0.3
-	If ErrorLevel   								
-		Send,^+t
-	else
-		Send,^t
-	loop{	
-	Sleep,50
-	if !GetKeyState("<^", "P")
-		break
-	}
-Return
-
-
-;------ASDFG-Row
-;Space & a:: SendInput ^a  
-
- 
-
-<^g::
-<^h::
-	Send {LWin Down}{Tab Down}
-	Send {Tab Up}{LWin Up}
-Return
-
-
+    @Title: WinOrganize
+    @Desc: moving windows around on the screens
+    @Requirement: deactivate Windows Snap suggestion for that to work satisfying
+    @TODO decide whinch of the two versions is better
 */
+WinOrganizeLeft:
+	KeyWait, sc01A, T0.3
+	If ErrorLevel {
+		;WinMaximize, A
+		SendInput {LWin Down}{Down}{LWin Up}
+	} else
+		SendInput {LWin Down}{Left}{LWin Up}
+	KeyWait, sc01A,
+return
+WinOrganizeRight:
+	KeyWait, sc01B, T0.3
+	If ErrorLevel {
+		;WinMaximize, A
+		SendInput {LWin Down}{Up}{LWin Up}
+	} else
+		SendInput {LWin Down}{Right}{LWin Up}
+	KeyWait, sc01B,
+return
+
+
+/*
+    @Title: TypeArrow
+    @Desc: make arrow-keys accessible in the center
+*/
+Left:
+	Send {blind}{Left}
+return
+
+Up:
+	Send {blind}{Up}
+return
+
+Right:
+	Send {blind}{Right}
+return
+
+Down:
+	Send {blind}{Down}
+return
+
+Home:
+	Send {blind}{Home}
+return
+
+End:
+	Send {blind}{End}
+return
+
+
+
+
+
+
+
