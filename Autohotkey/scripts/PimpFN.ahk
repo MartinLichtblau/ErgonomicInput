@@ -1,9 +1,13 @@
 /*
     @Title: PimpFN
-    @Desc: personalizing F-key functions by combining some of the default ones and some of FN modified
+    @Desc: personalizing F-keys functions by combining some of the default ones and some of FN modified
+    @Requirements: set F-Keys to default F1-12, not special computer dependent functions
 */
 
 
+/*
+    @Desc: Use Esc-key for toggling F-key behavior instead of FN-key, because it's better reachable together with F-keys
+*/
 ESC up::
     SendInput {Esc}
 return
@@ -15,7 +19,7 @@ ESC & F1::
 Return
 
 
-$F2::Volume_Down
+F2::Volume_Down
 ESC & F2::
 	SendInput {F2}
 Return
@@ -23,11 +27,14 @@ Return
 
 F3::Volume_Up
 ESC & F3::
-	SendInput {Volume_Up}
+	SendInput {F3}
 Return
 
 
 F4::F2
+
+
+; #note F5 - F8 vacant
 
 
 F9::Media_Prev
@@ -54,7 +61,8 @@ ESC & F13::
 Return
 
 
-/* Alternative method with long press. But that wouldn't work well with volume up/down. 
+/* #Alternative method with long press like in @AltGrify
+    But that wouldn't work well with volume up/down.
 $F1::
 	KeyWait,F1,T0.33                        
 	If ErrorLevel

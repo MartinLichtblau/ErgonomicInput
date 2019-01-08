@@ -2,7 +2,11 @@
     @Title: TypeArrow
     @Desc: make arrow-keys accessible in the center
 */
-Process, priority,, Realtime
+#SingleInstance force
+#Persistent
+;Process,priority,,Realtime
+
+
 
 
 ~LButton & h::

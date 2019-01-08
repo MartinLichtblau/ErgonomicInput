@@ -2,9 +2,11 @@
     @Title: Print
     @Desc: prints current website as .pdf in certain folder
 */
+/* where do I need that?
 #Include %A_ScriptDir%/scripts/print/WinClipAPI.ahk
 #Include %A_ScriptDir%/scripts/print/WinClip.ahk
 wc := new WinClip
+*/
 clipTemp := ""
 
 

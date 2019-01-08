@@ -2,6 +2,11 @@
     @Title: BrowserTricks
     @Desc: expand and adapt browser functions
 */
+#SingleInstance force
+#Persistent
+;Process,priority,,Realtime
+
+
 
 
 ; -----------------------------------Open link in same tab------------------------------------
@@ -19,6 +24,7 @@ Return
 */
 
 
+; #note belongs in @ErgoNav
 ; -----------------------------------CLOSE  ON HOLD------------------------------------
 <^w::
 	KeyWait, w, T0.4      

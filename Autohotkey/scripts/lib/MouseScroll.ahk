@@ -1,94 +1,115 @@
 /*
-    @Title: Trackpad
-    @Desc: change trackpad buttons behavior
+    @Title: MouseScroll
+    @Desc: hold key to scroll by moving mouse>cursor
 */
-Process, priority,, Realtime
+#SingleInstance force
+#Persistent
+Process,priority,,Realtime
 
+#include %A_ScriptDir%\AutoHotInterception\AutoHotInterception.ahk
 
-$*MButton::
-	Click, down,
-	Keywait,MButton,
-	Click, up,
-return
+; Parameter: %pressDeviceId% %pressKey% %scrollMouseId%
+if(A_Args.Length() != 3)
+    ExitApp
+global pressDeviceId := A_Args[1]
+global pressKey := A_Args[2]
+global scrollMouseId := A_Args[3]
+;Tooltip Parameters: pressDeviceId: %pressDeviceId% pressKey: %pressKey%   scrollMouseId: %scrollMouseId%
 
-
-$*LButton::
-	;SetMouseDelay, 10
-	; Tooltip %A_MouseDelay%
-	KeyWait, LButton, T0.2
-	if (ErrorLevel) {
-		ScrollWithMouse("LButton")
-		;SystemCursor("On")
-	} else if (A_PriorHotkey == "$*LButton") {
-		;Tooltip %A_PriorKey% %A_PriorHotkey% %A_ThisHotkey%
-		;SystemCursor("On")
-		Click,down,Middle,,
-		Sleep 10
-		Click,up,Middle,,
-	}
-return
-;Critical, On
-;#MaxThreadsPerHotkey 1
-$*LButton Up::
-	;Tooltip up
-	if WinExist("Task Switching") {
-		SendInput {Alt Up}
-	}
-
-	; BlockInput,On
-	; Sleep, 100
-	; BlockInput,Off
-	; ;Tooltip %A_PriorKey% %A_PriorHotkey% %A_ThisHotkey%
-
-Return
-; ; ;Critical, Off
-;#MaxThreadsPerHotkey 1
-
-
-; #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
-$*RButton::
-	KeyWait, RButton, T0.2
-	if (ErrorLevel) {
-		ScrollWithMouse("RButton")
-	} else if (A_PriorHotkey == "$*RButton") {
-		Click,,right
-	}
-return
-$*RButton Up::
-	if WinExist("Task Switching") {
-		SendInput {Alt Up}
-	}
-return
+; AHI
+global AHI := new AutoHotInterception()
+AHI.SubscribeMouseMoveRelative(scrollMouseId, true, Func("MouseEvent"))
+AHI.SubscribeMouseButton(pressDeviceId, pressKey, false, Func("PressKeyEvent"))
 
 
 /*
-    @Title: EasyScroll
-    @Desc: scroll by press- and holding h with middle-finger while controlling trackpoint with index-finger
-    #note: any other key could be used. Even alternative ones to allow changing positions
+; Subscribe to correct device and key
+; #note currently only AHI Button Ids possible
+if(pressDeviceId < 11) { ; it's a keyboard
+    ;AHI.SubscribeKey(pressDeviceId, GetKeySC(pressKey), true, Func("PressKeyEvent"))
+} else { ; it's a mouse
+    Tooltip %pressKey%
+    AHI.SubscribeMouseButton(pressDeviceId, pressKey, false, Func("PressKeyEvent"))
+}
+
+; Exit on release of pressKey
+PressKeyEvent(state) {
+    tooltip PressKeyEvent
+    if(!state)
+        ExitApp
+}
 */
-*h::
-    KeyWait, h, T0.15
-	if (ErrorLevel) {
-    	ScrollWithMouse("h")
-    } else {
-        SendInput {blind}h
+
+
+
+
+
+global xSum := 0
+global ySum := 0
+MouseEvent(x, y){
+    xSum := xSum + x
+    ySum := ySum + y
+    if(xSum > 10) {
+        SendInput {WheelRight}
+        xSum = 0
+        ySum = 0
+    } else if(xSum < -10) {
+        SendInput {WheelLeft}
+        xSum = 0
+        ySum = 0
+    } else if(ySum > 8) {
+        SendInput {WheelDown}
+        xSum = 0
+        ySum = 0
+    } else if(ySum < -10) {
+        SendInput {WheelUp}
+        xSum = 0
+        ySum = 0
+
     }
-return
+    ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
+}
+
+/*
+if (DiffHrVr > 2 || DiffHrVr < -2) {
+			IF (absHrDist > absVrDist) {
+				smoothHrDist := ceil(log(absHrDist)) ; converted into positive int number
+				if (hrDist > 0) {
+					Send {WheelDown %smoothHrDist%}
+				} else {
+					Send {WheelUp %smoothHrDist%}
+				}
+			} ELSE {
+				smoothVrDist := ceil(log(absVrDist)) ; converted into positive int number
+				if (vrDist > 0) {
+					Send {WheelRight %smoothVrDist%}
+				} else {
+					Send {WheelLeft %smoothVrDist%}
+				}
+			}
+		}
+
+        AHI.SendMouseButtonEvent(scrollMouseId, 5, 1) ; vWheelDown
+        AHI.SendMouseButtonEvent(scrollMouseId, 5, 0) ; vWheelUp
+*/
 
 
-;this version is too fucking over-complicated
+
+
+
+/*
+; #note this version is too fucking over-complicated
 ScrollWithMouse(key) {
-	MouseGetPos, oldX, oldY
+    CoordMode, Mouse, Screen ; #note needs to be set inside function, at top of script it won't work
+    MouseGetPos, oldX, oldY
 	SystemCursor("Toggle")
 
 	While GetKeyState(key, "P") {
-		MouseGetPos, newX, newY
-		MouseMove, oldX, oldY, 0
+        MouseGetPos, newX, newY
 		vrDist := newX-oldX
 		absVrDist := Abs(vrDist)
 		hrDist := newY-oldY
 		absHrDist := Abs(hrDist)
-		;Tooltip, %newX% | %oldX% movVer:%movVer%
 
 		DiffHrVr := absHrDist - absVrDist
 		;Tooltip %absHrDist% %absVrDist%
@@ -109,12 +130,14 @@ ScrollWithMouse(key) {
 				}
 			}
 		}
-		;MouseMove, oldX, oldY, 0
-        ;Sleep 20
+		DllCall("SetCursorPos", int, oldX, int, oldY)  ; The first number is the X-coordinate and the second is the Y (relative to the screen).
+		    ; MouseMove didn't work on multi-monitor https://www.autohotkey.com/docs/commands/MouseMove.htm
+        ; Sleep 20
+        ; Tooltip, %A_CoordModeMouse% — X: %newX% | %oldX%  Y: %newY% | %oldY%
 	}
 	SystemCursor("Toggle")
-return
 }
+
 /*
 ScrollWithMouse(key) {
 	CoordMode, Mouse, Screen ; The fucking bug! that bugged my head!
@@ -175,3 +198,4 @@ SystemCursor(OnOff=1)   ; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T","Tog
         DllCall( "SetSystemCursor", "uint",h_cursor, "uint",c%A_Index% )
     }
 }
+*/

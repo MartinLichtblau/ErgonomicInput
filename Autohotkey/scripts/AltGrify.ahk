@@ -5,6 +5,12 @@
     @Requirements: none
     @Recommendations: remove AltGr functionality of keyboard layout since you use this instead
 */
+#SingleInstance force
+#Persistent
+;Process,priority,,Realtime
+
+
+
 
 $2::OnLongPress("2", "U+00B2") ; U+00B2 = "²"
 $3::OnLongPress("3", "U+00B3")  ; U+00B3 = "³"

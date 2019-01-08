@@ -2,43 +2,27 @@
     @Title: ErgoNavi
     @Desc: bring all frequently used commands together for better ergonomic navigation
 */
-Process, priority,, Realtime
+#SingleInstance force
+#Persistent
+;Process,priority,,Realtime
+
+#Include %A_ScriptDir%/lib/Functions.ahk
+
+
 
 
 /*
-    @Title: Test
+    @Title:
     @Desc:
 */
-~RButton & x::
-  	Send ^n
-return
-
-~RButton & v::
-  	Send ^t
-return
-
+/* For other unoccupied keys
+~RButton & x::LongPressCommand("x", "^n", "+^n")
+~RButton & v::LongPressCommand("v", "^t", "+^t") ; perhaps extend with OpenNewTabWithSelection()
 ~RButton & c::
-  	Send ^w
-return
-
 ~RButton & y::
-  	Send ^l
-return
-
 ~RButton & z::
-  	Send ^w
-return
-
-~RButton & d::
-	KeyWait, d, T0.4
-	If ErrorLevel
-		SendInput !{F4}
-	Else
-		SendInput ^w
-	KeyWait,d
-return
-
-
+*/
+~RButton & d::LongPressCommand("d", "^w", "!{F4}")
 
 
 /*
@@ -48,16 +32,16 @@ return
 ~RButton & f::
 ~LButton & k::
 <^<+f::
-	Send ^{PgUp}
+	SendInput ^{PgUp}
 	;SendInput +^{Tab}
 Return
 /*
     @Title: TabRight
     @Desc: switch one tab right
 */
-~RButton & p::
+~RButton & a::
 ~LButton & m::
-<^<+p::
+<^<+a::
 	Send ^{PgDn}
 	;SendInput ^{Tab}
 Return
@@ -76,7 +60,8 @@ Return
 ; ~LButton & sc00d:: ;sc00d = ´
 ; ~LButton & sc019:: ;sc019 = ö
 ~LButton & o::
-~RButton & w::
+~RButton & q::
+$^+q::
 	Send ^+w
 return
 /*
@@ -87,8 +72,8 @@ return
 ; ~LButton & j::
 ; ~RButton & c::
 ~LButton & j::
-~RButton & q::
-^+q::
+~RButton & w::
+$^+w::
 	Send !z ; #note can' t set ^+q in chrome as extension shortcut, hence it's mapped on x
 return
 
@@ -139,9 +124,9 @@ return
     @Title: WinView
     @Desc: Opening overview showing all desktop and open windows
 */
-~RButton & a::
+~RButton & p::
 ~LButton & sc035:: ; sc035 = -
-<^<+a::
+<^<+p::
 	Send #{Tab}
 return
 
@@ -156,18 +141,19 @@ return
 <+<^t::
 	if WinExist("Task Switching") { ; in german if WinExist("Programmumschaltung")
 			;Tooltip "just tab"
-			SendInput {Tab}
+			Send {Tab}
 	} else {
 		;Tooltip "Open menu"
-		SendInput {Alt Down}{Tab}
+		Send {Alt Down}{Tab}
 	}
 return
-~LShift & ~LCtrl Up::
-~LCtrl & ~LShift Up::
+;~LShift & ~LCtrl Up::
+;~LCtrl & ~LShift Up::
+;$*LButton Up::
+;$*RButton Up::
+~*LCtrl up::
 	if WinExist("Task Switching")
-		SendInput {Alt Up}	
-	;else 
-	;	SendInput {Esc}
+		SendInput {Alt Up}
 return
 
 
@@ -188,7 +174,7 @@ Return
 	If ErrorLevel {  
 		WinMaximize, A
 		;SendInput {LWin Down}{Up}{LWin Up}
-	}Elsen
+	}Else
 		SendInput {LWin Down}{Right}{LWin Up}
 	KeyWait, F2, 
 Return
