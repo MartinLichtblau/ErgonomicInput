@@ -14,6 +14,9 @@ return
 ;---------------------------------LeftHand--------------------------------
 ;--------------------------------------------F-Row
 ;--------------------------------------------Number-Row
+    ~RButton & 1:: 
+    ~RButton & 3:: Browser_Back
+    ~RButton & 4:: Browser_Forward
 ;--------------------------------------------TopLetter-Row
     ~RButton & w:: gosub PreviousTab
     $^+w:: gosub PreviousTab
@@ -55,7 +58,7 @@ return
 ;--------------------------------------------F-Row
 ;--------------------------------------------Number-Row
 ;--------------------------------------------TopLetter-Row
-~MButton & j:: gosub PreviousTab
+~MButton & j:: gosub MoveMouseToCaret ; gosub PreviousTab
 ~MButton & l:: gosub Up
 ~MButton & u:: gosub Right
 ; b
@@ -69,8 +72,8 @@ return
 ; e
 ; i
 ~MButton & o:: gosub TabSearch
-~MButton & sc028:: gosub WinOrganizeLeft ; sc028 = ä
-~MButton & sc02B:: gosub WinOrganizeRight ; sc02B = #
+~MButton & sc028:: WinOrganizeLeft("sc028") ; sc028 = ä
+~MButton & sc02B:: WinOrganizeRight("sc02B") ; sc02B = #
 
 ;--------------------------------------------LowerLetter-Row
 ~MButton & x:: gosub AltTab
@@ -169,8 +172,10 @@ AltTab:
 	}
 return
 AltTabRelease:
-	if WinExist("Task Switching")
+	if WinExist("Task Switching"){
 		SendInput {Alt Up}
+            gosub CenterMouseOnActiveWindow
+    }
 return
 
 
@@ -180,25 +185,26 @@ return
     @Requirement: deactivate Windows Snap suggestion for that to work satisfying
     @TODO decide whinch of the two versions is better
 */
-WinOrganizeLeft:
-	KeyWait, sc01A, T0.3
+WinOrganizeLeft(pKey){
+	KeyWait,%pKey%,T0.3
 	If ErrorLevel {
-		;WinMaximize, A
+		;WinMaximize, A ; maximize directly
 		SendInput {LWin Down}{Down}{LWin Up}
 	} else
 		SendInput {LWin Down}{Left}{LWin Up}
-	KeyWait, sc01A,
+	KeyWait,%pKey%,
 return
-WinOrganizeRight:
-	KeyWait, sc01B, T0.3
+}
+WinOrganizeRight(pKey){
+	KeyWait,%pKey%,T0.3
 	If ErrorLevel {
-		;WinMaximize, A
+		;WinMaximize, A ; maximize directly
 		SendInput {LWin Down}{Up}{LWin Up}
 	} else
 		SendInput {LWin Down}{Right}{LWin Up}
-	KeyWait, sc01B,
+	KeyWait,%pKey%,
 return
-
+}
 
 /*
     @Title: TypeArrow
@@ -228,9 +234,25 @@ End:
 	Send {blind}{End}
 return
 
+/*
+    @Title: MoveMouseToCaret
+    #note would be nice, but pretty useless since nearly no app uses windows integrated caret function
+*/
+MoveMouseToCaret:
+    MouseMove, A_CaretX, A_CaretY, 0
+return
 
-
-
-
-
+/*
+    @Title: CenterMouseOnActiveWindow
+*/
+CenterMouseOnActiveWindow:
+    Sleep 50
+    CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winCenter_x, int, winCenter_y)
+    ;Tooltip winTopL_x:%winTopL_x% winTopL_y:%winTopL_y% winCenter_x:%winCenter_x% winCenter_y:%winCenter_y%
+return
 

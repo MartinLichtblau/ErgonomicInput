@@ -55,3 +55,18 @@ MonitorSetup() {
     }
     MsgBox %out%
 }
+
+MouseSpy() {
+; This example allows you to move the mouse around to see
+; the title of the window currently under the cursor:
+#Persistent
+SetTimer, WatchCursor, 100
+return
+}
+WatchCursor:
+CoordMode,Mouse,Screen
+MouseGetPos, xpos, ypos, id, control
+WinGetTitle, title, ahk_id %id%
+WinGetClass, class, ahk_id %id%
+ToolTip, xpos:%xpos% ypos:%ypos%`n ahk_id %id%`nahk_class %class%`n%title%`nControl: %control%
+return
