@@ -22,19 +22,23 @@ return
     then they will be treated as ⇧ Shift plus X, Y and Z.
     @Ref.: https://autohotkey.com/board/topic/57344-spacebar-as-space-and-as-shift/
 */
+
 ~LShift:: ; tilde so it gets triggered already on down, in cobination with any key, hence can be used as modifier key
+    global lShiftDownStart:=A_TickCount ; A_TimeSincePriorHotkey would be better, but is wrong when other script is running, e.g. MouseArrow.ahk
+
     ; @TODO how it it going without * Less responsive? Without it, Space shouldn't be p
-    Keywait,LShift, L ; just to deactivate autofire
+    Keywait,LShift, ; just to deactivate autofire
 return
-; Critical, On ; makes it only slower
 ~*LShift up::
-    ; @TODO without * it's faster, but with it you can produce a space while you hold a key, e.g. when tying speedy
     ; %A_PriorHotkey% does not work, since not every key has a hotkey
-    IF(A_TimeSincePriorHotkey < 150 && A_PriorKey = "LShift") {
+    timeSince := A_TickCount-lShiftDownStart
+    ;Tooltip A_PriorKey: %A_PriorKey% | A_PriorHotkey: %A_PriorHotkey% | A_ThisHotkey: %A_ThisHotkey% | A_TimeSinceThisHotkey:%A_TimeSinceThisHotkey% | A_TimeSincePriorHotkey:%A_TimeSincePriorHotkey% timeSince: %timeSince% ; #debug
+    IF(timeSince < 150 && A_PriorKey = "LShift") {
         SendInput {Space}
+    } else {
+        lShiftDownStart := 0 ; need to reset for cases like, e.g. when space follows a Shift-char e.g. "N ", or else it won't make that space.
     }
 return
-; Critical, Off
 
 /*
     @Title: SpaceErase
