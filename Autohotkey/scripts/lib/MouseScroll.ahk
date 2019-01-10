@@ -23,6 +23,7 @@ global scrollMouseId := A_Args[3]
 ; AHI
 global AHI := new AutoHotInterception()
 AHI.SubscribeMouseMoveRelative(scrollMouseId, true, Func("MouseEvent"))
+gosub ResetXY ; reset values since var have undefined value
 
 AHI.SubscribeMouseButton(pressDeviceId, pressKey, false, Func("PressKeyEvent")) ;keep it or Exit hooks won't work
 exitOnInput()
@@ -47,24 +48,25 @@ MouseEvent(x, y){
     global xSum := xSum + x
     global ySum := ySum + y
     if(xSum > 10) {
-        SendInput {WheelRight}
-        xSum = 0
-        ySum = 0
+        AHI.SendMouseButtonEvent(scrollMouseId, 6, 1)
+        gosub ResetXY
     } else if(xSum < -10) {
-        SendInput {WheelLeft}
-        xSum = 0
-        ySum = 0
+        AHI.SendMouseButtonEvent(scrollMouseId, 6, -1)
+        gosub ResetXY
     } else if(ySum > 8) {
-        SendInput {WheelDown}
-        xSum = 0
-        ySum = 0
+        AHI.SendMouseButtonEvent(scrollMouseId, 5, -1)
+        gosub ResetXY
     } else if(ySum < -10) {
-        SendInput {WheelUp}
-        xSum = 0
-        ySum = 0
+        AHI.SendMouseButtonEvent(scrollMouseId, 5, 1)
+        gosub ResetXY
     }
     ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
 }
+
+ResetXY:
+    xSum := 0
+    ySum := 0
+return
 
 
 exitOnInput() {
