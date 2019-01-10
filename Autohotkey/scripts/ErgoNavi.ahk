@@ -14,7 +14,7 @@ return
 ;---------------------------------LeftHand--------------------------------
 ;--------------------------------------------F-Row
 ;--------------------------------------------Number-Row
-    ~RButton & 1:: 
+    ~RButton & 1::
     ~RButton & 3:: Browser_Back
     ~RButton & 4:: Browser_Forward
 ;--------------------------------------------TopLetter-Row
@@ -46,10 +46,6 @@ return
 ;--------------------------------------------MISC
     $*RButton Up:: gosub AltTabRelease
     $~*LCtrl up:: gosub AltTabRelease
-
-
-
-
 
 
 
@@ -256,3 +252,20 @@ CenterMouseOnActiveWindow:
     ;Tooltip winTopL_x:%winTopL_x% winTopL_y:%winTopL_y% winCenter_x:%winCenter_x% winCenter_y:%winCenter_y%
 return
 
+/*
+    @Title: OpenTabWithSelection
+*/
+OpenTabWithSelection:
+    oldClip := clipboard
+    Send ^c
+    Sleep 200
+    if (oldClip == clipboard) {
+        SendInput ^t ; open empty tab / start page
+    } else {
+        ; Open new tab with selection
+        Send ^l
+        Sleep 100
+        Send ^a^v!{Enter}
+    }
+    clipboard := oldClip
+return

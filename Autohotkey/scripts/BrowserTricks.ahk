@@ -23,7 +23,6 @@
 Return
 */
 
-
 ; #note belongs in @ErgoNav
 ; -----------------------------------CLOSE  ON HOLD------------------------------------
 <^w::
@@ -35,34 +34,19 @@ Return
 	KeyWait,w
 Return
 
-
-; -----------------------------------Ergonomic easier *Open last closed tab*------------------------------------
-<^n::
-	KeyWait, n, T0.3                       	 ; Wait no more than 0.5 sec for key release (also suppress auto-repeat)
-	If ErrorLevel   								; Delete function
-		SendInput ^+t
-	else
-		SendInput ^n
-	KeyWait, n
-Return 
-
-
-/*
-;new combined with new tab translate
-; #remember It is all about timing! So add more sleep if it does not work.
-*/
+;RELEVANT ;---------------------------Opening new tab with currently marked text-------------------------------------
 $<^t::
 	KeyWait,t,T0.3
     If ErrorLevel
 	{
 		cliptemp := clipboard
 		Send ^c
-	
+
 		;Open content in new tab
 		Send ^l
 		Sleep 100
 		Send ^a^v!{Enter}
-		
+
 		;If hotkey still pressed translate it
 		Sleep 400
 		If(GetKeyState("t", "P"))
@@ -74,7 +58,7 @@ $<^t::
 			Send ^v
 			Send {ENTER}
 		}
-		
+
 		clipboard := clipTemp
 	}
 	ELSE
@@ -82,45 +66,9 @@ $<^t::
 		SendInput ^t
 	}
 	KeyWait,t, ;not L, since that means logical. Physical is default!
-Return 
-
-; ---------------------------Opening new tab with currently marked text-------------------------------------
-/*
-;Closed: Better do it with ctrl + t, which is already used for opening new tab
-<^c::
-	cliptemp := clipboard
-	SendInput ^c
-	KeyWait, c, T0.3
-    If ErrorLevel
-	{
-		;clipboard = https://www.google.de/search?q=%clipboard%
-		Send ^l
-		Sleep 100
-		Send ^a^v!{Enter}
-		
-		Sleep 300  ;If hotkey still pressed translate it 
-		If GetKeyState("c", "P"){   
-			clipboard = https://translate.google.de/?source=osdd#en/de/%cliptemp%
-			Send ^l
-			Sleep 200
-			Send ^v{ENTER}
-		}
-		
-		Sleep 300 ;If hotkey still pressed translate it 
-		If GetKeyState("c", "P"){   
-			clipboard = https://www.vocabulary.com/search?q=%cliptemp% 
-			Send ^l 
-			Sleep 200
-			Send ^v{ENTER}
-		}
-		
-		clipboard := clipTemp
-	}
-	KeyWait,c,L
 Return
-*/
 
-;------------------------Opening Bookmarks-bar to delete or save tab / URL-------------------------------------------------
+; RELEVANT ;------------------------Opening Bookmarks-bar to delete or save tab / URL-------------------------------------------------
 $^d::
 	KeyWait, d, T0.3                         	  
     If ErrorLevel {

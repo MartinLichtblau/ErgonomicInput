@@ -1,5 +1,5 @@
 /*
-    @Title: TrackScroll
+    @Title: Trackpad
     @Desc: swap trackad buttons for ergonomic reasons and for easy scrolling
     @Recommendation: for right-handed, swap left and right button in windows, so right trackpoint-hand has LButton underneath
     #note don't know how to do all that only for trackpad
@@ -7,7 +7,7 @@
 #include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
 Global AHI, trackpadId
 
-TrackScroll_Setup:
+Trackpad_Setup:
     #SingleInstance force
     #Persistent
     Process,priority,,Realtime
@@ -83,7 +83,7 @@ LButtonEvent(state) {
 $*MButton::
     KeyWait, MButton, T0.15
     if (ErrorLevel) {
-       run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "2" %trackpadId%
+       run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2" %trackpadId%
     } else if (A_PriorKey == "MButton") {
         Tooltip
         Send {MButton down}

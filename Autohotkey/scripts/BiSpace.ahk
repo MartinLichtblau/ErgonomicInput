@@ -22,14 +22,19 @@ return
     then they will be treated as ⇧ Shift plus X, Y and Z.
     @Ref.: https://autohotkey.com/board/topic/57344-spacebar-as-space-and-as-shift/
 */
-~*LShift::    ;tilde so it gets triggered already on down, in cobination with any key, hence can be used as modifier key
+~LShift:: ; tilde so it gets triggered already on down, in cobination with any key, hence can be used as modifier key
+    ; @TODO how it it going without * Less responsive? Without it, Space shouldn't be p
     Keywait,LShift, L ; just to deactivate autofire
 return
-~LShift up::
-    IF(A_TimeSincePriorHotkey < 150 && A_PriorKey = "LShift"){
+; Critical, On ; makes it only slower
+~*LShift up::
+    ; @TODO without * it's faster, but with it you can produce a space while you hold a key, e.g. when tying speedy
+    ; %A_PriorHotkey% does not work, since not every key has a hotkey
+    IF(A_TimeSincePriorHotkey < 150 && A_PriorKey = "LShift") {
         SendInput {Space}
     }
 return
+; Critical, Off
 
 /*
     @Title: SpaceErase

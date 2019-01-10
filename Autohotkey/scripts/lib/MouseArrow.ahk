@@ -25,7 +25,7 @@ global AHI := new AutoHotInterception()
 AHI.SubscribeMouseMoveRelative(scrollMouseId, true, Func("MouseEvent"))
 
 AHI.SubscribeMouseButton(pressDeviceId, pressKey, false, Func("PressKeyEvent")) ;keep it or Exit hooks won't work
-exitOnInput()
+;exitOnInput()
 return ; End of Auto-execute section
 
 
@@ -46,20 +46,20 @@ if(pressDeviceId < 11) { ; it's a keyboard
 MouseEvent(x, y){
     global xSum := xSum + x
     global ySum := ySum + y
-    if(xSum > 10) {
-        SendInput {WheelRight}
+    if(xSum > 30) {
+        Send {blind}{Right}
         xSum = 0
         ySum = 0
-    } else if(xSum < -10) {
-        SendInput {WheelLeft}
+    } else if(xSum < -30) {
+        Send {blind}{Left}
         xSum = 0
         ySum = 0
-    } else if(ySum > 8) {
-        SendInput {WheelDown}
+    } else if(ySum > 30) {
+        Send {blind}{Down}
         xSum = 0
         ySum = 0
-    } else if(ySum < -10) {
-        SendInput {WheelUp}
+    } else if(ySum < -30) {
+        Send {blind}{Up}
         xSum = 0
         ySum = 0
     }
@@ -79,7 +79,7 @@ PressKeyEvent(state) {
     ;tooltip PressKeyEvent
     ;SystemCursor("Toggle")
     ;Sleep 50
-    AHI := 1
+    AHI := "" ; free mem. Delete instance?
 ExitApp
 }
 

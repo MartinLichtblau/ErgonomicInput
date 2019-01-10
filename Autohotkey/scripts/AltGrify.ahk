@@ -30,7 +30,7 @@ $1::OnLongPress("1", "U+27a4") ; {u+27a4} = "➤"
 ; #note: guess could also work without backspace by using Input command
 OnLongPress(PressedKey, CharToWrite) {
 	SendInput {%PressedKey%}
-	KeyWait, %PressedKey%, T0.3
+	KeyWait, %PressedKey%, T0.25
 	if ErrorLevel {
 		SendInput {BS}{%CharToWrite%}
 	}

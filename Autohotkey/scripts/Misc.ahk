@@ -6,6 +6,5 @@
 
 
 F7::
-    run %A_ScriptDir%/Monitor.ahk
+    run %A_ScriptDir%/lib/AutoHotInterception/Monitor.ahk
 return
-

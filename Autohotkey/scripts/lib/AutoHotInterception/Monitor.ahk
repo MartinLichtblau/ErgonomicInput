@@ -3,7 +3,7 @@ Script to show data flowing from Interception
 */
 #SingleInstance force
 #Persistent ; (Interception hotkeys do not stop AHK from exiting, so use this)
-#include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+#include %A_ScriptDir%\AutoHotInterception.ahk
 
 OutputDebug DBGVIEWCLEAR
 

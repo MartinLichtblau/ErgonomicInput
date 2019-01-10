@@ -6,17 +6,16 @@
 SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
 #Persistent
+
 Process, priority,, Realtime
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-;SetBatchLines -1
-;ListLines Off
+SetBatchLines -1
+ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
-;#MaxThreadsBuffer On
-;#InstallKeybdHook ;important, oterwise
-;#InstallMouseHook
-;#UseHook
-;#MaxHotkeysPerInterval 200
-SetKeyDelay -1 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
+;#MaxThreadsBuffer On ; = Causes some or all hotkeys to buffer rather than ignore keypresses when their #MaxThreadsPerHotkey limit has been reached.
+;#MaxThreadsPerHotkey 5 ; = Sets the maximum number of simultaneous threads per hotkey or hotstring.
+
+SetKeyDelay 0 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
 	; but then in some scripts you need to add delays manually (mostly if interacts with UI)
 SetMouseDelay, 0
 
@@ -27,22 +26,25 @@ SetMouseDelay, 0
     @Req: Includes must come after
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
-GoSub, TrackScroll_Setup
+GoSub, Trackpad_Setup
 
 /*
     @Title: Includes
     @Desc: include scripts that need to run constantly, right from the start
+    #note order shouldn't matter here
 */
 #Include %A_ScriptDir%/AltGrify.ahk
 #Include %A_ScriptDir%/ErgoNavi.ahk
 #Include %A_ScriptDir%/PimpFN.ahk
 #Include %A_ScriptDir%/BiSpace.ahk
-;#Include %A_ScriptDir%/Thinkpad.ahk
 #Include %A_ScriptDir%/BrowserTricks.ahk
 #Include %A_ScriptDir%/print/Print.ahk
 #Include %A_ScriptDir%/Misc.ahk
-#Include %A_ScriptDir%/TrackScroll.ahk
+#Include %A_ScriptDir%/Trackpad.ahk
+;#Include %A_ScriptDir%/Thinkpad.ahk
+
 return ; end of auto-execute section
+
 
 
 

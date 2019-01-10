@@ -2,9 +2,6 @@
 #Persistent
 ;Process,priority,,Realtime
 
-#Include %A_ScriptDir%/lib/Functions.ahk
-
-
 
 
 /*
@@ -20,21 +17,6 @@ LongPressCommand(pressedKey, shortCommand, longCommand) {
         SendInput %shortCommand%
     }
     KeyWait, %pressedKey%
-}
-
-OpenNewTabWithSelection() {
-    oldClip := clipboard
-    Send ^c
-    Sleep 200
-    if (oldClip == clipboard) {
-        SendInput ^t ; open empty tab / start page
-    } else {
-        ; Open new tab with selection
-        Send ^l
-        Sleep 100
-        Send ^a^v!{Enter}
-    }
-    clipboard := oldClip
 }
 
 /*
