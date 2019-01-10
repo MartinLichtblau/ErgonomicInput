@@ -23,6 +23,8 @@ global scrollMouseId := A_Args[3]
 ; AHI
 global AHI := new AutoHotInterception()
 AHI.SubscribeMouseMoveRelative(scrollMouseId, true, Func("MouseEvent"))
+gosub ResetXY ; reset values since var have undefined value
+gosub initVars ; @TODO some others need to be init too
 
 AHI.SubscribeMouseButton(pressDeviceId, pressKey, false, Func("PressKeyEvent")) ;keep it or Exit hooks won't work
 ;exitOnInput()
@@ -43,28 +45,74 @@ if(pressDeviceId < 11) { ; it's a keyboard
 */
 
 
+;right := GetKeySc("Right") ; 333
+;left := GetKeySc("left") ; 331
+;up := GetKeySc("up") ; 328
+;down := GetKeySc("down") ; 336
+
+initVars:
+    clickStride := 0
+return
+
+global xSum, ySum, timeOfLastMouseEvent, clickStride
 MouseEvent(x, y){
-    global xSum := xSum + x
-    global ySum := ySum + y
-    if(xSum > 30) {
-        Send {blind}{Right}
-        xSum = 0
-        ySum = 0
-    } else if(xSum < -30) {
-        Send {blind}{Left}
-        xSum = 0
-        ySum = 0
-    } else if(ySum > 30) {
-        Send {blind}{Down}
-        xSum = 0
-        ySum = 0
-    } else if(ySum < -30) {
-        Send {blind}{Up}
-        xSum = 0
-        ySum = 0
+    xSum := xSum + x
+    ySum := ySum + y
+
+    ; if user paused mouse movement for T then reset XY, so it starts fresh and not with e.g. x=29.
+    timeDiffBetweenMoves  := A_TickCount-timeOfLastMouseEvent
+    if(timeDiffBetweenMoves > 150) {
+        clickStride := 0
+        gosub ResetXY
+        Tooltip %timeDiffBetweenMoves%
+    }
+    timeOfLastMouseEvent := A_TickCount ; timeLastMove is time of current move
+    ; @TODO think in terms of key presses, whereby the up event equals a break of duration T without mouse movement
+    ; if sum movement distance > distance-click-threshold, then press key and start timer for break duration.
+        ; if no new movement during that time, then release key. To send a single event
+        ; Means: timeframes without movment symbolize/represent release of key.
+
+
+    if(xSum > 15) {
+        ;Send {blind}{Right}
+        SendStrideMode(333)
+    } else if(xSum < -15) {
+        ;Send {blind}{Left}
+        SendStrideMode(331)
+    } else if(ySum > 15) {
+        ;Send {blind}{Down}
+        SendStrideMode(336)
+    } else if(ySum < -20) {
+        ;Send {blind}{Up}
+        SendStrideMode(328)
     }
     ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
 }
+
+SendStrideMode(scCode) {
+    ;Tooltip clickStride: %clickStride%
+    if(clickStride = 0) {
+        ; send one click
+        SendAhiScKey(scCode)
+    } else if (clickStride > 10) {
+        ; send further clicks if above stride_threshold
+        SendAhiScKey(scCode)
+    } else {
+        gosub ResetXY
+    }
+    clickStride++
+}
+
+SendAhiScKey(scCode){
+    AHI.SendKeyEvent(1, scCode, 1)
+    AHI.SendKeyEvent(1, scCode, 0)
+    gosub ResetXY
+}
+
+ResetXY:
+    xSum = 0
+    ySum = 0
+return
 
 
 exitOnInput() {
