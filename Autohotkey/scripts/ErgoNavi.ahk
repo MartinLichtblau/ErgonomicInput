@@ -42,6 +42,7 @@ return
     ~RButton & c::LongPressCommand("c", "^w", "!{F4}")
     ~RButton & v::LongPressCommand("v", "^t", "+^t") ; perhaps extend with OpenNewTabWithSelection()
     ~RButton & x::LongPressCommand("x", "^n", "+^n")
+    ; @TODO reload also used often
 
 ;--------------------------------------------MISC
     $*RButton Up:: gosub AltTabRelease
@@ -80,7 +81,7 @@ return
 ~MButton & sc035:: gosub WinView ; sc035 = -
 
 ;--------------------------------------------MISC
-$*MButton Up:: gosub AltTabRelease
+; $*MButton Up:: gosub AltTabRelease ; @TODO in conflict with @Trackpad MButton hotkeys. #open.merge
 
 
 

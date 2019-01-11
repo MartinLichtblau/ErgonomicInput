@@ -2,6 +2,23 @@
 #Persistent
 ;Process,priority,,Realtime
 
+/*
+    @Desc: shows relevant and often needed integrated A_variables
+*/
+showKeyVars:
+    Tooltip A_PriorKey: %A_PriorKey% | A_PriorHotkey: %A_PriorHotkey% | A_ThisHotkey: %A_ThisHotkey% | A_TimeSinceThisHotkey:%A_TimeSinceThisHotkey% | A_TimeSincePriorHotkey:%A_TimeSincePriorHotkey% ; #debug
+    return
+
+
+/*
+    @reasonWhy: simply "PostMessage,0x111,65307,,,MouseScroll.ahk" will lead to problems if said script doesn't exist
+*/
+KillScript(scriptName){
+    if(WinExist(scriptName . ".ahk" . " ahk_class AutoHotkey")) {
+        ;Tooltip %scriptName% exists
+        PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
+    }
+}
 
 
 /*
@@ -12,12 +29,12 @@ LongPressCommand(pressedKey, shortCommand, longCommand) {
     KeyWait, %pressedKey%, T0.4
     If ErrorLevel {
         SendInput %longCommand%
-    }
-    Else {
+    } else {
         SendInput %shortCommand%
     }
     KeyWait, %pressedKey%
 }
+
 
 /*
     @Title: PrintMonitorSetup
