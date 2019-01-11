@@ -5,6 +5,7 @@
     #note don't know how to do all that only for trackpad
 */
 #include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+#Include %A_ScriptDir%\Commands.ahk
 #Include %A_ScriptDir%\lib\Functions.ahk
 Global AHI, trackpadId
 
@@ -41,14 +42,6 @@ RButtonEvent(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
-        /* Wait in case the script is just starting
-        Sleep 50
-        If (WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
-            ;Tooltip MouseScroll running
-            PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
-            ;PostMessage,0x111,65307,,,MouseScroll.ahk
-        }
-        */
     }
 }
 LButtonEvent(state) {
@@ -78,7 +71,7 @@ LButtonEvent(state) {
 */
 $*MButton:: run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2" %trackpadId%
 $*MButton up::
-    Sleep 100
+    gosub AltTabRelease
     ;Tooltip %A_TimeSincePriorHotkey% %A_PriorKey%
     KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
     ; @TODO don't run a separate script but include it instead. Should remove all current issues and much simpler.
@@ -95,12 +88,11 @@ $*MButton up::
     #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
         after reboot all ok
 */
-$*RButton::
-    KeyWait, RButton, T0.15
-    if (ErrorLevel) {
-       run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1" %trackpadId%
-    } else if (A_PriorKey == "RButton") { ; A_PriorHotkey does not seem to work
-        ;Tooltip %A_PriorKey% %A_PriorHotkey%
+$*RButton:: run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1" %trackpadId%
+$*RButton up::
+    gosub AltTabRelease
+    KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
+    if (A_PriorKey == "RButton") ; A_PriorHotkey does not seem to work
         Send {RButton}
-    }
-return
+    return
+
