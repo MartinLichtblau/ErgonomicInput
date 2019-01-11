@@ -5,6 +5,7 @@
     #note don't know how to do all that only for trackpad
 */
 #include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+#Include %A_ScriptDir%\lib\Functions.ahk
 Global AHI, trackpadId
 
 Trackpad_Setup:
@@ -60,14 +61,9 @@ LButtonEvent(state) {
 	    if WinExist("Task Switching")
 	        SendInput {Alt Up}
         */
-
+        Sleep 100
         ; THE ONLY surefire way to kill the run script (in case it's stuck in between)
-         Sleep 100
-         If (WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
-             ;Tooltip MouseScroll running
-             PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
-             ;PostMessage,0x111,65307,,,MouseScroll.ahk
-         }
+         KillScript("MouseScroll")
         ;Tooltip LButton up
 	}
 }
@@ -80,18 +76,18 @@ LButtonEvent(state) {
         - LButton makes MButton click
     @Reason: like this the right hand can scroll easily and the MButton-key is good enough for left clicks
 */
-$*MButton::
-    KeyWait, MButton, T0.15
-    if (ErrorLevel) {
-       run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2" %trackpadId%
-    } else if (A_PriorKey == "MButton") {
-        Tooltip
+$*MButton:: run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2" %trackpadId%
+$*MButton up::
+    Sleep 100
+    ;Tooltip %A_TimeSincePriorHotkey% %A_PriorKey%
+    KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
+    ; @TODO don't run a separate script but include it instead. Should remove all current issues and much simpler.
+    if (A_PriorKey == "MButton") {
         Send {MButton down}
         Sleep 50
         Send {MButton up}
     }
-return
-
+    return
 
 /*
     @Title RButtonScroll

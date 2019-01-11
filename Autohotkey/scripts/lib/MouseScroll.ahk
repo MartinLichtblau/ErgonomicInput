@@ -22,7 +22,7 @@ global scrollMouseId := A_Args[3]
 
 ; AHI
 global AHI := new AutoHotInterception()
-AHI.SubscribeMouseMoveRelative(scrollMouseId, true, Func("MouseEvent"))
+AHI.SubscribeMouseMoveRelative(scrollMouseId, true, Func("FixedAxisScrolling"))
 gosub ResetXY ; reset values since var have undefined value
 
 AHI.SubscribeMouseButton(pressDeviceId, pressKey, false, Func("PressKeyEvent")) ;keep it or Exit hooks won't work
@@ -44,24 +44,73 @@ if(pressDeviceId < 11) { ; it's a keyboard
 */
 
 
-MouseEvent(x, y){
+/*
+    @Title: FreePlaneScroll
+    @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
+    #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
+*/
+FreePlaneScrolling(x, y) {
     global xSum := xSum + x
     global ySum := ySum + y
-    if(xSum > 10) {
-        AHI.SendMouseButtonEvent(scrollMouseId, 6, 1)
-        gosub ResetXY
-    } else if(xSum < -10) {
-        AHI.SendMouseButtonEvent(scrollMouseId, 6, -1)
-        gosub ResetXY
-    } else if(ySum > 8) {
-        AHI.SendMouseButtonEvent(scrollMouseId, 5, -1)
-        gosub ResetXY
-    } else if(ySum < -10) {
-        AHI.SendMouseButtonEvent(scrollMouseId, 5, 1)
-        gosub ResetXY
+    abs_xSum := abs(xSum)
+    abs_ySum := abs(ySum)
+
+    if(abs_xSum > 8 || abs_ySum > 8) { ; moveThreshold=8
+        if(abs_ySum >= abs_xSum) { ; up/down
+            if (ySum > 0) {
+                AHI.SendMouseButtonEvent(scrollMouseId, 5, -1) ; Wheel Down
+                ySum := 0
+            } else {
+                AHI.SendMouseButtonEvent(scrollMouseId, 5, 1) ; Wheel Up
+                ySum := 0
+            }
+        } else { ; right/left
+            if (xSum > 0) {
+                AHI.SendMouseButtonEvent(scrollMouseId, 6, 1) ; Wheel Right
+                xSum := 0
+            } else {
+                AHI.SendMouseButtonEvent(scrollMouseId, 6, -1) ; Wheel Left
+                xSum := 0
+            }
+        }
     }
-    ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
+    ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | xSum: %xSum% ;top left is minus for x and y
 }
+
+
+/*
+    @Title: FixedAxisScrolling
+    @Desc: scrolls on fixed axis, hence diagonal movements aren't possible like on an unrestricted plane.
+        That is so simply because with any move both X and Y are reset.
+*/
+FixedAxisScrolling(x, y) {
+    global xSum := xSum + x
+    global ySum := ySum + y
+    abs_xSum := abs(xSum)
+    abs_ySum := abs(ySum)
+
+    if(abs_xSum > 7 || abs_ySum > 7) { ; moveThreshold=8
+        if(abs_ySum >= abs_xSum) { ; up/down
+            if (ySum > 0) {
+                AHI.SendMouseButtonEvent(scrollMouseId, 5, -1) ; Wheel Down
+                gosub ResetXY
+            } else {
+                AHI.SendMouseButtonEvent(scrollMouseId, 5, 1) ; Wheel Up
+                gosub ResetXY
+            }
+        } else { ; right/left
+            if (xSum > 0) {
+                AHI.SendMouseButtonEvent(scrollMouseId, 6, 1) ; Wheel Right
+                gosub ResetXY
+            } else {
+                AHI.SendMouseButtonEvent(scrollMouseId, 6, -1) ; Wheel Left
+                gosub ResetXY
+            }
+        }
+    }
+    ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
+}
+
 
 ResetXY:
     xSum := 0

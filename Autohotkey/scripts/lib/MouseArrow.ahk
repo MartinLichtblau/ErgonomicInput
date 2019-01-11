@@ -61,10 +61,10 @@ MouseEvent(x, y){
 
     ; if user paused mouse movement for T then reset XY, so it starts fresh and not with e.g. x=29.
     timeDiffBetweenMoves  := A_TickCount-timeOfLastMouseEvent
-    if(timeDiffBetweenMoves > 150) {
+    if(timeDiffBetweenMoves > 80) {
         clickStride := 0
         gosub ResetXY
-        Tooltip %timeDiffBetweenMoves%
+        ; Tooltip %timeDiffBetweenMoves%
     }
     timeOfLastMouseEvent := A_TickCount ; timeLastMove is time of current move
     ; @TODO think in terms of key presses, whereby the up event equals a break of duration T without mouse movement
@@ -94,7 +94,7 @@ SendStrideMode(scCode) {
     if(clickStride = 0) {
         ; send one click
         SendAhiScKey(scCode)
-    } else if (clickStride > 10) {
+    } else if (clickStride > 10) { ; like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
         SendAhiScKey(scCode)
     } else {
@@ -112,7 +112,7 @@ SendAhiScKey(scCode){
 ResetXY:
     xSum = 0
     ySum = 0
-return
+    return
 
 
 exitOnInput() {
@@ -128,7 +128,7 @@ PressKeyEvent(state) {
     ;SystemCursor("Toggle")
     ;Sleep 50
     AHI := "" ; free mem. Delete instance?
-ExitApp
+    ExitApp
 }
 
 /* #alternative
