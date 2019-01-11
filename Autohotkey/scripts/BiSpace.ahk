@@ -32,7 +32,7 @@ return
 ~*LShift up::
     ; %A_PriorHotkey% does not work, since not every key has a hotkey
     timeSince := A_TickCount-lShiftDownStart
-    ;Tooltip A_PriorKey: %A_PriorKey% | A_PriorHotkey: %A_PriorHotkey% | A_ThisHotkey: %A_ThisHotkey% | A_TimeSinceThisHotkey:%A_TimeSinceThisHotkey% | A_TimeSincePriorHotkey:%A_TimeSincePriorHotkey% timeSince: %timeSince% ; #debug
+    ; gosub showKeyVars
     IF(timeSince < 150 && A_PriorKey = "LShift") {
         SendInput {Space}
     } else {

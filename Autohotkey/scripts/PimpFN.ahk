@@ -13,6 +13,7 @@ ESC up::
 return
 
 
+;------------------------------------- F1 - F4 -----------------------------
 F1::Volume_Mute
 ESC & F1::
 	SendInput {F1}
@@ -34,9 +35,15 @@ Return
 F4::F2
 
 
-; #note F5 - F8 vacant
+;------------------------------------- F5 - F8 -----------------------------
+; F5 = F5
 
 
+F8:: gosub toggleReadMode
+
+
+
+;------------------------------------- F9 - F12 -----------------------------
 F9::Media_Prev
 ESC & F9::
 	SendInput {F9}
@@ -61,6 +68,7 @@ ESC & F13::
 Return
 
 
+;------------------------------------- Functions -----------------------------
 /* #Alternative method with long press like in @AltGrify
     But that wouldn't work well with volume up/down.
 $F1::
@@ -72,3 +80,13 @@ $F1::
 	KeyWait,F1,L
 Return
 */
+
+
+/*
+    @TODO
+*/
+toggleReadMode:
+    Send !h ; activate tool for text markup/annotation/highlighting
+    Send !r ; color for reading #
+    Send {F11}
+return
