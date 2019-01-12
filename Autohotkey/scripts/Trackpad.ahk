@@ -75,6 +75,9 @@ $*MButton up::
     ;Tooltip %A_TimeSincePriorHotkey% %A_PriorKey%
     KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
     ; @TODO don't run a separate script but include it instead. Should remove all current issues and much simpler.
+
+   ; A_PriorHotkey does not seem to work
+    ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
     if (A_PriorKey == "MButton") {
         Send {MButton down}
         Sleep 50
@@ -92,7 +95,10 @@ $*RButton:: run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1
 $*RButton up::
     gosub AltTabRelease
     KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
-    if (A_PriorKey == "RButton") ; A_PriorHotkey does not seem to work
+
+    ; A_PriorHotkey does not seem to work
+    ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
+    if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 300)
         Send {RButton}
     return
 

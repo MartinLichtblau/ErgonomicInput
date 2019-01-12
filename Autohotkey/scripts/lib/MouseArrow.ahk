@@ -49,64 +49,117 @@ if(pressDeviceId < 11) { ; it's a keyboard
 ;left := GetKeySc("left") ; 331
 ;up := GetKeySc("up") ; 328
 ;down := GetKeySc("down") ; 336
+;home := GetKeySc("home") ; 327
+;end := GetKeySc("end") ; 335
+
 
 initVars:
+    gosub ResetXY
+    i := 0
     clickStride := 0
+    waitForMovementPause := 0
+    movementThreshold := 10
 return
 
-global xSum, ySum, timeOfLastMouseEvent, clickStride
+global xSum, ySum, timeOfLastMouseEvent, clickStride, i, waitForMovementPause, movementThreshold
 MouseEvent(x, y){
-    xSum := xSum + x
-    ySum := ySum + y
-
     ; if user paused mouse movement for T then reset XY, so it starts fresh and not with e.g. x=29.
     timeDiffBetweenMoves  := A_TickCount-timeOfLastMouseEvent
-    if(timeDiffBetweenMoves > 80) {
-        clickStride := 0
-        gosub ResetXY
-        ; Tooltip %timeDiffBetweenMoves%
+    timeOfLastMouseEvent := A_TickCount ; timeOfLastMouseEvent becomes time of current MouseEvent
+    if(timeDiffBetweenMoves < 80) {
+        if(!waitForMovementPause) {
+            processMovement(x, y)
+        } else {
+            ; did not pause && since waitForMovementPause=true return. For @SendHomeEndCom
+            ;Tooltip waitForMovementPause
+            Exit ; #note return statement causes immense delay and breaking hence breaking timers
+        }
+    } else { ; movement pause / no mouse input since
+        gosub initVars
+        ;Tooltip %timeDiffBetweenMoves%
     }
-    timeOfLastMouseEvent := A_TickCount ; timeLastMove is time of current move
     ; @TODO think in terms of key presses, whereby the up event equals a break of duration T without mouse movement
     ; if sum movement distance > distance-click-threshold, then press key and start timer for break duration.
         ; if no new movement during that time, then release key. To send a single event
         ; Means: timeframes without movment symbolize/represent release of key.
-
-
-    if(xSum > 15) {
-        ;Send {blind}{Right}
-        SendStrideMode(333)
-    } else if(xSum < -15) {
-        ;Send {blind}{Left}
-        SendStrideMode(331)
-    } else if(ySum > 15) {
-        ;Send {blind}{Down}
-        SendStrideMode(336)
-    } else if(ySum < -20) {
-        ;Send {blind}{Up}
-        SendStrideMode(328)
-    }
-    ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
 }
 
-SendStrideMode(scCode) {
+processMovement(x, y){
+    global xSum := xSum + x
+    global ySum := ySum + y
+    abs_xSum := abs(xSum)
+    abs_ySum := abs(ySum)
+
+    if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
+        if(abs_ySum >= abs_xSum) { ; up/down
+            if (ySum > 0) {
+                SendStrideMode("Down")
+            } else {
+                SendStrideMode("Up")
+            }
+        } else { ; right/left
+            if (xSum > 0) {
+                SendStrideMode("Right")
+            } else {
+                SendStrideMode("Left")
+            }
+        }
+    }
+    ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
+    i++
+}
+
+SendStrideMode(keyName) {
     ;Tooltip clickStride: %clickStride%
-    if(clickStride = 0) {
+    if(clickStride = 0) { ; initial send mode
         ; send one click
-        SendAhiScKey(scCode)
-    } else if (clickStride > 10) { ; like in windows the keyboard auto repeat inertia t
+        SendArrowKey(keyName)
+    } else if(clickStride > 3) { ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
-        SendAhiScKey(scCode)
+        if(i < 2 ) { ; reached threshold fast
+            SendHomeEndCom(keyName)
+        } else { ; reached threshold normal
+            SendArrowKey(keyName)
+        }
     } else {
         gosub ResetXY
     }
     clickStride++
 }
 
-SendAhiScKey(scCode){
-    AHI.SendKeyEvent(1, scCode, 1)
-    AHI.SendKeyEvent(1, scCode, 0)
+SendArrowKey(keyName){
+    if(keyName = "Right") {
+        AHI.SendKeyEvent(1, 333, 1)
+        AHI.SendKeyEvent(1, 333, 0)
+    } else if(keyName = "Left") {
+        AHI.SendKeyEvent(1, 331, 1)
+        AHI.SendKeyEvent(1, 331, 0)
+    } else if(keyName = "Down") {
+        AHI.SendKeyEvent(1, 336, 1)
+        AHI.SendKeyEvent(1, 336, 0)
+    } else if(keyName = "Up") {
+        AHI.SendKeyEvent(1, 328, 1)
+        AHI.SendKeyEvent(1, 328, 0)
+    }
+    i := 0
     gosub ResetXY
+}
+
+SendHomeEndCom(keyName) {
+    if(keyName = "Right") {
+        Send {blind}{End}
+    } else if(keyName = "Left") {
+        SendInput {blind}{Home}
+    } else if(keyName = "Down") {
+        SendInput {blind}{LCtrl down}{End}{LCtrl up}
+    } else if(keyName = "Up") {
+        SendInput {blind}{LCtrl down}{Home}{LCtrl up}
+    }
+    i := 0
+    gosub ResetXY
+    clickStride := 0
+    ; enforce break, not reacting to new input. until mouse event stop for stride timeframe
+    waitForMovementPause := 1
 }
 
 ResetXY:

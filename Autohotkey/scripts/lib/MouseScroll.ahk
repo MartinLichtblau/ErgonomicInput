@@ -89,7 +89,7 @@ FixedAxisScrolling(x, y) {
     abs_xSum := abs(xSum)
     abs_ySum := abs(ySum)
 
-    if(abs_xSum > 7 || abs_ySum > 7) { ; moveThreshold=8
+    if(abs_xSum > 6 || abs_ySum > 6) { ; moveThreshold=8
         if(abs_ySum >= abs_xSum) { ; up/down
             if (ySum > 0) {
                 AHI.SendMouseButtonEvent(scrollMouseId, 5, -1) ; Wheel Down
