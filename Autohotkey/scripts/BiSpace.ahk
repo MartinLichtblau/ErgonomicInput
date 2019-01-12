@@ -46,9 +46,9 @@ return
     #note use send instead of SendInput so that Input commands are able to detect it
 */
 <+Del::
-	Send ^{Del}
+	SendInput ^{Del}
 return
 
 <+BS::
-	Send ^{Bs}
+	SendInput ^{Bs}
 return

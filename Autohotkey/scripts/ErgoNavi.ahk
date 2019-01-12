@@ -20,7 +20,7 @@ return
     ~RButton & 4:: Browser_Forward
 ;--------------------------------------------TopLetter-Row
     ~RButton & w:: gosub PreviousTab
-    $^+w:: gosub PreviousTab
+    $<^<+w:: gosub PreviousTab
     ~RButton & q:: gosub TabSearch
     $^+q:: gosub TabSearch
     ~RButton & f:: gosub TabLeft
@@ -36,7 +36,7 @@ return
     ~RButton & s:: gosub DesktopRight
     <^<+s:: gosub DesktopRight
     ~RButton & t:: gosub AltTab
-    <+<^t:: gosub AltTab
+    <^<+t:: gosub AltTab
     ~RButton & d::LongPressCommand("d", "^w", "!{F4}")
 
 ;--------------------------------------------LowerLetter-Row
@@ -62,7 +62,8 @@ return
 ; b
 ~MButton & sc019:: gosub Home ; sc019 = ö
 ~MButton & sc01A:: gosub End ; sc01A = ü
-; +
+~MButton & sc01B:: gosub MoveAWinBetweenScreens
+
 
 ;--------------------------------------------Home-Row
 ~MButton & h:: gosub Left

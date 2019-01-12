@@ -92,7 +92,7 @@ return
     @TODO decide whinch of the two versions is better
 */
 WinOrganizeLeft(pKey){
-	KeyWait,%pKey%,T0.3
+	KeyWait,%pKey%,T0.2
 	If ErrorLevel {
 		;WinMaximize, A ; maximize directly
 		SendInput {LWin Down}{Down}{LWin Up}
@@ -102,7 +102,7 @@ WinOrganizeLeft(pKey){
 return
 }
 WinOrganizeRight(pKey){
-	KeyWait,%pKey%,T0.3
+	KeyWait,%pKey%,T0.2
 	If ErrorLevel {
 		;WinMaximize, A ; maximize directly
 		SendInput {LWin Down}{Up}{LWin Up}
@@ -153,7 +153,7 @@ return
 */
 CenterMouseOnActiveWindow:
     Sleep 50
-    CoordMode,Mouse,Screen
+    ; CoordMode,Mouse,Screen ; not necessary when using DLL-call SetCursorPos
     WinGetPos, winTopL_x, winTopL_y, width, height, A
     winCenter_x := winTopL_x + width/2
     winCenter_y := winTopL_y + height/2
@@ -179,3 +179,15 @@ OpenTabWithSelection:
     }
     clipboard := oldClip
 return
+
+/*
+    @Title:
+    @Desc: moves active windows to other screen
+    @Req: Dual-Monitor setup
+*/
+MoveAWinBetweenScreens:
+    SendInput {LWin Down}{LShift Down}{RIGHT}{LShift Up}{LWin Up}
+    Sleep 100
+    WinMaximize, A
+    gosub CenterMouseOnActiveWindow
+    return
