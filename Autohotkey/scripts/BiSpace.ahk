@@ -24,7 +24,7 @@ return
 */
 
 ~LShift:: ; tilde so it gets triggered already on down, in cobination with any key, hence can be used as modifier key
-    global lShiftDownStart:=A_TickCount ; A_TimeSincePriorHotkey would be better, but is wrong when other script is running, e.g. MouseArrow.ahk
+    global lShiftDownStart:=A_TickCount ; A_TimeSincePriorHotkey would be better, but is wrong when other script is running, e.g. MoulseArrow.ahk
 
     ; @TODO how it it going without * Less responsive? Without it, Space shouldn't be p
     Keywait,LShift, ; just to deactivate autofire

@@ -24,7 +24,7 @@ $sc01B::OnLongPress("sc01B", "~") ; sc01B = +
 $q::OnLongPress("q", "@")
 
 ; Additional custom ones
-$sc035::OnLongPress("sc035", "U+2014") ; sc035 = - | ; {U+2014} = "—"
+$sc035::OnLongPress("sc035", "U+2012") ; sc035 = - | ; EM Dash: {U+2014} = "—" | EN Dash: {U+2013} = "-" | Figure Dash: {U+2012} = "‒"
 $1::OnLongPress("1", "U+27a4") ; {u+27a4} = "➤"
 
 ; #note: guess could also work without backspace by using Input command

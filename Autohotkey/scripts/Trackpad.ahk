@@ -30,37 +30,31 @@ return
 MButtonEvent(state) {
 	if(state){
         AHI.SendMouseButtonEvent(11, 0, 1) ; LButton down
-        ;Tooltip MButton down
 	}
     else {
         AHI.SendMouseButtonEvent(11, 0, 0) ; LButton up
-        ;Tooltip MButton up
     }
 }
+
 RButtonEvent(state) {
     if(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
+        run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2"
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
+        ExitScript("MouseArrow")
     }
 }
+
 LButtonEvent(state) {
 	if(state) {
         AHI.SendMouseButtonEvent(11, 1, 1) ; RButton down
-        ;Tooltip LButton down
+        run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1"
 	} else {
 	    AHI.SendMouseButtonEvent(11, 1, 0) ; RButton up
-	    /*
-	    if WinExist("Task Switching")
-	        SendInput {Alt Up}
-        */
-        Sleep 100
-        ; THE ONLY surefire way to kill the run script (in case it's stuck in between)
-         KillScript("MouseScroll")
-        ;Tooltip LButton up
+	    ExitScript("MouseScroll")
 	}
 }
-
 
 /*
     @Title LButtonScroll
@@ -69,15 +63,12 @@ LButtonEvent(state) {
         - LButton makes MButton click
     @Reason: like this the right hand can scroll easily and the MButton-key is good enough for left clicks
 */
-$*MButton:: run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2" %trackpadId%
+$*MButton:: return
 $*MButton up::
     gosub AltTabRelease
-    ;Tooltip %A_TimeSincePriorHotkey% %A_PriorKey%
-    KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
-    ; @TODO don't run a separate script but include it instead. Should remove all current issues and much simpler.
-
    ; A_PriorHotkey does not seem to work
     ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
+    ; gosub showKeyVars
     if (A_PriorKey == "MButton") {
         Send {MButton down}
         Sleep 50
@@ -91,14 +82,12 @@ $*MButton up::
     #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
         after reboot all ok
 */
-$*RButton:: run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1" %trackpadId%
+$*RButton:: return
 $*RButton up::
     gosub AltTabRelease
-    KillScript("MouseArrow") #note only necessary because starting external script takes time (and suck overall)
 
     ; A_PriorHotkey does not seem to work
     ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
     if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 300)
         Send {RButton}
     return
-
