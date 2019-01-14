@@ -5,11 +5,15 @@
 #SingleInstance force
 #Persistent
 Process,priority,,Realtime
-#include %A_ScriptDir%\AutoHotInterception\AutoHotInterception.ahk
+#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
+SetBatchLines -1
+ListLines Off
+#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
+#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
 gosub Setup
 return
 
-Global mouseId, holdButton, xSum, ySum, movementThreshold, AHI
+Global mouseId, holdButton, xSum, ySum, movementThreshold, AHI, runFlag
 
 Setup:
     OnExit("ExitFunc")
@@ -22,6 +26,7 @@ Setup:
     return
 
 InitVars:
+    runFlag := true
     mouseId := A_Args[1]
     holdButton := A_Args[2]
     movementThreshold := 8
@@ -31,7 +36,7 @@ InitVars:
 InitAhi:
     AHI := new AutoHotInterception()
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("FixedAxisScrolling"))
-    AHI.SubscribeMouseButton(mouseId, holdButton, false, Func("ExitOnHoldButton")) ; is too slow
+    ;AHI.SubscribeMouseButton(mouseId, holdButton, false, Func("ExitOnHoldButton")) ; is too slow
     return
 
 /*
@@ -73,6 +78,8 @@ FreePlaneScrolling(x, y) {
         That is so simply because with any move both X and Y are reset.
 */
 FixedAxisScrolling(x, y) {
+    if(!runFlag)
+        Exit
     global xSum := xSum + x
     global ySum := ySum + y
     abs_xSum := abs(xSum)
@@ -108,8 +115,14 @@ return
 ; @Desc: run in parallel since it's a function
 ExitOnInput() {
     Input, UserInput, V L1 B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-    if(ErrorLevel)
-        ExitApp
+    ExitApp
+    /*
+    if(ErrorLevel){
+        runFlag := false
+        AHI.SubscribeMouseMoveRelative(mouseId, false, Func("FixedAxisScrolling"))
+        restoreCursors()
+    }
+    */
 }
 
 ExitOnHoldButton(state) {
@@ -118,8 +131,18 @@ ExitOnHoldButton(state) {
 
 ExitFunc(ExitReason, ExitCode)
 {
-    AHI := ""
+    ; Do not call ExitApp -- that would prevent other OnExit functions from being called.
     restoreCursors()
     return
-    ; Do not call ExitApp -- that would prevent other OnExit functions from being called.
+
+    /*
+    if(WinExist("Mousescroll.ahk ahk_class AutoHotkey")) {
+        Tooltip %scriptName% exists time:%A_ClickCount%
+        PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
+        ;Tooltip Exit
+        return
+    } else {
+         return
+    }
+    */
 }

@@ -80,7 +80,8 @@ return
 AltTabRelease:
 	if WinExist("Task Switching"){
 		SendInput {Alt Up}
-            gosub CenterMouseOnActiveWindow
+		;Tooltip AltTabRelease
+		gosub CenterMouseOnActiveWindow
     }
 return
 

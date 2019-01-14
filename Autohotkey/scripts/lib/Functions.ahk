@@ -13,10 +13,16 @@ showKeyVars:
 /*
     @reasonWhy: simply "PostMessage,0x111,65307,,,MouseScroll.ahk" will lead to problems if said script doesn't exist
 */
-ExitScript(scriptName){
-    if(WinExist(scriptName . ".ahk" . " ahk_class AutoHotkey")) {
-        ;Tooltip %scriptName% exists
-        PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
+ExitScript(scriptName) {
+    ;foundCount := 0
+    Loop 5 {
+        if(WinExist(scriptName . ".ahk" . " ahk_class AutoHotkey")) {
+            ;foundCount++
+            ;Tooltip %scriptName% exists %A_INdex% %foundCount%
+            PostMessage, 0x111, 65307, 0 ; The message is sent to the "last found window" due to WinExist() above.
+            ;return
+        }
+        Sleep 10
     }
 }
 

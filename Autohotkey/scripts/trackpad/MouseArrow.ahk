@@ -5,7 +5,7 @@
 #SingleInstance force
 #Persistent
 Process,priority,,Realtime
-#include %A_ScriptDir%\AutoHotInterception\AutoHotInterception.ahk
+#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
 gosub Setup
 return
 
@@ -137,7 +137,7 @@ SendArrowKey(keyName){
 ;end := GetKeySc("end") ; 335
 SendHomeEndCom(keyName) {
     if(keyName = "Right") {
-        Send {blind}{End}
+        SendInput {blind}{End}
     } else if(keyName = "Left") {
         SendInput {blind}{Home}
     } else if(keyName = "Down") {

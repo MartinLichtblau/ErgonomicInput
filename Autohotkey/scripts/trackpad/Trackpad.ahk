@@ -17,7 +17,8 @@ Trackpad_Setup:
 	DetectHiddenWindows, on
     SetTitleMatchMode, 2
 
-    AHI := new AutoHotInterception()
+    if(AHI == "")
+        Global AHI := new AutoHotInterception()
     trackpadId := AHI.GetMouseId(0x0000, 0x0000)
     AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
@@ -34,12 +35,13 @@ MButtonEvent(state) {
     else {
         AHI.SendMouseButtonEvent(11, 0, 0) ; LButton up
     }
+    ExitScript("MouseScroll")
 }
 
 RButtonEvent(state) {
     if(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
-        run AutoHotkey.exe %A_ScriptDir%\lib\MouseArrow.ahk %trackpadId% "2"
+        run AutoHotkey.exe %A_ScriptDir%\trackpad\MouseArrow.ahk %trackpadId% "2"
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
         ExitScript("MouseArrow")
@@ -47,13 +49,24 @@ RButtonEvent(state) {
 }
 
 LButtonEvent(state) {
+;Tooltip %state% %A_ClickCount%
 	if(state) {
         AHI.SendMouseButtonEvent(11, 1, 1) ; RButton down
-        run AutoHotkey.exe %A_ScriptDir%\lib\MouseScroll.ahk %trackpadId% "1"
+        if(WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
+            Tooltip Error: MouseScroll already running %A_ClickCount%
+            ExitScript("MouseScroll")
+        } else {
+            run AutoHotkey.exe %A_ScriptDir%\trackpad\MouseScroll.ahk %trackpadId% "1"
+        }
 	} else {
-	    AHI.SendMouseButtonEvent(11, 1, 0) ; RButton up
+	    ;restoreCursors()
+	    gosub AltTabRelease
+	    ;Tooltip up1
 	    ExitScript("MouseScroll")
+	    Sleep 10
+	    AHI.SendMouseButtonEvent(11, 1, 0) ; RButton up
 	}
+
 }
 
 /*
@@ -82,12 +95,13 @@ $*MButton up::
     #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
         after reboot all ok
 */
-$*RButton:: return
+$*RButton::
+    ;Tooltip down
+return
 $*RButton up::
-    gosub AltTabRelease
-
     ; A_PriorHotkey does not seem to work
     ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
     if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 300)
-        Send {RButton}
+        SendInput {RButton}
+    ;Tooltip upuien
     return
