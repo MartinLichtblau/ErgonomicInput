@@ -23,11 +23,12 @@ return
     @Ref.: https://autohotkey.com/board/topic/57344-spacebar-as-space-and-as-shift/
 */
 
-~LShift:: ; tilde so it gets triggered already on down, in cobination with any key, hence can be used as modifier key
+~*LShift:: ; tilde so it gets triggered already on down, in cobination with any key, hence can be used as modifier key
     global lShiftDownStart:=A_TickCount ; A_TimeSincePriorHotkey would be better, but is wrong when other script is running, e.g. MoulseArrow.ahk
 
     ; @TODO how it it going without * Less responsive? Without it, Space shouldn't be p
-    Keywait,LShift, ; just to deactivate autofire
+    ;Keywait,LShift, ; just to deactivate autofire
+    Hotkey, ~*LShift, Off
 return
 ~*LShift up::
     ; %A_PriorHotkey% does not work, since not every key has a hotkey
@@ -38,6 +39,7 @@ return
     } else {
         lShiftDownStart := 0 ; need to reset for cases like, e.g. when space follows a Shift-char e.g. "N ", or else it won't make that space.
     }
+    Hotkey, ~*LShift, On
 return
 
 /*
