@@ -1,6 +1,7 @@
 #SingleInstance force
 #Persistent
 ;Process,priority,,Realtime
+return
 
 /*
     @Desc: shows relevant and often needed integrated A_variables

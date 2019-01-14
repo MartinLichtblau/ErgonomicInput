@@ -7,7 +7,10 @@
 #include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
 #Include %A_WorkingDir%\lib\Commands.ahk
 #Include %A_WorkingDir%\lib\Functions.ahk
+#Include %A_WorkingDir%\global\trackpad\MouseScroll.ahk
+
 Global AHI, trackpadId
+
 
 Trackpad_Setup:
     #SingleInstance force
@@ -23,6 +26,7 @@ Trackpad_Setup:
     AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 0, true, Func("LButtonEvent"))
+    Setup_MouseScroll(trackpadId)
 return
 
 
@@ -49,22 +53,13 @@ RButtonEvent(state) {
 }
 
 LButtonEvent(state) {
-;Tooltip %state% %A_ClickCount%
+    ;Tooltip %state% %A_TickCount%
 	if(state) {
-        AHI.SendMouseButtonEvent(11, 1, 1) ; RButton down
-        if(WinExist("MouseScroll.ahk ahk_class AutoHotkey")) {
-            Tooltip Error: MouseScroll already running %A_ClickCount%
-            ExitScript("MouseScroll")
-        } else {
-            run AutoHotkey.exe %A_WorkingDir%\global\trackpad\MouseScroll.ahk %trackpadId% "1"
-        }
+        AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
+        Start_MouseScroll()
 	} else {
-	    ;restoreCursors()
-	    gosub AltTabRelease
-	    ;Tooltip up1
-	    ExitScript("MouseScroll")
-	    Sleep 10
-	    AHI.SendMouseButtonEvent(11, 1, 0) ; RButton up
+	    Stop_MouseScroll()
+        AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
 	}
 
 }
@@ -96,12 +91,9 @@ $*MButton up::
         after reboot all ok
 */
 $*RButton::
-    ;Tooltip down
-return
+    return
 $*RButton up::
-    ; A_PriorHotkey does not seem to work
-    ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
+    gosub AltTabRelease
     if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 300)
         SendInput {RButton}
-    ;Tooltip upuien
     return

@@ -1,4 +1,11 @@
 /*
+
+*/
+#SingleInstance force
+#Persistent
+return
+
+/*
     @Title: TabLeft
     @Desc: switch one tab left
 */

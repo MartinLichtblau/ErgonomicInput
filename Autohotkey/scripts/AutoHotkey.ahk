@@ -26,6 +26,7 @@ SetMouseDelay, 0
     @Req: Includes must come after
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
+Global AHI := new AutoHotInterception()
 GoSub, BaseLayout_Setup
 GoSub, Trackpad_Setup
 
