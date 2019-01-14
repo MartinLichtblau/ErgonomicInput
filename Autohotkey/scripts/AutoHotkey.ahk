@@ -27,6 +27,8 @@ SetMouseDelay, 0
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
 GoSub, Trackpad_Setup
+GoSub, BaseLayout_Setup
+
 
 /*
     @Title: Includes
@@ -36,11 +38,11 @@ GoSub, Trackpad_Setup
 #Include %A_ScriptDir%/AltGrify.ahk
 #Include %A_ScriptDir%/ErgoNavi.ahk
 #Include %A_ScriptDir%/PimpFN.ahk
-#Include %A_ScriptDir%/BiSpace.ahk
+#Include %A_ScriptDir%/BaseLayout.ahk
 #Include %A_ScriptDir%/BrowserTricks.ahk
 #Include %A_ScriptDir%/print/Print.ahk
 #Include %A_ScriptDir%/Misc.ahk
-#Include %A_ScriptDir%/Trackpad.ahk
+#Include %A_ScriptDir%/trackpad/Trackpad.ahk
 ;#Include %A_ScriptDir%/Thinkpad.ahk
 
 return ; end of auto-execute section
