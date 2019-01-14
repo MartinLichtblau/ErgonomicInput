@@ -1,35 +1,30 @@
 /*
     @Title: Print
     @Desc: prints current website as .pdf in certain folder
+    @TODO broken print_open
 */
-/* where do I need that?
-#Include %A_ScriptDir%/scripts/print/WinClipAPI.ahk
-#Include %A_ScriptDir%/scripts/print/WinClip.ahk
-wc := new WinClip
-*/
-clipTemp := ""
+global clipTemp := ""
 
 
-;---------------------------------Chrome: Print to Article---------------------------------------------------------
-$^p::
+PrintInChromeToFolder(folder) {
 	clipTemp := Clipboard ;temp save Clipboard content
-	folder = C:\Users\marti\Google Drive\Diary\Professional Life\Academic\General Literature\Read Literature
 	printChrome()
 	;Sleep 1000
-	path := print_save(folder, filename)
+	filename := print_save(folder)
 	MsgBox, 0,, Open PDF?, 1
 	IfMsgBox OK
-		print_open("local", folder, path)
+		print_open("local", folder, filename)
 	Clipboard := clipTemp 				;reset to old Clipboard content
-Return
-
-printChrome(){
-	SendInput ^p ;print in chrome
-	Sleep 3000  ;Wait for print preview to be open and responsive
-Return
+    return
 }
 
-print_save(folder, filename){
+printChrome() {
+	SendInput ^p ;print in chrome
+	Sleep 3000  ;Wait for print preview to be open and responsive
+    return
+}
+
+print_save(folder) {
 	saveAs = Save As ;String depends on which system language is used
 	SendInput {Enter} 					;Click save (print pdf)
 	WinWaitActive, %saveAs%, , 10
@@ -38,10 +33,10 @@ print_save(folder, filename){
 		MsgBox, Speichern unter timed out.
 		Reload
 	}
-	Sleep 333
+	Sleep 500
 	Send ^c 					;takes the given pdf name
 	filename := Clipboard
-	Sleep 333 ;needed because clipboard takes time 
+	Sleep 333 ;needed because clipboard takes time
 	Clipboard := folder
 	Sleep 333
 
@@ -57,19 +52,20 @@ print_save(folder, filename){
 		if(!ErrorLevel)
 			break
 	}
-Return filename
+    return filename
 }
 
-print_open(type, folder, filename){
+print_open(type, folder, filename) {
 	Sleep 1000
-	If(type == "local"){
-		Run, open %folder%\%filename%.pdf ;Open pdf with local software ;//update: perhaps the ".pdf" has to be removed for it to work
-	}else if(type == "chrome"){
+	If(type == "local") {
+	    fullPath := folder . filename . ".pdf"
+		Run, open %fullPath% ; Open pdf with local software ;//update: perhaps the ".pdf" has to be removed for it to work
+	}else if(type == "chrome") {
 		Clipboard = https://drive.google.com/drive/search?q=%filename%
 		Send ^t
 		Send ^l
 		Send ^v {Enter}
-	}else if(type == "drive"){
+	}else if(type == "drive") {
 		Run, explore %folder%
 		Sleep 300
 		Send ^f
@@ -82,5 +78,5 @@ print_open(type, folder, filename){
 	;not in use >>>>>>>>>>>>>>>>>>>
 	;Clipboard = http://fivefilters.org/pdf-newspaper/makepdf.php?feed=%Clipboard%&v=2&mode=single-story&template=A4&images=true&fulltext=true
 	;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Return
+    return
 }

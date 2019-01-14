@@ -26,8 +26,8 @@ SetMouseDelay, 0
     @Req: Includes must come after
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
-GoSub, Trackpad_Setup
 GoSub, BaseLayout_Setup
+GoSub, Trackpad_Setup
 
 
 /*
@@ -35,15 +35,12 @@ GoSub, BaseLayout_Setup
     @Desc: include scripts that need to run constantly, right from the start
     #note order shouldn't matter here
 */
-#Include %A_ScriptDir%/AltGrify.ahk
-#Include %A_ScriptDir%/ErgoNavi.ahk
-#Include %A_ScriptDir%/PimpFN.ahk
-#Include %A_ScriptDir%/BaseLayout.ahk
-#Include %A_ScriptDir%/BrowserTricks.ahk
-#Include %A_ScriptDir%/print/Print.ahk
-#Include %A_ScriptDir%/Misc.ahk
-#Include %A_ScriptDir%/trackpad/Trackpad.ahk
-;#Include %A_ScriptDir%/Thinkpad.ahk
+#Include %A_ScriptDir%\global\trackpad\Trackpad.ahk
+#Include %A_ScriptDir%\global\keyboard\BaseLayout.ahk
+#Include %A_ScriptDir%\global\keyboard\AltGrify.ahk
+#Include %A_ScriptDir%\global\keyboard\ErgoNavi.ahk
+#Include %A_ScriptDir%\global\keyboard\PimpFN.ahk
+#Include %A_ScriptDir%\context-sensitive\BrowserOnly.ahk
 
 return ; end of auto-execute section
 

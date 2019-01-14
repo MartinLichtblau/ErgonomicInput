@@ -38,6 +38,9 @@ F4::F2
 ;------------------------------------- F5 - F8 -----------------------------
 ; F5 = F5
 
+F7::
+    run %A_ScriptDir%/lib/AutoHotInterception/Monitor.ahk
+return
 
 F8:: gosub toggleReadMode
 

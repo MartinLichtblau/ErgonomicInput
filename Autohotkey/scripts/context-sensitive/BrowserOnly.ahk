@@ -7,7 +7,10 @@
 ;Process,priority,,Realtime
 
 
+#IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
 
+;---------------------------------Chrome: Print to Article---------------------------------------------------------
+$^p:: PrintInChromeToFolder("C:\Users\marti\Google Drive\Diary\Professional Life\Academic\General Literature\Read Literature")
 
 ; -----------------------------------Open link in same tab------------------------------------
 /*
@@ -122,3 +125,5 @@ Return
 	WinClip.SetHTML("<i>" cliptxt " (<a href=" clipurl ">" title "</a>)</i>")
 Return
 */
+
+#IfWinActive ;; end of condition IfWinActive

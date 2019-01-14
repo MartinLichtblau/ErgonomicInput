@@ -4,9 +4,9 @@
     @Recommendation: for right-handed, swap left and right button in windows, so right trackpoint-hand has LButton underneath
     #note don't know how to do all that only for trackpad
 */
-#include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
-#Include %A_ScriptDir%\Commands.ahk
-#Include %A_ScriptDir%\lib\Functions.ahk
+#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+#Include %A_WorkingDir%\lib\Commands.ahk
+#Include %A_WorkingDir%\lib\Functions.ahk
 Global AHI, trackpadId
 
 Trackpad_Setup:
@@ -41,7 +41,7 @@ MButtonEvent(state) {
 RButtonEvent(state) {
     if(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
-        run AutoHotkey.exe %A_ScriptDir%\trackpad\MouseArrow.ahk %trackpadId% "2"
+        run AutoHotkey.exe %A_WorkingDir%\global\trackpad\MouseArrow.ahk %trackpadId% "2"
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
         ExitScript("MouseArrow")
@@ -56,7 +56,7 @@ LButtonEvent(state) {
             Tooltip Error: MouseScroll already running %A_ClickCount%
             ExitScript("MouseScroll")
         } else {
-            run AutoHotkey.exe %A_ScriptDir%\trackpad\MouseScroll.ahk %trackpadId% "1"
+            run AutoHotkey.exe %A_WorkingDir%\global\trackpad\MouseScroll.ahk %trackpadId% "1"
         }
 	} else {
 	    ;restoreCursors()

@@ -5,8 +5,8 @@
 #SingleInstance force
 #Persistent
 Process,priority,,Realtime
-#Include %A_ScriptDir%\Commands.ahk
-#Include %A_ScriptDir%/lib/Functions.ahk
+#Include %A_WorkingDir%\lib\Commands.ahk
+#Include %A_WorkingDir%\lib\Functions.ahk
 return
 
 
