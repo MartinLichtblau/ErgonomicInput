@@ -8,6 +8,7 @@
 #Include %A_WorkingDir%\lib\Commands.ahk
 #Include %A_WorkingDir%\lib\Functions.ahk
 #Include %A_WorkingDir%\global\trackpad\MouseScroll.ahk
+#Include %A_WorkingDir%\global\trackpad\MouseArrow.ahk
 
 Global AHI, trackpadId
 
@@ -17,43 +18,48 @@ Trackpad_Setup:
     #Persistent
     Process,priority,,Realtime
 
-	DetectHiddenWindows, on
-    SetTitleMatchMode, 2
-
     if(AHI == "")
-        Global AHI := new AutoHotInterception()
+        AHI := new AutoHotInterception()
     trackpadId := AHI.GetMouseId(0x0000, 0x0000)
     AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 0, true, Func("LButtonEvent"))
     Setup_MouseScroll(trackpadId)
-return
+    Setup_MouseArrow(trackpadId)
+    return
 
 
+
+~LButton & h::
+    ;Tooltip ~LButton & h:: %A_TickCount%
+    Start_MouseArrow()
+    Keywait, h,
+    return
 
 
 MButtonEvent(state) {
+    ;Tooltip MButtonEvent %state%
 	if(state){
         AHI.SendMouseButtonEvent(11, 0, 1) ; LButton down
+        ;Start_MouseArrow() ; @Todo purely on LButton feels even better; more powerful!
 	}
     else {
+        Stop_MouseArrow()
         AHI.SendMouseButtonEvent(11, 0, 0) ; LButton up
     }
-    ExitScript("MouseScroll")
 }
 
 RButtonEvent(state) {
     if(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
-        run AutoHotkey.exe %A_WorkingDir%\global\trackpad\MouseArrow.ahk %trackpadId% "2"
+        Start_MouseArrow()
     } else {
         AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
-        ExitScript("MouseArrow")
+        Stop_MouseArrow()
     }
 }
 
 LButtonEvent(state) {
-    ;Tooltip %state% %A_TickCount%
 	if(state) {
         AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
         Start_MouseScroll()
@@ -61,7 +67,6 @@ LButtonEvent(state) {
 	    Stop_MouseScroll()
         AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
 	}
-
 }
 
 /*

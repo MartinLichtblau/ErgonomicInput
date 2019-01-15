@@ -40,6 +40,19 @@ Start_MouseScroll() {
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("FixedAxisScrolling"))
 }
 
+Stop_MouseScroll() {
+    ;Tooltip Stop_MouseScroll
+    runFlag := false
+    AHI.SubscribeMouseMoveRelative(mouseId, false, Func("FixedAxisScrolling"))
+    restoreCursors()
+}
+
+; @Desc: run in parallel since it's a function
+ExitOnInput() {
+    Input, UserInput, V L1 B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
+    Stop_MouseScroll()
+}
+
 /*
     @Title: FreePlaneScroll
     @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
@@ -107,17 +120,4 @@ FixedAxisScrolling(x, y) {
         }
         ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
     }
-}
-
-; @Desc: run in parallel since it's a function
-ExitOnInput() {
-    Input, UserInput, V L1 B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-    Stop_MouseScroll()
-}
-
-Stop_MouseScroll() {
-    ;Tooltip Stop_MouseScroll
-    runFlag := false
-    AHI.SubscribeMouseMoveRelative(mouseId, false, Func("FixedAxisScrolling"))
-    restoreCursors()
 }
