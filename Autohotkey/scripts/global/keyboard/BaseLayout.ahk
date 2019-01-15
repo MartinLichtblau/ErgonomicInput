@@ -23,7 +23,7 @@ BaseLayout_Setup:
     AHI.SubscribeKey(1, GetKeySC("RAlt"), true, Func("RAltEvent"))
     AHI.SubscribeKey(1, GetKeySC("RCtrl"), true, Func("RCtrlEvent"))
     AHI.SubscribeKey(1, 355, true, Func("FnEvent")) ; 355 = FN
-return
+    return
 
 LShiftEvent(state) {
     if(state) {
@@ -113,28 +113,25 @@ FnEvent(state) {
     }
 }
 
-Global blockSpaceRepeats, lastSpaceTime
 SpaceShiftEvent(state) {
-    ;key := GetKeySC("Esc")
-    ;Tooltip %key%
-    ;Tooltip %state%
+    static blockSpaceRepeats := false, lastSpaceTime, lShiftSc := GetKeySC("LShift"), spaceSc := GetKeySC("Space")
     if(state) {
-        if(!blockSpaceRepeats) {
-            AHI.SendKeyEvent(1, GetKeySC("LShift"), 1)
-            ; AHI.SendKeyEvent(1, GetKeySC("LShift"), 1) ; option B (for A_PriorKey to work)
+        if(!blockSpaceRepeats) { ; to only react to the initial press; not the auto key repeats
+            AHI.SendKeyEvent(1, lShiftSc, 1)
+            ; AHI.SendKeyEvent(1, lShiftSc, 1) ; #alternative B (for A_PriorKey to work)
             lastSpaceTime := A_TickCount
             blockSpaceRepeats := true
         }
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("LShift"), 0)
+        AHI.SendKeyEvent(1, lShiftSc, 0)
         pressDuration := A_TickCount - lastSpaceTime
         ;gosub showKeyVars
-        sleep 1 ; option A (for A_PriorKey to work)
+        sleep 1 ; #alternative A (for A_PriorKey to work)
         IF(A_PriorKey = "LShift" && pressDuration < 130) {
-            AHI.SendKeyEvent(1, GetKeySC("Space"), 1)
-            AHI.SendKeyEvent(1, GetKeySC("Space"), 0)
+            AHI.SendKeyEvent(1, spaceSc, 1)
+            AHI.SendKeyEvent(1, spaceSc, 0)
         }
-        blockSpaceRepeats := false
+        blockSpaceRepeats := false ; release lock
     }
 }
 

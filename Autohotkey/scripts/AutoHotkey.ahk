@@ -36,11 +36,11 @@ GoSub, Trackpad_Setup
     @Desc: include scripts that need to run constantly, right from the start
     #note order shouldn't matter here
 */
-#Include %A_ScriptDir%\global\trackpad\Trackpad.ahk
 #Include %A_ScriptDir%\global\keyboard\BaseLayout.ahk
+#Include %A_ScriptDir%\global\trackpad\Trackpad.ahk
 #Include %A_ScriptDir%\global\keyboard\AltGrify.ahk
-#Include %A_ScriptDir%\global\keyboard\ErgoNavi.ahk
 #Include %A_ScriptDir%\global\keyboard\PimpFN.ahk
+#Include %A_ScriptDir%\global\keyboard\ErgoNavi.ahk
 #Include %A_ScriptDir%\context-sensitive\BrowserOnly.ahk
 
 return ; end of auto-execute section
