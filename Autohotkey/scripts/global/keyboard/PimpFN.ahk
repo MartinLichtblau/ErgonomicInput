@@ -3,6 +3,7 @@
     @Desc: personalizing F-keys functions by combining some of the default ones and some of FN modified
     @Requirements: set F-Keys to default F1-12, not special computer dependent functions
 */
+#Include %A_WorkingDir%\lib\Commands.ahk
 
 
 /*
@@ -42,7 +43,7 @@ F7::
     run %A_ScriptDir%/lib/AutoHotInterception/Monitor.ahk
 return
 
-F8:: gosub toggleReadMode
+F8:: gosub ReadMode
 
 
 
@@ -83,13 +84,3 @@ $F1::
 	KeyWait,F1,L
 Return
 */
-
-
-/*
-    @TODO
-*/
-toggleReadMode:
-    Send !h ; activate tool for text markup/annotation/highlighting
-    Send !r ; color for reading #
-    Send {F11}
-return

@@ -62,7 +62,7 @@ return
 ; b
 ~MButton & sc019:: gosub Home ; sc019 = ö
 ~MButton & sc01A:: gosub End ; sc01A = ü
-~MButton & sc01B:: gosub MoveAWinBetweenScreens
+~MButton & sc01B:: gosub MoveWinBetweenScreens
 
 
 ;--------------------------------------------Home-Row

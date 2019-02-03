@@ -9,6 +9,12 @@
 
 #IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
 
+; -----------------------------------Combine: Add to Keep && Highlight------------------------------------
+$!c::
+    SendInput !c
+    SendInput !2
+    return
+
 ;---------------------------------Chrome: Print to Article---------------------------------------------------------
 $^p:: PrintInChromeToFolder("C:\Users\marti\Google Drive\Diary\Professional Life\Academic\General Literature\Read Literature")
 

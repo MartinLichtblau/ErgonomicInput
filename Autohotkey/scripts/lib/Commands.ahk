@@ -193,9 +193,37 @@ return
     @Desc: moves active windows to other screen
     @Req: Dual-Monitor setup
 */
-MoveAWinBetweenScreens:
+MoveWinBetweenScreens:
     SendInput {LWin Down}{LShift Down}{RIGHT}{LShift Up}{LWin Up}
     Sleep 100
     WinMaximize, A
     gosub CenterMouseOnActiveWindow
+    return
+
+/*
+    @Title: ReadMode
+    @Desc: one shortcut to activate the optimal environment for reading
+*/
+readModeActive := false
+ReadMode:
+    readModeActive := !readModeActive
+    if(readModeActive) {
+            ; Highlight all quotes since often most concise part of whole text
+            Send ^l
+            Sleep 100
+            SendInput find{Tab}
+            Sleep 100
+            SendInput [„“"‘](.*?)[“"”
+            Sleep 500
+            Send ]
+            Sleep 1000
+            Send {Enter}
+    }
+
+    Send {F11}
+    Send !r ; color for reading #
+
+    ; activate tool for text markup/annotation/highlighting
+    ;Send !h ; Hypothesis
+    Send !l ; Liner
     return
