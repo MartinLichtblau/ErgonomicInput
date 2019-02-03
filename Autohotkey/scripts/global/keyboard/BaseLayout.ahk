@@ -99,9 +99,9 @@ RAltEvent(state) {
 
 RCtrlEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("RAlt"), 1)
+        AHI.SendKeyEvent(1, GetKeySC("LWin"), 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("RAlt"), 0)
+        AHI.SendKeyEvent(1, GetKeySC("LWin"), 0)
     }
 }
 
@@ -127,7 +127,7 @@ SpaceShiftEvent(state) {
         pressDuration := A_TickCount - lastSpaceTime
         ;gosub showKeyVars
         sleep 1 ; #alternative A (for A_PriorKey to work)
-        IF(A_PriorKey = "LShift" && pressDuration < 130) {
+        IF(A_PriorKey = "LShift" && pressDuration < 150) {
             AHI.SendKeyEvent(1, spaceSc, 1)
             AHI.SendKeyEvent(1, spaceSc, 0)
         }

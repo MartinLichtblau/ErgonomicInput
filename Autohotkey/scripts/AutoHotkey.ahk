@@ -1,7 +1,9 @@
 /*
     @Title: AutoHotkey
     @Desc: main script to bring all else together
-    #note: run authotkey as admin
+    @Requirements:
+        - Set Autohotkey.exe as default application to open .ahk files
+        - run authotkey as admin
 */
 SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
@@ -54,6 +56,7 @@ return ; end of auto-execute section
     @Title: ReloadAhk
     @Desc: reload Autohotkey, including all scripts
 */
+Insert::Reload
 $^s:: 
 	KeyWait, s, T0.3       
 	If ErrorLevel {
