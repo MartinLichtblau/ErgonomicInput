@@ -1,6 +1,7 @@
 /*
     @Title: MouseArrow
     @Desc: hold key to move caret by moving mouse>cursor
+    @TODO it's an ugly piece of code, esp. the mapping of mouse movements to key commands.
 */
 #SingleInstance force
 #Persistent
@@ -10,8 +11,7 @@ SetBatchLines -1
 ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
-Global mouseId, xSum, ySum, MA_runflag, clickStride, i
-    , waitForMovementPause, MA_moveDistThreshold, pauseTimeThreshold
+Global mouseId, xSum, ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, pauseTimeThreshold
 return
 
 Setup_MouseArrow(mId) {
@@ -23,7 +23,7 @@ Setup_MouseArrow(mId) {
 InitVars_MouseArrow(mId) {
     MA_runflag := false
     mouseId := mId
-    MA_moveDistThreshold := 9
+    MA_moveDistThreshold := 14 ; @TODO this is the tranformation factor, One send key equals Coordinate DELTA change
     pauseTimeThreshold := 80
     ResetRuntimeVars()
 }
@@ -36,7 +36,7 @@ ResetRuntimeVars() {
 
 Start_MouseArrow() {
     ;Tooltip Start_MouseArrow
-    SetSystemCursor("",0,0)
+    ;SetSystemCursor("",0,0)
     MA_runflag := true
     waitForMovementPause := false
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseEvent"))
@@ -46,7 +46,7 @@ Stop_MouseArrow() {
     ;Tooltip Stop_MouseArrow
     MA_runflag := false
     AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseEvent"))
-    restoreCursors()
+    ;restoreCursors()
 }
 
 ResetXY_MouseArrow:
@@ -61,11 +61,13 @@ ExitOnInput_MouseArrow() {
         Stop_MouseArrow()
 }
 
-/*
-    @Title: FreePlaneScroll
-    @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
-    #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
-*/
+; @TODO represent like this: continous mouse movement events are a movement stream
+    ; this stream can be continous without pauses and is called flow or a sprint which is sourrounded by pauses.
+    ; a @flow which has a @flowDistance and a @flowDuration.
+    ; + make it all time-based. So make identify breaks based on the time passed, not the movement sum.
+    ; #note using the trackpoint has various advantages itself. So just making it time-based, bacause that's how it
+        ; has ever been is naive and such thinking won't lead to innovation. Trackpad has: VELOCITY, DISTANCE/FORCE per time
+        ; DIRECTION and more
 MouseEvent(x, y){
     static timeOfLastMouseEvent
     if(!MA_runflag)
@@ -97,7 +99,9 @@ MouseEvent(x, y){
         ; Means: timeframes without movment symbolize/represent release of key.
 }
 
+global abs_xSum, abs_ySum
 ProcessMovement(x, y){
+    ; @TODO don't work with negative numbers at all, instead ste a flag xNeg, yNeg
     global xSum := xSum + x
     global ySum := ySum + y
     abs_xSum := abs(xSum)
@@ -119,19 +123,21 @@ ProcessMovement(x, y){
         }
     }
     ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
-    i++
 }
 
 SendStrideMode(keyName) {
     static repeatStrideThreshold := 4
-    ;Tooltip clickStride: %clickStride%
+    ;Tooltip clickStride: %clickStride% %i%
     if(clickStride = 0) { ; initial send mode
         ; send one click
         SendArrowKey(keyName)
     } else if(clickStride > repeatStrideThreshold) { ; @TODO time based seems better to grasp.
         ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
-        if(i < 2 ) { ; reached threshold fast
+        ;Tooltip %abs_ySum%
+        if(abs_ySum > 3*MA_moveDistThreshold || abs_xSum > 2*MA_moveDistThreshold) { ; reached threshold fast
+        ;@TODO link factors to other values and make them static/global
+            ; #idea increase responsivness by using X/Y of this one movement and not the sum
             SendHomeEndCom(keyName)
         } else { ; reached threshold normal
             SendArrowKey(keyName)
@@ -152,17 +158,20 @@ SendArrowKey(keyName){
     if(keyName = "Right") {
         AHI.SendKeyEvent(1, 333, 1)
         AHI.SendKeyEvent(1, 333, 0)
+        ;Send {blind}{Right}
     } else if(keyName = "Left") {
         AHI.SendKeyEvent(1, 331, 1)
         AHI.SendKeyEvent(1, 331, 0)
+        ;Send {blind}{Left}
     } else if(keyName = "Down") {
         AHI.SendKeyEvent(1, 336, 1)
         AHI.SendKeyEvent(1, 336, 0)
+        ;Send {blind}{Down}
     } else if(keyName = "Up") {
         AHI.SendKeyEvent(1, 328, 1)
         AHI.SendKeyEvent(1, 328, 0)
+        ;Send {blind}{Up}
     }
-    i := 0
     gosub ResetXY
 }
 
@@ -170,15 +179,14 @@ SendArrowKey(keyName){
 ;end := GetKeySc("end") ; 335
 SendHomeEndCom(keyName) {
     if(keyName = "Right") {
-        SendInput {blind}{End}
+        Send {blind}{End}
     } else if(keyName = "Left") {
-        SendInput {blind}{Home}
+        Send {blind}{Home}
     } else if(keyName = "Down") {
-        SendInput {blind}{LCtrl down}{End}{LCtrl up}
+        Send {blind}{LCtrl down}{End}{LCtrl up}
     } else if(keyName = "Up") {
-        SendInput {blind}{LCtrl down}{Home}{LCtrl up}
+        Send {blind}{LCtrl down}{Home}{LCtrl up}
     }
-    i := 0
     gosub ResetXY
     clickStride := 0
     ; enforce break, not reacting to new input. until mouse event stop for stride timeframe

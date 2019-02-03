@@ -54,8 +54,8 @@ RButtonEvent(state) {
         AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
         Start_MouseArrow()
     } else {
-        AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
         Stop_MouseArrow()
+        AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
     }
 }
 

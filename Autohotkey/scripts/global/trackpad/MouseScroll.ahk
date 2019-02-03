@@ -24,7 +24,7 @@ Setup_MouseScroll(mId) {
 InitVars(mId) {
     runFlag := false
     mouseId := mId
-    movementThreshold := 8
+    movementThreshold := 1
     gosub ResetXY
 }
 
@@ -35,7 +35,7 @@ ResetXY:
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
-    SetSystemCursor("IDC_SIZEALL",0,0)
+    ;SetSystemCursor("IDC_SIZEALL",0,0)
     runFlag := true
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("FixedAxisScrolling"))
 }
@@ -44,7 +44,7 @@ Stop_MouseScroll() {
     ;Tooltip Stop_MouseScroll
     runFlag := false
     AHI.SubscribeMouseMoveRelative(mouseId, false, Func("FixedAxisScrolling"))
-    restoreCursors()
+    ;restoreCursors()
 }
 
 ; @Desc: run in parallel since it's a function
@@ -59,8 +59,8 @@ ExitOnInput() {
     #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
 */
 FreePlaneScrolling(x, y) {
-    xSum := xSum + x
-    ySum := ySum + y
+    xSum := xSum + (x*x) ; quadratic increase
+    ySum := ySum + (y*y) ; quadratic increase
     abs_xSum := abs(xSum)
     abs_ySum := abs(ySum)
 
@@ -92,32 +92,45 @@ FreePlaneScrolling(x, y) {
         That is so simply because with any move both X and Y are reset.
 */
 FixedAxisScrolling(x, y) {
-    if(runFlag){
-        ;Tooltip FixedAxisScrolling %x% %y%
-        xSum := xSum + x
-        ySum := ySum + y
-        abs_xSum := abs(xSum)
-        abs_ySum := abs(ySum)
+    ;static skip_count := 0, skipX := 2       ; such fine grained mouse movement is unnecessary
+    if(!runFlag)
+        Exit
+    /*
+    if(skip_count < skipX){
+        skip_count++
+        Exit
+    }else
+        skip_count := 0
+    */
 
-        if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
-            if(abs_ySum >= abs_xSum) { ; up/down
-                if (ySum > 0) {
-                    AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down
-                    gosub ResetXY
-                } else {
-                    AHI.SendMouseButtonEvent(mouseId, 5, 1) ; Wheel Up
-                    gosub ResetXY
-                }
-            } else { ; right/left
-                if (xSum > 0) {
-                    AHI.SendMouseButtonEvent(mouseId, 6, 1) ; Wheel Right
-                    gosub ResetXY
-                } else {
-                    AHI.SendMouseButtonEvent(mouseId, 6, -1) ; Wheel Left
-                    gosub ResetXY
-                }
+    ;Tooltip FixedAxisScrolling %x% %y%
+    xSum := xSum + x
+    ySum := ySum + y
+    abs_xSum := floor(ln(abs(xSum))) ; functions possible: ln/log = starts quick and slows down
+    abs_ySum := floor(ln(abs(ySum)))   ; sqrt or * x to start quick
+    ;Tooltip %abs_xSum% %abs_ySum%
+    if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
+        if(abs_ySum >= abs_xSum) { ; up/down
+            if (ySum > 0) {
+                ;AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down  ; #note AHI is slower
+                SendInput {WheelDown}
+                gosub ResetXY
+            } else {
+                ;AHI.SendMouseButtonEvent(mouseId, 5, 1) ; Wheel Up
+                SendInput {WheelUp}
+                gosub ResetXY
+            }
+        } else { ; right/left
+            if (xSum > 0) {
+                ;AHI.SendMouseButtonEvent(mouseId, 6, 1) ; Wheel Right
+                SendInput {WheelRight %abs_xSum%}
+                gosub ResetXY
+            } else {
+                ;AHI.SendMouseButtonEvent(mouseId, 6, -1) ; Wheel Left
+                SendInput {WheelLeft %abs_xSum%}
+                gosub ResetXY
             }
         }
-        ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
     }
+    ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
 }
