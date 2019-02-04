@@ -1,86 +1,36 @@
 /*
     @Title: PimpFN
-    @Desc: personalizing F-keys functions by combining some of the default ones and some of FN modified
-    @Requirements: set F-Keys to default F1-12, not special computer dependent functions
+    @Desc: customizing F-key functions, by mixing their default functions with custom ones
+    @Requirements: set F-Keys to default F1-12 in Bios or OS, not the computer specific functions
+    #Maturity:6
 */
 #Include %A_WorkingDir%\lib\Commands.ahk
-
-
-/*
-    @Desc: Use Esc-key for toggling F-key behavior instead of FN-key, because it's better reachable together with F-keys
-*/
-ESC up::
-    SendInput {Esc}
-return
+#Include %A_WorkingDir%\lib\Functions.ahk
 
 
 ;------------------------------------- F1 - F4 -----------------------------
-F1::Volume_Mute
-ESC & F1::
-	SendInput {F1}
-Return
+$F1::LongPressCommand("F1", "{Volume_Mute}", "{F1}")
 
+$F2::LongPressCommand("F2", "{Volume_Down}", "{F2}")
 
-F2::Volume_Down
-ESC & F2::
-	SendInput {F2}
-Return
+$F3::LongPressCommand("F3", "{Volume_Up}", "{F3}")
 
-
-F3::Volume_Up
-ESC & F3::
-	SendInput {F3}
-Return
-
-
-F4::F2
-
+$F4::LongPressCommand("F4", "{F2}", "{F4}") ; #idea MuteOtherTabsToggle
 
 ;------------------------------------- F5 - F8 -----------------------------
 ; F5 = F5
 
-F7::
+$F7::
     run %A_ScriptDir%/lib/AutoHotInterception/Monitor.ahk
 return
 
-F8:: gosub ReadMode
-
-
+$F8:: gosub ReadMode
 
 ;------------------------------------- F9 - F12 -----------------------------
-F9::Media_Prev
-ESC & F9::
-	SendInput {F9}
-Return
+$F9::LongPressCommand("F9", "{Media_Prev}", "{F9}")
 
+$F10::LongPressCommand("F10", "{Media_Play_Pause}", "{F10}")
 
-F10::Media_Play_Pause
-ESC & F10::
-	SendInput {F10}
-Return
+$F11::LongPressCommand("F11", "{Media_Next}", "{F11}")
 
-
-F11::Media_Next
-ESC & F11::
-	SendInput {F11}
-Return
-
-
-F12::^+l ; like button: e.g. to like a song
-ESC & F13::
-	SendInput {F12}
-Return
-
-
-;------------------------------------- Functions -----------------------------
-/* #Alternative method with long press like in @AltGrify
-    But that wouldn't work well with volume up/down.
-$F1::
-	KeyWait,F1,T0.33                        
-	If ErrorLevel
-		SendInput {F1}
-	Else        
-		SendInput {Volume_Mute}
-	KeyWait,F1,L
-Return
-*/
+$F12::LongPressCommand("F12", "{^+l}", "{F12}")

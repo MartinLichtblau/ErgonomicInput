@@ -29,7 +29,9 @@ ExitScript(scriptName) {
 
 
 /*
-    @Desc: produce different command depending on time pressing the key
+    @Title:
+    @Desc: produce different command depending on press-duration of pressedKey
+    @Parameter: all strings
     #reminder {%string%} interprets it as string and %string% as a raw command
 */
 LongPressCommand(pressedKey, shortCommand, longCommand) {
