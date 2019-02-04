@@ -144,26 +144,23 @@ FnEvent(state) {
     @Title: SpaceShift
     @Desc: use Space as both Shift and Space
     #note manual time calculation is just a #fix because internal A_TimeSince.. vars don't work (since AHI hides input)
+    #note A_PriorKey needs some key event after down-event and it slow; hence various ways to deal with it:
+        see: #Alt1.1, #Alt1.2
 */
 SpaceShiftEvent(state) {
     static blockSpaceRepeats := false, lastSpaceTime
     if(state) {
         if(!blockSpaceRepeats) { ; to only react to the initial press; not the auto key repeats
             AHI.SendKeyEvent(kbdId, lShiftSc, 1)
-            AHI.SendKeyEvent(kbdId, lShiftSc, 1)
+            ; AHI.SendKeyEvent(kbdId, lShiftSc, 1) ; #Alt1.1
             lastSpaceTime := A_TickCount
             blockSpaceRepeats := true
         }
     } else {
         AHI.SendKeyEvent(kbdId, lShiftSc, 0)
         pressDuration := A_TickCount - lastSpaceTime ;
-        ; @debug gosub showKeyVars
-
-        ; #note A_PriorKey needs some key event after down-event and it slow; hence various ways to deal with it
-        ;Sleep 1 ; #A =fix wait so it recognizes the LShift up event
-
+        Sleep 1 ; #Alt1.2 =fix wait so it recognizes the LShift up event
         if(A_PriorKey = "LShift" && pressDuration < 150) {
-            ;SendInput {Space} ; #alternative doesn't go as deep, but likely faster
             AHI.SendKeyEvent(kbdId, spaceSc, 1)
             AHI.SendKeyEvent(kbdId, spaceSc, 0)
         }
