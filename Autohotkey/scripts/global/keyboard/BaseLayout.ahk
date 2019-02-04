@@ -3,135 +3,171 @@
     @Desc: fundamental changes of layout; e.g. language, space, backspace, ...
     @Requirements:
         - registry remap Space-key so it becomes LShift
+    #Maturity:7
 */
 BaseLayout_Setup:
     #SingleInstance force
     #Persistent
     Process,priority,,Realtime
 
+    ; Init Variables
+    global spaceSc, tabSc, lShiftSc, capslockSc, lAltSc, lCtrlSc, lWinSc, printScreenSc, rAltSc, rCtrlSc, r2c1Sc, FnSc
+        , escSc, enterSc, deleteSc, backspaceSc
     if(AHI == "")
-        Global AHI := new AutoHotInterception()
-    AHI.SubscribeKey(1, GetKeySC("Space"), true, Func("SpaceShiftEvent"))
-    AHI.SubscribeKey(1, GetKeySC("LShift"), true, Func("LShiftEvent"))
-    AHI.SubscribeKey(1, GetKeySC("Tab"), true, Func("TabEvent"))
-    AHI.SubscribeKey(1, GetKeySC("^"), true, Func("KeyUnderEscEvent"))
-    AHI.SubscribeKey(1, GetKeySC("Capslock"), true, Func("CapslockEvent"))
-    AHI.SubscribeKey(1, GetKeySC("LAlt"), true, Func("LAltEvent"))
-    AHI.SubscribeKey(1, GetKeySC("LCtrl"), true, Func("LCtrlEvent"))
-    AHI.SubscribeKey(1, GetKeySC("LWin"), true, Func("LWinEvent"))
-    AHI.SubscribeKey(1, GetKeySC("PrintScreen"), true, Func("PrintScreenEvent"))
-    AHI.SubscribeKey(1, GetKeySC("RAlt"), true, Func("RAltEvent"))
-    AHI.SubscribeKey(1, GetKeySC("RCtrl"), true, Func("RCtrlEvent"))
-    AHI.SubscribeKey(1, 355, true, Func("FnEvent")) ; 355 = FN
+        global AHI := new AutoHotInterception()
+    global kbdId = 1 ; use 1st/primary keyboard to intercept and also for output
+    Gosub GetAllKeySc
+
+    ; Subscribe to Keys
+    AHI.SubscribeKey(kbdId, spaceSc, true, Func("SpaceShiftEvent"))
+    AHI.SubscribeKey(kbdId, lShiftSc, true, Func("LShiftEvent"))
+    AHI.SubscribeKey(kbdId, tabSc, true, Func("TabEvent"))
+    AHI.SubscribeKey(kbdId, r2c1Sc, true, Func("KeyUnderEscEvent"))
+    AHI.SubscribeKey(kbdId, capslockSc, true, Func("CapslockEvent"))
+    AHI.SubscribeKey(kbdId, lAltSc, true, Func("LAltEvent"))
+    AHI.SubscribeKey(kbdId, lCtrlSc, true, Func("LCtrlEvent"))
+    AHI.SubscribeKey(kbdId, lWinSc, true, Func("LWinEvent"))
+    AHI.SubscribeKey(kbdId, printScreenSc, true, Func("PrintScreenEvent"))
+    AHI.SubscribeKey(kbdId, rAltSc, true, Func("RAltEvent"))
+    AHI.SubscribeKey(kbdId, rCtrlSc, true, Func("RCtrlEvent"))
+    AHI.SubscribeKey(kbdId, FnSc, true, Func("FnEvent")) ; 355 = FN
+    return
+
+GetAllKeySc:
+    spaceSc := GetKeySC("Space")
+    tabSc := GetKeySC("Tab")
+    lShiftSc := GetKeySC("LShift")
+    capslockSc := GetKeySC("Capslock")
+    lAltSc := GetKeySC("LAlt")
+    lCtrlSc := GetKeySC("LCtrl")
+    lWinSc := GetKeySC("LWin")
+    printScreenSc := GetKeySC("PrintScreen")
+    rAltSc := GetKeySC("RAlt")
+    rCtrlSc := GetKeySC("RCtrl")
+    r2c1Sc := GetKeySC("^")
+    FnSc := 355
+    escSc := GetKeySC("Esc")
+    enterSc := GetKeySC("Enter")
+    deleteSc := GetKeySC("Delete")
+    backspaceSc := GetKeySC("Backspace")
     return
 
 LShiftEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("Tab"), 1)
+        AHI.SendKeyEvent(kbdId, tabSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("Tab"), 0)
+        AHI.SendKeyEvent(kbdId, tabSc, 0)
     }
 }
 
 TabEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("Backspace"), 1)
+        AHI.SendKeyEvent(kbdId, backspaceSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("Backspace"), 0)
+        AHI.SendKeyEvent(kbdId, backspaceSc, 0)
     }
 }
 
 KeyUnderEscEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("Delete"), 1)
+        AHI.SendKeyEvent(kbdId, deleteSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("Delete"), 0)
+        AHI.SendKeyEvent(kbdId, deleteSc, 0)
     }
 }
 
 CapslockEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("Enter"), 1)
+        AHI.SendKeyEvent(kbdId, enterSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("Enter"), 0)
+        AHI.SendKeyEvent(kbdId, enterSc, 0)
     }
 }
 
 LAltEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("LCtrl"), 1)
+        AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("LCtrl"), 0)
+        AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
     }
 }
 
 LCtrlEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("LWin"), 1)
+        AHI.SendKeyEvent(kbdId, lWinSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("LWin"), 0)
+        AHI.SendKeyEvent(kbdId, lWinSc, 0)
     }
 }
 
 LWinEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("LAlt"), 1)
+        AHI.SendKeyEvent(kbdId, lAltSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("LAlt"), 0)
+        AHI.SendKeyEvent(kbdId, lAltSc, 0)
     }
 }
 
 PrintScreenEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("LAlt"), 1)
+        AHI.SendKeyEvent(kbdId, lAltSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("LAlt"), 0)
+        AHI.SendKeyEvent(kbdId, lAltSc, 0)
     }
 }
 
 RAltEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("RCtrl"), 1)
+        AHI.SendKeyEvent(kbdId, rCtrlSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("RCtrl"), 0)
+        AHI.SendKeyEvent(kbdId, rCtrlSc, 0)
     }
 }
 
 RCtrlEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("LWin"), 1)
+        AHI.SendKeyEvent(kbdId, lWinSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("LWin"), 0)
+        AHI.SendKeyEvent(kbdId, lWinSc, 0)
     }
 }
 
 FnEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(1, GetKeySC("Esc"), 1)
+        AHI.SendKeyEvent(kbdId, escSc, 1)
     } else {
-        AHI.SendKeyEvent(1, GetKeySC("Esc"), 0)
+        AHI.SendKeyEvent(kbdId, escSc, 0)
     }
 }
 
+/*
+    @Title: SpaceShift
+    @Desc: use Space as both Shift and Space
+    #note manual time calculation is just a #fix because internal A_TimeSince.. vars don't work (since AHI hides input)
+*/
 SpaceShiftEvent(state) {
-    static blockSpaceRepeats := false, lastSpaceTime, lShiftSc := GetKeySC("LShift"), spaceSc := GetKeySC("Space")
+    static blockSpaceRepeats := false, lastSpaceTime
     if(state) {
         if(!blockSpaceRepeats) { ; to only react to the initial press; not the auto key repeats
-            AHI.SendKeyEvent(1, lShiftSc, 1)
-            ; AHI.SendKeyEvent(1, lShiftSc, 1) ; #alternative B (for A_PriorKey to work)
+            AHI.SendKeyEvent(kbdId, lShiftSc, 1)
+            AHI.SendKeyEvent(kbdId, lShiftSc, 1)
             lastSpaceTime := A_TickCount
             blockSpaceRepeats := true
         }
     } else {
-        AHI.SendKeyEvent(1, lShiftSc, 0)
-        pressDuration := A_TickCount - lastSpaceTime
-        ;gosub showKeyVars
-        sleep 1 ; #alternative A (for A_PriorKey to work)
-        IF(A_PriorKey = "LShift" && pressDuration < 150) {
-            AHI.SendKeyEvent(1, spaceSc, 1)
-            AHI.SendKeyEvent(1, spaceSc, 0)
+        AHI.SendKeyEvent(kbdId, lShiftSc, 0)
+        pressDuration := A_TickCount - lastSpaceTime ;
+        ; @debug gosub showKeyVars
+
+        ; #note A_PriorKey needs some key event after down-event and it slow; hence various ways to deal with it
+        ;Sleep 1 ; #A =fix wait so it recognizes the LShift up event
+
+        if(A_PriorKey = "LShift" && pressDuration < 150) {
+            ;SendInput {Space} ; #alternative doesn't go as deep, but likely faster
+            AHI.SendKeyEvent(kbdId, spaceSc, 1)
+            AHI.SendKeyEvent(kbdId, spaceSc, 0)
         }
-        blockSpaceRepeats := false ; release lock
+        blockSpaceRepeats := false ; release auto-repeat lock
     }
 }
 
