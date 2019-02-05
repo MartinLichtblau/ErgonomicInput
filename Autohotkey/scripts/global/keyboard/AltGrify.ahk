@@ -21,8 +21,7 @@ $0::OnLongPress("0", "}")
 $sc00C::OnLongPress("sc00C", "\") ; sc00C = ß
 $sc056::OnLongPress("sc056", "|") ; sc056 = <
 $sc01B::OnLongPress("sc01B", "~") ; sc01B = +
-$q::OnLongPress("q", "@")
-
+$sc011::OnLongPress("q", "@") ; sc011 = q
 ; Additional custom ones
 $sc035::OnLongPress("sc035", "U+2012") ; sc035 = - | ; EM Dash: {U+2014} = "—" | EN Dash: {U+2013} = "-" | Figure Dash: {U+2012} = "‒"
 $1::OnLongPress("1", "U+27a4") ; {u+27a4} = "➤"
@@ -30,7 +29,7 @@ $1::OnLongPress("1", "U+27a4") ; {u+27a4} = "➤"
 ; #note: guess could also work without backspace by using Input command
 OnLongPress(PressedKey, CharToWrite) {
 	SendInput {%PressedKey%}
-	KeyWait, %PressedKey%, T0.25
+	KeyWait, %PressedKey%, T0.3
 	if ErrorLevel {
 		SendInput {BS}{%CharToWrite%}
 	}
