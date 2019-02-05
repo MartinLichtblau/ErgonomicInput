@@ -30,16 +30,24 @@ Return
     @Desc: Opening Chrome extension for searching tabs, history and bookmarks
 */
 TabSearch:
-	Send ^+w
+	SendInput !+7
 return
 
 
 /*
-    @Title: PreviousTab
-    @Desc: Jumping back to last visited tab
+    @Title: TabBackward
+    @Desc: Jump back to last visited tab
 */
-PreviousTab:
-	Send !z ; #note can' t set ^+q in chrome as extension shortcut, hence it's mapped on x
+TabBackward:
+	SendInput !+8
+return
+
+/*
+    @Title: TabForward
+    @Desc: Jump forward to newer tab
+*/
+TabForward:
+	SendInput !+9
 return
 
 
@@ -213,10 +221,9 @@ ReadMode:
             Sleep 100
             SendInput find{Tab}
             Sleep 100
-            SendInput [‚Äû‚Äú"‚Äò](.*?)[‚Äú"‚Äù
+            SendInput [Ñì"ë](.*?)[ì"î
             Sleep 500
             Send ]
-            Sleep 1000
             Send {Enter}
     }
 

@@ -27,7 +27,6 @@ ExitScript(scriptName) {
     }
 }
 
-
 /*
     @Title:
     @Desc: produce different command depending on press-duration of pressedKey
@@ -44,6 +43,19 @@ LongPressCommand(pressedKey, shortCommand, longCommand) {
     KeyWait, %pressedKey%
 }
 
+/*
+    @Title: ReplaceOnLongPress
+    @Desc: On long press of pKey it is substituted with charToWrite
+*/
+ReplaceOnLongPress(pKey, charToWrite) {
+	SendInput {%pKey%}
+	KeyWait, %pKey%, T0.3
+	if ErrorLevel {
+	    SendInput {BS} ; #A1.2 SendInput ^z is unpredictable
+		SendInput %charToWrite%
+	}
+	KeyWait, %pKey%,
+}
 
 /*
     @Title: PrintMonitorSetup
