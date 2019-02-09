@@ -78,7 +78,7 @@ $<^t::
 Return
 
 ; RELEVANT ;------------------------Opening Bookmarks-bar to delete or save tab / URL-------------------------------------------------
-$^d::
+<^d::
 	KeyWait, d, T0.3                         	  
     If ErrorLevel {
 		Send ^d
@@ -86,7 +86,7 @@ $^d::
 		Sleep 100
 		Send {Tab}{Tab}{Tab}{Tab}{Enter} ;Delete Bookmark
 	} else {
-		Send !d  ;Open bookmark extension to add website 
+		Send !+b  ;Open bookmark extension to add website
 	}
 	KeyWait, d,
 return

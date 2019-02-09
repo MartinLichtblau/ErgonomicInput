@@ -1,32 +1,36 @@
 /*
     @Title: ErgoNavi
     @Desc: bring all frequently used commands together for better ergonomic navigation
+    @ModifierKeys: MButton, RButton, Ctrl+Shift
+    @Maturity:6
 */
-#SingleInstance force
-#Persistent
-Process,priority,,Realtime
-#Include %A_WorkingDir%\lib\Commands.ahk
-#Include %A_WorkingDir%\lib\Functions.ahk
-return
-
-
+ErgoNavi_Setup:
+    #SingleInstance force
+    #Persistent
+    Process,priority,,Realtime
+    #Include %A_WorkingDir%\lib\Commands.ahk
+    #Include %A_WorkingDir%\lib\Functions.ahk
+    return
 
 
 ;---------------------------------LeftHand--------------------------------
 ;--------------------------------------------F-Row
 ;--------------------------------------------Number-Row
     ~RButton & 1::
-    ~RButton & 3:: Browser_Back
-    ~RButton & 4:: Browser_Forward
+    ~RButton & 3::Browser_Back
+    ~RButton & 4::Browser_Forward
+
 ;--------------------------------------------TopLetter-Row
-    ~RButton & w:: gosub PreviousTab
-    $<^<+w:: gosub PreviousTab
-    ~RButton & q:: gosub TabSearch
-    $^+q:: gosub TabSearch
-    ~RButton & f:: gosub TabLeft
-    <^<+f:: gosub TabLeft
-    ~RButton & a:: gosub TabRight
-    <^<+a:: gosub TabRight
+    ~RButton & sc010:: gosub TabBackward
+    $<^<+sc010:: gosub TabBackward
+    ~RButton & sc011:: gosub TabSearch
+    $^+sc011:: gosub TabSearch
+    ~RButton & sc012:: gosub TabLeft
+    <^<+sc012:: gosub TabLeft
+    ~RButton & sc013:: gosub TabRight
+    <^<+sc013:: gosub TabRight
+    ~RButton & sc014:: gosub TabForward
+    $^+sc014:: gosub TabForward
 
 ;--------------------------------------------Home-Row
     ~RButton & p:: gosub WinView
@@ -36,12 +40,12 @@ return
     ~RButton & s:: gosub DesktopRight
     <^<+s:: gosub DesktopRight
     ~RButton & t:: gosub AltTab
-    <^<+t:: gosub AltTab
+    ;<^<+t:: gosub AltTab
     ~RButton & d::LongPressCommand("d", "^w", "!{F4}")
 
 ;--------------------------------------------LowerLetter-Row
     ~RButton & c::LongPressCommand("c", "^w", "!{F4}")
-    ~RButton & v::LongPressCommand("v", "^t", "+^t") ; perhaps extend with OpenNewTabWithSelection()
+    ~RButton & v::LongPressCommand("v", "^t", "^+t") ; perhaps extend with OpenNewTabWithSelection()
     ~RButton & x::LongPressCommand("x", "^n", "+^n")
     ; @TODO reload also used often
 
