@@ -29,7 +29,7 @@ SetMouseDelay, 0
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
 Global AHI := new AutoHotInterception()
-GoSub, BaseLayout_Setup
+GoSub, SpecialKeys_Setup
 GoSub, Trackpad_Setup
 
 
@@ -38,7 +38,7 @@ GoSub, Trackpad_Setup
     @Desc: include scripts that need to run constantly, right from the start
     #note order shouldn't matter here
 */
-#Include %A_ScriptDir%\global\keyboard\BaseLayout.ahk
+#Include %A_ScriptDir%\global\keyboard\SpecialKeys.ahk
 #Include %A_ScriptDir%\global\trackpad\Trackpad.ahk
 #Include %A_ScriptDir%\global\keyboard\AltGrify.ahk
 #Include %A_ScriptDir%\global\keyboard\PimpFN.ahk

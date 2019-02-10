@@ -1,11 +1,9 @@
 /*
-    @Title: BiSpace
-    @Desc: fundamental changes of layout; e.g. language, space, backspace, ...
-    @Requirements:
-        - registry remap Space-key so it becomes LShift
+    @Title: SpecialKeys
+    @Desc: fundamental changes of special keys, concerning mapping and behavior
     #Maturity:7
 */
-BaseLayout_Setup:
+SpecialKeys_Setup:
     #SingleInstance force
     #Persistent
     Process,priority,,Realtime
