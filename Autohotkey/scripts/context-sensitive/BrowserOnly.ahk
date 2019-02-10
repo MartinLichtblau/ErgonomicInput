@@ -1,13 +1,20 @@
 /*
     @Title: BrowserTricks
-    @Desc: expand and adapt browser functions
+    @Desc: expand and adapt functions only present in browsers
+    @Maturity:3
 */
-#SingleInstance force
-#Persistent
-;Process,priority,,Realtime
+BrowserTricks_Setup:
+    #SingleInstance force
+    #Persistent
+    #Include %A_WorkingDir%\lib\Commands.ahk
+    return
+
 
 
 #IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
+
+; -----------------------------------Two translation modes------------------------------------
+$!t::ChangeTranslateModeOnLongPress("t")
 
 ; -----------------------------------Combine: Add to Keep && Highlight------------------------------------
 $!c::
@@ -31,17 +38,6 @@ $^p:: PrintInChromeToFolder("C:\Users\marti\Google Drive\Diary\Professional Life
 	clipboard := clipTemp
 Return
 */
-
-; #note belongs in @ErgoNav
-; -----------------------------------CLOSE  ON HOLD------------------------------------
-<^w::
-	KeyWait, w, T0.4      
-	If ErrorLevel
-		SendInput !{F4}
-	Else        
-		SendInput ^w
-	KeyWait,w
-Return
 
 ;RELEVANT ;---------------------------Opening new tab with currently marked text-------------------------------------
 $<^t::

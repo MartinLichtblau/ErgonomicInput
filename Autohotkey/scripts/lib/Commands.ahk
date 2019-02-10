@@ -234,3 +234,30 @@ ReadMode:
     ;Send !h ; Hypothesis
     Send !l ; Liner
     return
+
+/*
+    @Title: ChangeTranslateModeOnLongPress
+    @Desc: on short press it quickly translates in place and on long press opens multiple sites with more comprehensive translations
+    @Requirements:
+        - Translate extension is installed in browser and put on Alt+t. E.g. @GoogleTranslateExtension
+        - @InstantMultiTranslationExtension is installed and configured as needed
+*/
+ChangeTranslateModeOnLongPress(pressKey) {
+    tempClip := clipboard
+    SendInput ^c
+    KeyWait, %pressKey%, T0.4
+    If ErrorLevel {
+        ; Comprehensive translation
+        SendInput {ESC} ; #test if it closes blocking windows without causing problems, then keep it
+        Sleep 50 ; wait some time for the blocking window to close
+        SendInput ^t
+        SendInput m{Space}
+        SendInput t{space}^v
+        SendInput {Enter}s
+    } else {
+        ; Quick Translate
+        SendInput !t
+    }
+    clipboard := tempClip
+    KeyWait, %pressKey%
+}
