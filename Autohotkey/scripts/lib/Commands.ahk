@@ -243,21 +243,25 @@ ReadMode:
         - @InstantMultiTranslationExtension is installed and configured as needed
 */
 ChangeTranslateModeOnLongPress(pressKey) {
-    tempClip := clipboard
+    clipTemp := ClipboardAll
     SendInput ^c
     KeyWait, %pressKey%, T0.4
     If ErrorLevel {
         ; Comprehensive translation
         SendInput {ESC} ; #test if it closes blocking windows without causing problems, then keep it
-        Sleep 50 ; wait some time for the blocking window to close
+        Sleep 50
         SendInput ^t
+        Sleep 200
         SendInput m{Space}
-        SendInput t{space}^v
-        SendInput {Enter}s
+        Sleep 50
+        SendInput t{space}
+        SendInput ^v
+        Sleep 50
+        SendInput {Enter}
     } else {
         ; Quick Translate
         SendInput !t
     }
-    clipboard := tempClip
+    Clipboard := clipTemp
     KeyWait, %pressKey%
 }
