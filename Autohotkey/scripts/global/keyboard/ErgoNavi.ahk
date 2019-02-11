@@ -20,16 +20,15 @@ ErgoNavi_Setup:
     ~RButton & 4::Browser_Forward
 
 ;--------------------------------------------TopLetter-Row
-    ~RButton & w:: gosub TabSearch
-    ~RButton & q::
-    ~RButton & f:: gosub TabBackward
-    ~RButton & a:: gosub TabBackward
-    ~RButton & g:: gosub TabForward
+    ~RButton & w::LongPressCommand("p", "^l", "^f")
+    ; q
+    ~RButton & f:: gosub TabLeft
+    ~RButton & a:: gosub TabRight
 
 ;--------------------------------------------Home-Row
-    ~RButton & p::LongPressCommand("p", "^l", "^f")
-    ~RButton & r:: gosub TabLeft
-    ~RButton & s:: gosub TabRight
+    ~RButton & p:: gosub TabSearch
+    ~RButton & r:: gosub TabBackward
+    ~RButton & s:: gosub TabForward
     ~RButton & t:: gosub AltTab
     ~RButton & d::LongPressCommand("d", "^w", "!{F4}")
 
