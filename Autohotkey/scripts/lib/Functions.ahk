@@ -33,14 +33,15 @@ ExitScript(scriptName) {
     @Parameter: all strings
     #reminder {%string%} interprets it as string and %string% as a raw command
 */
-LongPressCommand(pressedKey, shortCommand, longCommand) {
-    KeyWait, %pressedKey%, T0.4
+LongPressCommand(pressKey, quickCmd, longCmd) {
+    ;Tooltip Quick Cmd: %quickCmd% | Long Cmd: %longCmd%
+    KeyWait, %pressKey%, T0.4
     If ErrorLevel {
-        SendInput %longCommand%
+        SendInput %longCmd%
     } else {
-        SendInput %shortCommand%
+        SendInput %quickCmd%
     }
-    KeyWait, %pressedKey%
+    KeyWait, %pressKey%
 }
 
 /*

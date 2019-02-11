@@ -180,11 +180,13 @@ return
 
 /*
     @Title: OpenTabWithSelection
+    @Desc: open new empty tab if nothing selected, and else open the selection in new tab
+    #note: Would always delay opening of any new tab
 */
 OpenTabWithSelection:
     oldClip := clipboard
     Send ^c
-    Sleep 200
+    Sleep 400 ; need to wait for clipboard, but that also delays opening new tabs
     if (oldClip == clipboard) {
         SendInput ^t ; open empty tab / start page
     } else {
@@ -195,6 +197,29 @@ OpenTabWithSelection:
     }
     clipboard := oldClip
 return
+
+/*
+    @Title: OpenTabWOSelection
+    @Desc: on short press opens empty tab and on long press a new tab with selected text or url
+*/
+OpenTabWOSelection(pressKey) {
+    clipTemp := ClipboardAll
+    SendInput ^c
+    KeyWait, %pressKey%, T0.4
+    if ErrorLevel {
+        ; Open new tab with selection
+        Send ^l
+        Sleep 50
+        Send ^v
+        Sleep 50
+        Send !{Enter}
+    } else {
+        ; Open Tab without selection
+        SendInput ^t
+    }
+    Clipboard := clipTemp
+    KeyWait, %pressKey%
+}
 
 /*
     @Title:

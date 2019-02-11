@@ -89,5 +89,5 @@ $^r::
 	} Else {
 		SendInput ^r
 	}
-	KeyWait, r, 
+	KeyWait, r,
 return

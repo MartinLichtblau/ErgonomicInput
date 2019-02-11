@@ -16,38 +16,29 @@ ErgoNavi_Setup:
 ;---------------------------------LeftHand--------------------------------
 ;--------------------------------------------F-Row
 ;--------------------------------------------Number-Row
-    ~RButton & 1::
     ~RButton & 3::Browser_Back
     ~RButton & 4::Browser_Forward
 
 ;--------------------------------------------TopLetter-Row
-    ~RButton & sc010:: gosub TabBackward
-    $<^<+sc010:: gosub TabBackward
-    ~RButton & sc011:: gosub TabSearch
-    $^+sc011:: gosub TabSearch
-    ~RButton & sc012:: gosub TabLeft
-    <^<+sc012:: gosub TabLeft
-    ~RButton & sc013:: gosub TabRight
-    <^<+sc013:: gosub TabRight
-    ~RButton & sc014:: gosub TabForward
-    $^+sc014:: gosub TabForward
+    ~RButton & w:: gosub TabSearch
+    ~RButton & q::
+    ~RButton & f:: gosub TabBackward
+    ~RButton & a:: gosub TabBackward
+    ~RButton & g:: gosub TabForward
 
 ;--------------------------------------------Home-Row
-    ~RButton & p:: gosub WinView
-    <^<+p:: gosub WinView
-    ~RButton & r:: gosub DesktopLeft
-    <^<+r:: gosub DesktopLeft
-    ~RButton & s:: gosub DesktopRight
-    <^<+s:: gosub DesktopRight
+    ~RButton & p::LongPressCommand("p", "^l", "^f")
+    ~RButton & r:: gosub TabLeft
+    ~RButton & s:: gosub TabRight
     ~RButton & t:: gosub AltTab
-    ;<^<+t:: gosub AltTab
     ~RButton & d::LongPressCommand("d", "^w", "!{F4}")
 
-;--------------------------------------------LowerLetter-Row
-    ~RButton & c::LongPressCommand("c", "^w", "!{F4}")
-    ~RButton & v::LongPressCommand("v", "^t", "^+t") ; perhaps extend with OpenNewTabWithSelection()
-    ~RButton & x::LongPressCommand("x", "^n", "+^n")
-    ; @TODO reload also used often
+;--------------------------------------------LowLetter-Row
+    ~RButton & z:: gosub WinView
+    ~RButton & y:: gosub DesktopLeft
+    ~RButton & c:: gosub DesktopRight
+    ~RButton & v::OpenTabWOSelection("v")
+    ~RButton & x::LongPressCommand("x", "^+t", "^r")
 
 ;--------------------------------------------MISC
     ; $*RButton Up:: gosub AltTabRelease ; @TODO in conflict with @Trackpad MButton hotkeys. #open.merge
