@@ -56,8 +56,7 @@ return ; end of auto-execute section
     @Title: ReloadAhk
     @Desc: reload Autohotkey, including all scripts
 */
-Insert::Reload
-$^s:: 
+$^s::
 	KeyWait, s, T0.3       
 	If ErrorLevel {
 		SendInput {blind}{LCtrl Up}{s Up} ;perhaps needed
@@ -82,6 +81,7 @@ return
     @Title: AhkKeyhistory
     @Desc: open Autohotkey keyhistory
 */
+*Insert::KeyHistory
 $^r::
 	KeyWait, r, T0.3
 	If ErrorLevel {  
