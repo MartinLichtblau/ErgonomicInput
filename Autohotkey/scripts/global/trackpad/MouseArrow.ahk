@@ -135,7 +135,7 @@ SendStrideMode(keyName) {
         ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
         ;Tooltip %abs_ySum%
-        if(abs_ySum > 2.5*MA_moveDistThreshold || abs_xSum > 2*MA_moveDistThreshold) { ; reached threshold fast
+        if(abs_ySum > 2.3*MA_moveDistThreshold || abs_xSum > 1.8*MA_moveDistThreshold) { ; reached threshold fast
         ;@TODO link factors to other values and make them static/global
             ; #idea increase responsivness by using X/Y of this one movement and not the sum
 
