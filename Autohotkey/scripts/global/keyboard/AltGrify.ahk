@@ -27,6 +27,7 @@ $sc00C::ReplaceOnLongPress("sc00C", "{\}") ; here sc00C = ß
 $sc056::ReplaceOnLongPress("sc056", "{|}") ; here sc056 = <
 $sc01B::ReplaceOnLongPress("sc01B", "{~}") ; here sc01B = +
 $sc011::ReplaceOnLongPress("q", "@") ; here sc011 = q
+$sc025::ReplaceOnLongPress("e", "{U+20AC}") ; here sc025 = e
 
 ;--------------------------------------------Custom
 $sc035::ReplaceOnLongPress("sc035", "{U+2012}") ; sc035 = - | ; EM Dash: {U+2014} = "—" | EN Dash: {U+2013} = "-" | Figure Dash: {U+2012} = "‒"
