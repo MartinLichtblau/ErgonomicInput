@@ -48,8 +48,8 @@ return
 WinOrganizeRight(pKey){
 	KeyWait,%pKey%,T0.2
 	If ErrorLevel {
-		;WinMaximize, A ; maximize directly
-		SendInput {LWin Down}{Up}{LWin Up}
+		WinMaximize, A ; maximize directly
+		;SendInput {LWin Down}{Up}{LWin Up}
 	} else
 		SendInput {LWin Down}{Right}{LWin Up}
 	KeyWait,%pKey%,
