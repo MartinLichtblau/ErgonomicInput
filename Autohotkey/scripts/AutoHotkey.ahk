@@ -32,7 +32,7 @@ Global AHI := new AutoHotInterception()
 GoSub, SpecialKeys_Setup
 GoSub, Trackpad_Setup
 GoSub, ShortcutList_Setup
-
+GoSub, Misc_Setup
 
 /*
     @Title: Includes
@@ -46,11 +46,9 @@ GoSub, ShortcutList_Setup
 #Include %A_ScriptDir%\global\keyboard\PimpFN.ahk
 #Include %A_ScriptDir%\global\keyboard\ErgoNavi.ahk
 #Include %A_ScriptDir%\context-sensitive\BrowserOnly.ahk
+#Include %A_ScriptDir%\Misc.ahk
 
 return ; end of auto-execute section
-
-
-
 
 
 
