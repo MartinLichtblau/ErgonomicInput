@@ -31,6 +31,7 @@ SetMouseDelay, 0
 Global AHI := new AutoHotInterception()
 GoSub, SpecialKeys_Setup
 GoSub, Trackpad_Setup
+GoSub, ShortcutList_Setup
 
 
 /*
@@ -38,6 +39,7 @@ GoSub, Trackpad_Setup
     @Desc: include scripts that need to run constantly, right from the start
     #note order shouldn't matter here
 */
+#Include %A_ScriptDir%\ShortcutList.ahk
 #Include %A_ScriptDir%\global\keyboard\SpecialKeys.ahk
 #Include %A_ScriptDir%\global\trackpad\Trackpad.ahk
 #Include %A_ScriptDir%\global\keyboard\AltGrify.ahk

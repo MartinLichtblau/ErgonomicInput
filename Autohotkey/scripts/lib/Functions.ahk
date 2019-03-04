@@ -1,6 +1,6 @@
 #SingleInstance force
 #Persistent
-;Process,priority,,Realtime
+Process,priority,,Realtime
 return
 
 /*

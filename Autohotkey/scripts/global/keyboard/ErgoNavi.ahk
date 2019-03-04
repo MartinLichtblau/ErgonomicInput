@@ -13,31 +13,32 @@ ErgoNavi_Setup:
     return
 
 
+
 ;---------------------------------LeftHand--------------------------------
 ;--------------------------------------------F-Row
 ;--------------------------------------------Number-Row
-    ~RButton & 3::Browser_Back
-    ~RButton & 4::Browser_Forward
+    ~RButton & 3::SendInput %GOBACK_sc%
+    ~RButton & 4::SendInput %GOFORWARD_sc%
 
 ;--------------------------------------------TopLetter-Row
-    ~RButton & w::LongPressCommand("w", "^l", "^f")
+    ~RButton & w::LongPressCommand("w", ADDRESSBAR_sc, SEARCH_sc)
     ; q
-    ~RButton & f:: gosub TabLeft
-    ~RButton & a:: gosub TabRight
+    ~RButton & f::SendInput %LEFTTAB_sc%
+    ~RButton & a::SendInput %RIGHTTAB_sc%
 
 ;--------------------------------------------Home-Row
-    ~RButton & p:: gosub TabSearch
-    ~RButton & r:: gosub TabForward
-    ~RButton & s:: gosub TabBackward
+    ~RButton & p::SendInput %TABSEARCH_sc%
+    ~RButton & r::SendInput %LATERTAB_sc%
+    ~RButton & s::SendInput %PREVIOUSTAB_sc%
     ~RButton & t:: gosub AltTab
-    ~RButton & d::LongPressCommand("d", "^w", "!{F4}")
+    ~RButton & d::LongPressCommand("d", CLOSETAB_sc, CLOSEWINDOW_sc)
 
 ;--------------------------------------------LowLetter-Row
-    ~RButton & z:: gosub WinView
-    ~RButton & y:: gosub DesktopLeft
-    ~RButton & c:: gosub DesktopRight
+    ~RButton & z::SendInput %WINVIEW_sc%
+    ~RButton & y::SendInput %LEFTDESKTOP_sc%
+    ~RButton & c::SendInput %RIGHTDESKTOP_sc%
     ~RButton & v::OpenTabWOSelection("v")
-    ~RButton & x::LongPressCommand("x", "^+t", "^r")
+    ~RButton & x::LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
 
 ;--------------------------------------------MISC
     ; $*RButton Up:: gosub AltTabRelease ; @TODO in conflict with @Trackpad MButton hotkeys. #open.merge
@@ -64,17 +65,17 @@ ErgoNavi_Setup:
 ~MButton & n:: gosub Down
 ; e
 ; i
-~MButton & o:: gosub TabSearch
+~MButton & o::
 ~MButton & sc028:: WinOrganizeLeft("sc028") ; sc028 = ä
 ~MButton & sc02B:: WinOrganizeRight("sc02B") ; sc02B = #
 
 ;--------------------------------------------LowerLetter-Row
 ~MButton & x:: gosub AltTab
-~MButton & k:: gosub TabLeft
-~MButton & m:: gosub TabRight
-~MButton & ,:: gosub DesktopLeft
-~MButton & .:: gosub DesktopRight
-~MButton & sc035:: gosub WinView ; sc035 = -
+~MButton & k::
+~MButton & m::
+~MButton & ,::
+~MButton & .::
+~MButton & sc035:: ; sc035 = -
 
 ;--------------------------------------------MISC
 ; $*MButton Up:: gosub AltTabRelease ; @TODO in conflict with @Trackpad MButton hotkeys. #open.merge
