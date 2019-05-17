@@ -5,13 +5,13 @@
 */
 #SingleInstance force
 #Persistent
-;Process,priority,,Realtime
+;Process,priority,,High
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
-Global mouseId, xSum, ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, pauseTimeThreshold
+Global mouseId, xSum, ySum, abs_xSum, abs_ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, pauseTimeThreshold, mouseMoveCount
 return
 
 Setup_MouseArrow(mId) {
@@ -23,35 +23,39 @@ Setup_MouseArrow(mId) {
 InitVars_MouseArrow(mId) {
     MA_runflag := false
     mouseId := mId
-    MA_moveDistThreshold := 14 ; @TODO this is the tranformation factor, One send key equals Coordinate DELTA change
-    pauseTimeThreshold := 80
-    ResetRuntimeVars()
+    MA_moveDistThreshold := 8 ; @TODO this is the tranformation factor, One send key equals Coordinate DELTA change
+    pauseTimeThreshold := 90
 }
 
 ResetRuntimeVars() {
     clickStride := 0
     waitForMovementPause := false
     gosub ResetXY_MouseArrow
+    mouseMoveCount := 0
 }
 
 Start_MouseArrow() {
     ;Tooltip Start_MouseArrow
-    ;SetSystemCursor("",0,0)
+    SetSystemCursor("",0,0)
     MA_runflag := true
-    waitForMovementPause := false
-    AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseEvent"))
+    ResetRuntimeVars()
+    AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseArrowEvent"))
 }
 
 Stop_MouseArrow() {
     ;Tooltip Stop_MouseArrow
     MA_runflag := false
-    AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseEvent"))
-    ;restoreCursors()
+    ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseArrowEvent"))
+    AHI.UnsubscribeMouseMoveRelative(mouseId)
+    ResetRuntimeVars()
+    restoreCursors()
 }
 
 ResetXY_MouseArrow:
     xSum := 0
     ySum := 0
+    abs_xSum := 0
+    abs_ySum := 0
     return
 
 ; @Desc: run in parallel since it's a function
@@ -68,18 +72,21 @@ ExitOnInput_MouseArrow() {
     ; #note using the trackpoint has various advantages itself. So just making it time-based, bacause that's how it
         ; has ever been is naive and such thinking won't lead to innovation. Trackpad has: VELOCITY, DISTANCE/FORCE per time
         ; DIRECTION and more
-MouseEvent(x, y){
+MouseArrowEvent(x, y){
     static timeOfLastMouseEvent
     if(!MA_runflag)
-        Exit
+        return ; Exit
 
     ; if user paused mouse movement for T then reset XY, so it starts fresh and not with e.g. x=29.
     timeDiffBetweenMoves  := A_TickCount-timeOfLastMouseEvent
     timeOfLastMouseEvent := A_TickCount ; timeOfLastMouseEvent becomes time of current MouseEvent
-    if(timeDiffBetweenMoves > pauseTimeThreshold)
+    if(timeDiffBetweenMoves > pauseTimeThreshold) {
         movementPaused := true
-    else
+        ResetRuntimeVars() ; @TODO all dirty, this even more
+        mouseMoveCount := 0
+    } else {
         movementPaused := false
+    }
 
     if(!movementPaused) {
         if(!waitForMovementPause) {
@@ -87,11 +94,8 @@ MouseEvent(x, y){
         } else {
             ; did not pause && since waitForMovementPause=true return. For @SendHomeEndCom
             ;Tooltip waitForMovementPause
-            Exit ; #note return statement causes immense delay and breaking hence breaking timers
+            return ; Exit ; #note return statement causes immense delay and breaking hence breaking timers
         }
-    } else { ; movement pause / no mouse input since
-        ResetRuntimeVars() ; @TODO all dirty, this even more
-        ;Tooltip %timeDiffBetweenMoves%
     }
     ; @TODO think in terms of key presses, whereby the up event equals a break of duration T without mouse movement
     ; if sum movement distance > distance-click-threshold, then press key and start timer for break duration.
@@ -99,13 +103,14 @@ MouseEvent(x, y){
         ; Means: timeframes without movment symbolize/represent release of key.
 }
 
-global abs_xSum, abs_ySum
 ProcessMovement(x, y){
     ; @TODO don't work with negative numbers at all, instead ste a flag xNeg, yNeg
-    global xSum := xSum + x
+    global xSum := xSum + x*1.5 ; multipled by a factor to boost right/left movements so they are as sensitive as up/down
     global ySum := ySum + y
     abs_xSum := abs(xSum)
     abs_ySum := abs(ySum)
+    mouseMoveCount++
+    ;Tooltip %mouseMoveCount% %abs_xSum% %abs_ySum%
 
     if(abs_xSum > MA_moveDistThreshold || abs_ySum > MA_moveDistThreshold) {
         if(abs_ySum >= abs_xSum) { ; up/down
@@ -126,19 +131,24 @@ ProcessMovement(x, y){
 }
 
 SendStrideMode(keyName) {
-    static repeatStrideThreshold := 4
+    static repeatStrideThreshold := 7
     ;Tooltip clickStride: %clickStride% %i%
+
     if(clickStride = 0) { ; initial send mode
+        ;Tooltip %mouseMoveCount% ; %abs_xSum% %abs_ySum%
         ; send one click
-        SendArrowKey(keyName)
+        ;if (mouseMoveCount >= 3) {
+            SendArrowKey(keyName)
+        ;} else {
+         ;   SendHomeEndCom(keyName)
+        ;}
     } else if(clickStride > repeatStrideThreshold) { ; @TODO time based seems better to grasp.
         ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
         ;Tooltip %abs_ySum%
-        if(abs_ySum > 2.3*MA_moveDistThreshold || abs_xSum > 1.8*MA_moveDistThreshold) { ; reached threshold fast
-        ;@TODO link factors to other values and make them static/global
-            ; #idea increase responsivness by using X/Y of this one movement and not the sum
-
+        if(!GetKeyState("Ctrl", "P") && (abs_ySum > 2*MA_moveDistThreshold || abs_xSum > 2*MA_moveDistThreshold)) { ; reached threshold fast
+            ;@TODO link factors to other values and make them static/global
+                ; #idea increase responsivness by using X/Y of this one movement and not the sum
             SendHomeEndCom(keyName)
         } else { ; reached threshold normal
             SendArrowKey(keyName)

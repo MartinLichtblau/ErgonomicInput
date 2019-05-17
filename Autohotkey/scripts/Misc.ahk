@@ -30,3 +30,12 @@ ShellWinMessage(wParam, lParam) {
         }
     }
 }
+
+; switch Ctrl+Z and Ctrl+Y Undo/Redo so it's easier on the ring finger
+$^z::
+    SendInput ^y
+    return
+
+$^y::
+    SendInput ^z
+    return

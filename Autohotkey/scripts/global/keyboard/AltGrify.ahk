@@ -32,3 +32,6 @@ $e::ReplaceOnLongPress("e", "{U+20AC}")
 ;--------------------------------------------Custom
 $sc035::ReplaceOnLongPress("sc035", "{U+2012}") ; sc035 = - | ; EM Dash: {U+2014} = "—" | EN Dash: {U+2013} = "-" | Figure Dash: {U+2012} = "‒"
 $1::ReplaceOnLongPress("1", "{u+27a4}") ; {u+27a4} = "➤"
+$sc034::ReplaceOnLongPress("sc034", ":") ; sc034 = .
+$sc02B::ReplaceOnLongPress("sc02B", "'") ; sc02B = #
+$sc033::ReplaceOnLongPress("sc033", ";") ; sc033 = ;

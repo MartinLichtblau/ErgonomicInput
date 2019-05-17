@@ -4,13 +4,12 @@
 */
 #SingleInstance force
 #Persistent
-;Process,priority,,Realtime
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
-Global mouseId, xSum, ySum, movementThreshold, runFlag
+Global mouseId, xSum, ySum, movementThreshold, MS_runflag, isCursorChanged
 return
 
 
@@ -22,7 +21,7 @@ Setup_MouseScroll(mId) {
 }
 
 InitVars(mId) {
-    runFlag := false
+    MS_runflag := false
     mouseId := mId
     movementThreshold := 1
     gosub ResetXY
@@ -35,16 +34,19 @@ ResetXY:
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
-    ;SetSystemCursor("IDC_SIZEALL",0,0)
-    runFlag := true
-    AHI.SubscribeMouseMoveRelative(mouseId, true, Func("FixedAxisScrolling"))
+    SetSystemCursor("IDC_SIZEALL",0,0)
+    MS_runflag := true
+    AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseMovement"))
 }
 
 Stop_MouseScroll() {
     ;Tooltip Stop_MouseScroll
-    runFlag := false
-    AHI.SubscribeMouseMoveRelative(mouseId, false, Func("FixedAxisScrolling"))
-    ;restoreCursors()
+    MS_runflag := false
+    ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseMovement"))
+    AHI.UnsubscribeMouseMoveRelative(mouseId)
+    gosub ResetXY
+    restoreCursors()
+    isCursorChanged := false
 }
 
 ; @Desc: run in parallel since it's a function
@@ -58,6 +60,60 @@ ExitOnInput() {
     @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
     #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
 */
+MouseMovement(x, y) {
+    if(MS_runflag) {
+        ;Tooltip FixedAxisScrolling %x% %y%
+        xSum := xSum + x
+        ySum := ySum + y
+        abs_xSum := floor(ln(abs(xSum))) ; functions possible: ln/log = starts quick and slows down
+        abs_ySum := floor(ln(abs(ySum)))   ; sqrt or * x to start quick
+        ;Tooltip %abs_xSum% %abs_ySum%
+        if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
+            if(!isCursorChanged) {
+                isCursorChanged := true
+                ;SetSystemCursor("IDC_SIZEALL",0,0)
+            }
+            FixedAxisScrolling(xSum, ySum, abs_xSum, abs_ySum)
+        }
+    }
+}
+
+/*
+    @Title: FixedAxisScrolling
+    @Desc: scrolls on fixed axis, hence diagonal movements aren't possible like on an unrestricted plane.
+        That is so simply because with any move both X and Y are reset.
+*/
+FixedAxisScrolling(xSum, ySum, abs_xSum, abs_ySum) {
+    if(abs_ySum >= abs_xSum) { ; up/down
+        if (ySum > 0) {
+            ;AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down  ; #note AHI is slower
+            SendInput {WheelDown}
+            gosub ResetXY
+        } else {
+            ;AHI.SendMouseButtonEvent(mouseId, 5, 1) ; Wheel Up
+            SendInput {WheelUp}
+            gosub ResetXY
+        }
+    } else { ; right/left
+        if (xSum > 0) {
+            ;AHI.SendMouseButtonEvent(mouseId, 6, 1) ; Wheel Right
+            SendInput {WheelRight %abs_xSum%}
+            gosub ResetXY
+        } else {
+            ;AHI.SendMouseButtonEvent(mouseId, 6, -1) ; Wheel Left
+            SendInput {WheelLeft %abs_xSum%}
+            gosub ResetXY
+        }
+    }
+    ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
+}
+
+/*
+    @Title: FreePlaneScroll
+    @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
+    #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
+*/
+/*
 FreePlaneScrolling(x, y) {
     xSum := xSum + (x*x) ; quadratic increase
     ySum := ySum + (y*y) ; quadratic increase
@@ -84,53 +140,4 @@ FreePlaneScrolling(x, y) {
         }
     }
     ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | xSum: %xSum% ;top left is minus for x and y
-}
-
-/*
-    @Title: FixedAxisScrolling
-    @Desc: scrolls on fixed axis, hence diagonal movements aren't possible like on an unrestricted plane.
-        That is so simply because with any move both X and Y are reset.
 */
-FixedAxisScrolling(x, y) {
-    ;static skip_count := 0, skipX := 2       ; such fine grained mouse movement is unnecessary
-    if(!runFlag)
-        Exit
-    /*
-    if(skip_count < skipX){
-        skip_count++
-        Exit
-    }else
-        skip_count := 0
-    */
-
-    ;Tooltip FixedAxisScrolling %x% %y%
-    xSum := xSum + x
-    ySum := ySum + y
-    abs_xSum := floor(ln(abs(xSum))) ; functions possible: ln/log = starts quick and slows down
-    abs_ySum := floor(ln(abs(ySum)))   ; sqrt or * x to start quick
-    ;Tooltip %abs_xSum% %abs_ySum%
-    if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
-        if(abs_ySum >= abs_xSum) { ; up/down
-            if (ySum > 0) {
-                ;AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down  ; #note AHI is slower
-                SendInput {WheelDown}
-                gosub ResetXY
-            } else {
-                ;AHI.SendMouseButtonEvent(mouseId, 5, 1) ; Wheel Up
-                SendInput {WheelUp}
-                gosub ResetXY
-            }
-        } else { ; right/left
-            if (xSum > 0) {
-                ;AHI.SendMouseButtonEvent(mouseId, 6, 1) ; Wheel Right
-                SendInput {WheelRight %abs_xSum%}
-                gosub ResetXY
-            } else {
-                ;AHI.SendMouseButtonEvent(mouseId, 6, -1) ; Wheel Left
-                SendInput {WheelLeft %abs_xSum%}
-                gosub ResetXY
-            }
-        }
-    }
-    ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
-}

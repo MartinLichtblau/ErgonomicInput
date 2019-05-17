@@ -16,9 +16,9 @@ ShortcutList_Setup:
     global GOFORWARD_sc = "{Browser_Forward}"
     global ADDRESSBAR_sc = "^l" ; focus address bar""
     global SEARCH_sc = "^f" ; search in app
-    global TABSEARCH_sc = "!+7"
-    global PREVIOUSTAB_sc = "!+8"
-    global LATERTAB_sc = "!+9"
+    global TABSEARCH_sc = "!7"
+    global PREVIOUSTAB_sc = "!8"
+    global LATERTAB_sc = "!9"
     global CLOSETAB_sc = "^w"
     global CLOSEWINDOW_sc = "!{F4}"
     global REOPENCLOSEDTAB_sc = "^+t"

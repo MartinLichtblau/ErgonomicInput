@@ -12,11 +12,9 @@
 
 Global AHI, trackpadId
 
-
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
-    Process,priority,,Realtime
 
     if(AHI == "")
         AHI := new AutoHotInterception()
@@ -30,32 +28,23 @@ Trackpad_Setup:
 
 
 
-~LButton & h::
-    ;Tooltip ~LButton & h:: %A_TickCount%
-    Start_MouseArrow()
-    Keywait, h,
-    return
-
-
 MButtonEvent(state) {
     ;Tooltip MButtonEvent %state%
 	if(state){
-        AHI.SendMouseButtonEvent(11, 0, 1) ; LButton down
-        ;Start_MouseArrow() ; @Todo purely on LButton feels even better; more powerful!
+        AHI.SendMouseButtonEvent(trackpadId, 0, 1) ; LButton down
 	}
     else {
-        Stop_MouseArrow()
-        AHI.SendMouseButtonEvent(11, 0, 0) ; LButton up
+        AHI.SendMouseButtonEvent(trackpadId, 0, 0) ; LButton up
     }
 }
 
 RButtonEvent(state) {
     if(state) {
-        AHI.SendMouseButtonEvent(11, 2, 1) ; MButton down
+        AHI.SendMouseButtonEvent(trackpadId, 2, 1) ; MButton down
         Start_MouseArrow()
     } else {
         Stop_MouseArrow()
-        AHI.SendMouseButtonEvent(11, 2, 0) ; MButton up
+        AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
     }
 }
 
@@ -79,10 +68,9 @@ LButtonEvent(state) {
 $*MButton:: return
 $*MButton up::
     gosub AltTabRelease
-   ; A_PriorHotkey does not seem to work
-    ; A_TimeSincePriorHotkey if you are undecided and don't wanna take it back
-    ; gosub showKeyVars
-    if (A_PriorKey == "MButton") {
+    ;gosub showKeyVars
+    ; if (A_PriorKey == "MButton" && A_TimeSincePriorHotkey < 200) {
+    if (A_PriorHotkey == "$*MButton" && A_TimeSincePriorHotkey < 200) {
         Send {MButton down}
         Sleep 50
         Send {MButton up}
@@ -99,6 +87,7 @@ $*RButton::
     return
 $*RButton up::
     gosub AltTabRelease
-    if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 300)
+    if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 200) {
         SendInput {RButton}
+    }
     return

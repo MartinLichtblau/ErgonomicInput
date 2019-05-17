@@ -1,6 +1,5 @@
 #SingleInstance force
 #Persistent
-Process,priority,,Realtime
 return
 
 /*
@@ -28,32 +27,64 @@ ExitScript(scriptName) {
 }
 
 /*
-    @Title:
+    @Title: LongPressCommand
     @Desc: produce different command depending on press-duration of pressedKey
     @Parameter: all strings
     #reminder {%string%} interprets it as string and %string% as a raw command
 */
-LongPressCommand(pressKey, quickCmd, longCmd) {
+LongPressCommand(pressKey, shortCmd, longCmd) {
     ;Tooltip Quick Cmd: %quickCmd% | Long Cmd: %longCmd%
-    KeyWait, %pressKey%, T0.4
+    KeyWait, %pressKey%, T0.3
     If ErrorLevel {
-        SendInput %longCmd%
+        if ("gosub" == SubStr(longCmd, 1, 5)) {
+            longCmdLabel := SubStr(longCmd, 7)
+            Gosub %longCmdLabel%
+        } else {
+            Send %longCmd%
+        }
     } else {
-        SendInput %quickCmd%
+        if ("gosub" == SubStr(shortCmd, 1, 5)) {
+            shortCmdLabel := SubStr(shortCmd, 7)
+            Gosub %shortCmdLabel%
+        } else {
+            Send %shortCmd%
+        }
     }
-    KeyWait, %pressKey%
+    Keywait, %pressKey%,
 }
+
+/*
+    #note: can't work because once a hotkey is defined it cannot be removed, hence this function only works once.
+*/
+DeactivateHookedKeyUntilRelease(pressKey) {
+    Hotkey, %pressKey%,, UseErrorLevel
+    if (ErrorLevel ==  5 || ErrorLevel ==  6) {
+        ; 5 = The command attempted to modify a nonexistent hotkey.
+        ; 6 = The command attempted to modify a nonexistent variant of an existing hotkey. To solve this, use Hotkey IfWin to set the criteria to match those of the hotkey to be modified.
+        Hotkey, %pressKey%, JustReturn, On
+        KeyWait, %pressKey%,
+        Hotkey, %pressKey%, Off
+    }
+}
+
+DeactivateKeyUntilRelease(pressKey) {
+    Hotkey, %pressKey%, JustReturn, On
+    KeyWait, %pressKey%,
+    Hotkey, %pressKey%, Off
+}
+
+JustReturn:
+    return
 
 /*
     @Title: ReplaceOnLongPress
     @Desc: On long press of pKey it is substituted with charToWrite
 */
 ReplaceOnLongPress(pKey, charToWrite) {
-	SendInput {%pKey%}
-	KeyWait, %pKey%, T0.3
-	if ErrorLevel {
-	    SendInput {BS} ; #A1.2 SendInput ^z is unpredictable
-		SendInput %charToWrite%
+    SendInput {%pKey%}
+	KeyWait, %pKey%, T0.20
+	if (ErrorLevel && A_TimeIdleKeyboard >= 200) { ; A_Time* to ensure that no other key was pressed in between
+	    SendInput {BS}%charToWrite%
 	}
 	KeyWait, %pKey%,
 }

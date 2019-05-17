@@ -1,5 +1,5 @@
 /*
-    @Title: AutoHotkey
+    @Title: +AutoHotkey
     @Desc: main script to bring all else together
     @Requirements:
         - Set Autohotkey.exe as default application to open .ahk files
@@ -9,15 +9,14 @@ SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
 #Persistent
 
-Process, priority,, Realtime
+;Process, priority,, Realtime
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
-;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
-;#MaxThreadsBuffer On ; = Causes some or all hotkeys to buffer rather than ignore keypresses when their #MaxThreadsPerHotkey limit has been reached.
-;#MaxThreadsPerHotkey 5 ; = Sets the maximum number of simultaneous threads per hotkey or hotstring.
-
-SetKeyDelay 0 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
+;#KeyHistory 20 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
+;#InstallKeybdHook
+;#InstallMouseHook
+SetKeyDelay 0 ; , -1 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
 	; but then in some scripts you need to add delays manually (mostly if interacts with UI)
 SetMouseDelay, 0
 
@@ -58,24 +57,15 @@ return ; end of auto-execute section
 */
 $^s::
 	KeyWait, s, T0.3       
-	If ErrorLevel {
-		SendInput {blind}{LCtrl Up}{s Up} ;perhaps needed
-	
-		; pupose of block input and all is to prevent keys getting through, esp. the S
+	if ErrorLevel {
 		SplashTextOn,,, Reloading Autohotkey....
-		Blockinput, On 
-		Sleep 2000
-		SplashTextOff	  
-		SetCapsLockState, OFF
-		Blockinput, Off
-		
+		Sleep 1000
 		Reload
-		return ; won't reach that point since ahk does a full reset
-	} Else { 
+	} else {
 		SendInput ^s  
 	}
-return
-
+	KeyWait, s,
+    return
 
 /*
     @Title: AhkKeyhistory
@@ -90,4 +80,4 @@ $^r::
 		SendInput ^r
 	}
 	KeyWait, r,
-return
+    return

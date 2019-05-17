@@ -21,9 +21,10 @@ AltTab:
 	}
 return
 AltTabRelease:
-    SendInput {Alt Up}
-	if WinExist("Task Switching"){
-		;Tooltip AltTabRelease
+    if (GetKeyState("LAlt")) {
+        if (A_PriorHotkey == "~RButton & t" || A_PriorHotkey == "~RButton & s") ; #delete: just a dirty fix for the slowly opening Quicktabs extension
+            Sleep 200
+        SendInput {LAlt up}
     }
 return
 
@@ -35,7 +36,7 @@ return
     @TODO decide whinch of the two versions is better
 */
 WinOrganizeLeft(pKey){
-	KeyWait,%pKey%,T0.2
+	KeyWait,%pKey%,T0.3
 	If ErrorLevel {
 		;WinMaximize, A ; maximize directly
 		SendInput {LWin Down}{Down}{LWin Up}
@@ -45,7 +46,7 @@ WinOrganizeLeft(pKey){
 return
 }
 WinOrganizeRight(pKey){
-	KeyWait,%pKey%,T0.2
+	KeyWait,%pKey%,T0.3
 	If ErrorLevel {
 		WinMaximize, A ; maximize directly
 		;SendInput {LWin Down}{Up}{LWin Up}
@@ -96,7 +97,7 @@ return
     @Desc: moves mouse cursor in center of active window, if it isn't already above it / within bounds
 */
 CenterMouseOnActiveWindow:
-    ; Sleep 50 ; wait for GUI
+    Sleep 50 ; wait for GUI
     activeWinId := WinExist("A")
     MouseGetPos,,, winIdUnderMouse
     if (activeWinId != winIdUnderMouse) { ; check if mouse above active window
@@ -137,7 +138,7 @@ return
 OpenTabWOSelection(pressKey) {
     clipTemp := ClipboardAll
     SendInput ^c
-    KeyWait, %pressKey%, T0.4
+    KeyWait, %pressKey%, T0.3
     if ErrorLevel {
         ; Open new tab with selection
         Send ^l
@@ -158,12 +159,18 @@ OpenTabWOSelection(pressKey) {
     @Desc: moves active windows to other screen
     @Req: Dual-Monitor setup
 */
-MoveWinBetweenScreens:
-    SendInput {LWin Down}{LShift Down}{RIGHT}{LShift Up}{LWin Up}
-    Sleep 100
-    WinMaximize, A
-    gosub CenterMouseOnActiveWindow
-    return
+MoveWinBetweenScreens(pressKey) {
+    KeyWait, %pressKey%, T0.3
+    If ErrorLevel {
+        SendInput {LWin Down}{LShift Down}{RIGHT}{LShift Up}{LWin Up}
+        Sleep 100
+        WinMaximize, A
+        gosub CenterMouseOnActiveWindow
+    } else {
+        WinMaximize, A
+    }
+    KeyWait, %pressKey%
+}
 
 /*
     @Title: ReadMode
@@ -178,18 +185,22 @@ ReadMode:
             Sleep 100
             SendInput find{Tab}
             Sleep 100
-            SendInput [„“"‘](.*?)[“"”
-            Sleep 500
-            Send ]
+            SendRaw [„“"‘](.*?)[“"”
+            Sleep 100
+            SendRaw ]
+            Sleep 50
             Send {Enter}
     }
 
     Send {F11}
-    Send !r ; color for reading #
+    ;Send !r ; color for reading #
+    Send #^c ; use windows display filters to inverse colors
 
     ; activate tool for text markup/annotation/highlighting
-    ;Send !h ; Hypothesis
-    Send !l ; Liner
+    ; Send !h ; Hypothesis
+    ; Send !l ; Liner
+    ; use Worldbrains Mememx
+
     return
 
 /*
@@ -202,7 +213,7 @@ ReadMode:
 ChangeTranslateModeOnLongPress(pressKey) {
     clipTemp := ClipboardAll
     SendInput ^c
-    KeyWait, %pressKey%, T0.4
+    KeyWait, %pressKey%, T0.3
     If ErrorLevel {
         ; Comprehensive translation
         SendInput {ESC} ; #test if it closes blocking windows without causing problems, then keep it
@@ -221,4 +232,19 @@ ChangeTranslateModeOnLongPress(pressKey) {
     }
     Clipboard := clipTemp
     KeyWait, %pressKey%
+}
+
+/*
+    @Title: MuteTabsToggle
+    @Desc: mute or unmute tabs on short press and send F11 on long press
+*/
+MuteTabsToggle(pressKey) {
+    static muteToggle := false
+    if(muteToggle == false) {
+        LongPressCommand(pressKey, "+!,", pressKey) ; mute all but current tab
+        muteToggle := true
+    } else {
+        LongPressCommand(pressKey, "+!.", pressKey) ; unmute all tabs
+        muteToggle := false
+    }
 }
