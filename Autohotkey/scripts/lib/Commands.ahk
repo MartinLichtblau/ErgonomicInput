@@ -22,8 +22,8 @@ AltTab:
 return
 AltTabRelease:
     if (GetKeyState("LAlt")) {
-        if (A_PriorHotkey == "~RButton & t" || A_PriorHotkey == "~RButton & s") ; #delete: just a dirty fix for the slowly opening Quicktabs extension
-            Sleep 200
+        ;if (A_PriorHotkey == "~RButton & t" || A_PriorHotkey == "~RButton & s") ; #delete: just a dirty fix for the slowly opening Quicktabs extension
+        ;    Sleep 200
         SendInput {LAlt up}
     }
 return

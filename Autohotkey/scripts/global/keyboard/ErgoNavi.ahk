@@ -73,7 +73,7 @@ ErgoNavi_Setup:
     SendInput 9
     return
 
-#MaxThreadsPerHotkey 2
+; #MaxThreadsPerHotkey 2 ; this kills lots of code
 ~MButton & n::
 ~RButton & t::
     if (!GetKeyState("LAlt")) {
@@ -85,7 +85,7 @@ ErgoNavi_Setup:
       ;  gosub releaseHook
     return
 
-global alreadyHooked := false
+global alreadyHooked := false @TODO find a way to make this fine
 releaseHook:
     alreadyHooked := true
     KeyWait, RButton,
