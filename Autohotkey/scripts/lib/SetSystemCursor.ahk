@@ -1,23 +1,3 @@
-/* Short version, but blank cursor not working
-SetSystemCursor(Cursor="") ;http://www.autohotkey.com/forum/viewtopic.php?p=524686#524686
-{
-	Static SystemCursors := "32512IDC_ARROW|32513IDC_IBEAM|32514IDC_WAIT|32515IDC_CROSS|32516IDC_UPARROW|32642IDC_SIZENWSE|32643IDC_SIZENESW|32644IDC_SIZEWE|32645IDC_SIZENS|32646IDC_SIZEALL|32648IDC_NO|32649IDC_HAND|32650IDC_APPSTARTING|32651IDC_HELP"
-	If (Cursor = "") {
-				Tooltip tptrs
-
-		Return DllCall("SystemParametersInfo", "UInt", 0x57, "UInt", 0, "UInt", 0, "UInt", 0)
-    }
-	If (StrLen(SystemCursors) = 221)
-		Loop, Parse, SystemCursors, |
-			StringReplace, SystemCursors, SystemCursors, %A_LoopField%, % DllCall("LoadCursor", "UInt", 0, "Int", SubStr(A_LoopField, 1, 5)) A_LoopField
-	If !(Cursor := SubStr(SystemCursors, InStr(SystemCursors "|", "IDC_" Cursor "|") - 5 - p := (StrLen(SystemCursors) - 221) / 14, 5))
-		MsgBox, 262160, %A_ScriptName% - %A_ThisFunc%(): Error, Invalid cursor name!
-	Else
-		Loop, Parse, SystemCursors, |
-			DllCall("SetSystemCursor", "UInt", DllCall("CopyIcon", "UInt", Cursor), "Int", SubStr(A_LoopField, 6, p))
-}
-*/
-
 SetSystemCursor( Cursor = "", cx = 0, cy = 0 )
 {
 	BlankCursor := 0, SystemCursor := 0, FileCursor := 0 ; init

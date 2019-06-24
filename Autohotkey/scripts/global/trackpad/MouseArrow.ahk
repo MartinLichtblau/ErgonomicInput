@@ -36,7 +36,7 @@ ResetRuntimeVars() {
 
 Start_MouseArrow() {
     ;Tooltip Start_MouseArrow
-    SetSystemCursor("",0,0)
+    SetSystemCursor("")
     MA_runflag := true
     ResetRuntimeVars()
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseArrowEvent"))

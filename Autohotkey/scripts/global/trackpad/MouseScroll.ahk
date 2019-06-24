@@ -34,7 +34,6 @@ ResetXY:
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
-    SetSystemCursor("IDC_SIZEALL",0,0)
     MS_runflag := true
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseMovement"))
 }
@@ -45,8 +44,8 @@ Stop_MouseScroll() {
     ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseMovement"))
     AHI.UnsubscribeMouseMoveRelative(mouseId)
     gosub ResetXY
-    restoreCursors()
     isCursorChanged := false
+    restoreCursors()
 }
 
 ; @Desc: run in parallel since it's a function
@@ -71,7 +70,7 @@ MouseMovement(x, y) {
         if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
             if(!isCursorChanged) {
                 isCursorChanged := true
-                ;SetSystemCursor("IDC_SIZEALL",0,0)
+                SetSystemCursor("IDC_SIZEALL")
             }
             FixedAxisScrolling(xSum, ySum, abs_xSum, abs_ySum)
         }

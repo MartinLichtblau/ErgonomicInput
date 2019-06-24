@@ -93,9 +93,9 @@ CapslockEvent(state) {
 
 LAltEvent(state) {
     if(state) {
-        AHI.SendKeyEvent(kbdId, lShiftSc, 1)
+        AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
     } else {
-        AHI.SendKeyEvent(kbdId, lShiftSc, 0)
+        AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
     }
 }
 
@@ -125,9 +125,9 @@ PrintScreenEvent(state) {
 
 RAltEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(kbdId, lShiftSc, 1)
+        AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
     } else {
-        AHI.SendKeyEvent(kbdId, lShiftSc, 0)
+        AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
     }
 }
 
@@ -159,17 +159,17 @@ SpaceShiftEvent(state) {
     static timeOfInitDown
     if(state) {
         if(!shiftSpaceDown) {
-            AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
+            AHI.SendKeyEvent(kbdId, lShiftSc, 1)
             shiftSpaceDown := true
             timeOfInitDown := A_TickCount
         }
     } else {
-        AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
+        AHI.SendKeyEvent(kbdId, lShiftSc, 0)
         shiftSpaceDown := false
         pressDuration := A_TickCount - timeOfInitDown
         Sleep 1 ; #Alt1.2 =fix wait so it recognizes the LShift up event ; 0 or 1 ms seems to make a bigger difference
         ;Tooltip %A_TimeIdleKeyboard% %A_TimeIdlePhysical% %pressDuration% %A_PriorKey%
-        if(A_PriorKey == "LControl" && pressDuration < 200) { ; A_TimeIdleKeyboard >= pressDuration && doesn't work since fast typing overlap
+        if(A_PriorKey == "LShift" && pressDuration < 200) { ; A_TimeIdleKeyboard >= pressDuration && doesn't work since fast typing overlap
             AHI.SendKeyEvent(kbdId, spaceSc, 1)
             AHI.SendKeyEvent(kbdId, spaceSc, 0)
         }
@@ -179,7 +179,7 @@ SpaceShiftEvent(state) {
 /*
     @Title: SpaceErase like Ctrl to erase whole words
     #note use send instead of SendInput so that Input commands are able to detect it
-
+*/
 <+Del::
     SendInput {LCtrl down}{Del}{LCtrl up}
     return
@@ -198,7 +198,6 @@ SpaceShiftEvent(state) {
 	    ; physically released while the hotkey was pressed, leaving it in an inconsistent state.
     return
     */
-*/
 
 /*
     @Title: CtrlShift
@@ -206,6 +205,6 @@ SpaceShiftEvent(state) {
 ~LShift & ~LCtrl up::
 ~LCtrl & ~LShift up::
     if(A_PriorKey == "LControl" || A_PriorKey == "LShift") {
-        Send {Enter}
+        Send {tab}
     }
     return
