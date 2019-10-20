@@ -186,9 +186,9 @@ ReadMode:
             SendInput find{Tab}
             Sleep 100
             SendRaw [„“"‘](.*?)[“"”
-            Sleep 100
+            Sleep 150
             SendRaw ]
-            Sleep 50
+            Sleep 100
             Send {Enter}
     }
 
@@ -212,11 +212,12 @@ ReadMode:
 */
 ChangeTranslateModeOnLongPress(pressKey) {
     clipTemp := ClipboardAll
-    SendInput ^c
     KeyWait, %pressKey%, T0.3
     If ErrorLevel {
+        SendInput ^c
+        Sleep 100
         ; Comprehensive translation
-        SendInput {ESC} ; #test if it closes blocking windows without causing problems, then keep it
+        SendInput {ESC}
         Sleep 50
         SendInput ^t
         Sleep 200
@@ -238,13 +239,33 @@ ChangeTranslateModeOnLongPress(pressKey) {
     @Title: MuteTabsToggle
     @Desc: mute or unmute tabs on short press and send F11 on long press
 */
-MuteTabsToggle(pressKey) {
-    static muteToggle := false
-    if(muteToggle == false) {
-        LongPressCommand(pressKey, "+!,", pressKey) ; mute all but current tab
-        muteToggle := true
+muteToggle := false
+MuteTabsToggle:
+    muteToggle := !muteToggle
+    if(muteToggle) {
+        SendInput +!,
+        ; Tooltip mute all but current tab
     } else {
-        LongPressCommand(pressKey, "+!.", pressKey) ; unmute all tabs
-        muteToggle := false
+        SendInput +!.
+        ; Tooltip unmute all tabs
     }
-}
+    return
+
+/*
+    @Title: MuteTabsToggle
+    @Desc: mute or unmute tabs on short press and send F11 on long press
+*/
+presentationModeActive := false
+TogglePresentationMode:
+    presentationModeActive := !presentationModeActive
+    if (presentationModeActive) {
+        SetTimer, SendAwakeSignal, 60000
+        Tooltip Presentation Mode %presentationModeActive%, 10000, 10000
+    } else {
+        SetTimer, SendAwakeSignal, Off
+        Tooltip
+    }
+
+    SendAwakeSignal:
+        SendInput {Shift}
+    return

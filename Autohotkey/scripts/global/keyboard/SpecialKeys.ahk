@@ -3,6 +3,8 @@
     @Desc: fundamental changes of special keys, concerning mapping and behavior
     #Maturity:7
 */
+#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+
 SpecialKeys_Setup:
     #SingleInstance force
     #Persistent
@@ -29,6 +31,8 @@ SpecialKeys_Setup:
     AHI.SubscribeKey(kbdId, rAltSc, true, Func("RAltEvent"))
     AHI.SubscribeKey(kbdId, rCtrlSc, true, Func("RCtrlEvent"))
     AHI.SubscribeKey(kbdId, FnSc, true, Func("FnEvent")) ; 355 = FN
+    AHI.SubscribeKey(kbdId, GetKeySC("q"), true, Func("QEvent"))
+    AHI.SubscribeKey(kbdId, GetKeySC("w"), true, Func("WEvent"))
     return
 
 GetAllKeySc:
@@ -50,6 +54,22 @@ GetAllKeySc:
     deleteSc := GetKeySC("Delete")
     backspaceSc := GetKeySC("Backspace")
     return
+
+WEvent(state) {
+    if(state) {
+        AHI.SendKeyEvent(kbdId, GetKeySC("q"), 1)
+    } else {
+        AHI.SendKeyEvent(kbdId, GetKeySC("q"), 0)
+    }
+}
+
+QEvent(state) {
+    if(state) {
+        AHI.SendKeyEvent(kbdId, GetKeySC("w"), 1)
+    } else {
+        AHI.SendKeyEvent(kbdId, GetKeySC("w"), 0)
+    }
+}
 
 LShiftEvent(state) {
     if(state) {
@@ -180,6 +200,7 @@ SpaceShiftEvent(state) {
     @Title: SpaceErase like Ctrl to erase whole words
     #note use send instead of SendInput so that Input commands are able to detect it
 */
+
 <+Del::
     SendInput {LCtrl down}{Del}{LCtrl up}
     return
@@ -191,13 +212,14 @@ SpaceShiftEvent(state) {
     AHI.SendKeyEvent(kbdId, lShiftSc, 0) ; up so only Ctrl
     @Desc: Because of it superior position it should be usable+Bs is pressed
     AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
-	AHI.SendKeyEvent(kbdId, backspaceSc, 1)
-	AHI.SendKeyEvent(kbdId, backspaceSc, 0)
-	AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
-	AHI.SendKeyEvent(kbdId, lShiftSc, 1) ; set it to down as it was before. #risk: it could have been
-	    ; physically released while the hotkey was pressed, leaving it in an inconsistent state.
+    AHI.SendKeyEvent(kbdId, backspaceSc, 1)
+    AHI.SendKeyEvent(kbdId, backspaceSc, 0)
+    AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
+    AHI.SendKeyEvent(kbdId, lShiftSc, 1) ; set it to down as it was before. #risk: it could have been
+        ; physically released while the hotkey was pressed, leaving it in an inconsistent state.
     return
     */
+
 
 /*
     @Title: CtrlShift
@@ -205,6 +227,6 @@ SpaceShiftEvent(state) {
 ~LShift & ~LCtrl up::
 ~LCtrl & ~LShift up::
     if(A_PriorKey == "LControl" || A_PriorKey == "LShift") {
-        Send {tab}
+        SendInput {Enter}
     }
     return

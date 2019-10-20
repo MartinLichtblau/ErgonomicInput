@@ -10,14 +10,15 @@
 #Include %A_WorkingDir%\global\trackpad\MouseScroll.ahk
 #Include %A_WorkingDir%\global\trackpad\MouseArrow.ahk
 
-Global AHI, trackpadId
+Global trackpadId
 
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
 
+    global AHI
     if(AHI == "")
-        AHI := new AutoHotInterception()
+        global AHI := new AutoHotInterception()
     trackpadId := AHI.GetMouseId(0x0000, 0x0000)
     AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))

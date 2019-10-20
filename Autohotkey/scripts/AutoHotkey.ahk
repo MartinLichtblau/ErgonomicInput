@@ -8,8 +8,7 @@
 SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
 #Persistent
-
-;Process, priority,, Realtime
+;Process, priority,, High
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
@@ -27,7 +26,7 @@ SetMouseDelay, 0
     @Req: Includes must come after
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
-Global AHI := new AutoHotInterception()
+
 GoSub, SpecialKeys_Setup
 GoSub, Trackpad_Setup
 GoSub, ShortcutList_Setup
@@ -56,7 +55,7 @@ return ; end of auto-execute section
     @Desc: reload Autohotkey, including all scripts
 */
 $^s::
-	KeyWait, s, T0.3       
+	KeyWait, s, T0.3
 	if ErrorLevel {
 		SplashTextOn,,, Reloading Autohotkey....
 		Sleep 1000
@@ -71,7 +70,7 @@ $^s::
     @Title: AhkKeyhistory
     @Desc: open Autohotkey keyhistory
 */
-*Insert::KeyHistory
+Insert:: KeyHistory
 $^r::
 	KeyWait, r, T0.3
 	If ErrorLevel {  

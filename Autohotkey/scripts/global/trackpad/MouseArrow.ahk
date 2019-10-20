@@ -5,13 +5,8 @@
 */
 #SingleInstance force
 #Persistent
-;Process,priority,,High
-#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-SetBatchLines -1
-ListLines Off
-;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
-Global mouseId, xSum, ySum, abs_xSum, abs_ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, pauseTimeThreshold, mouseMoveCount
+Global mouseId, xSum, ySum, abs_xSum, abs_ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, MA_HomeEndThreshold, pauseTimeThreshold, mouseMoveCount
 return
 
 Setup_MouseArrow(mId) {
@@ -23,8 +18,9 @@ Setup_MouseArrow(mId) {
 InitVars_MouseArrow(mId) {
     MA_runflag := false
     mouseId := mId
-    MA_moveDistThreshold := 8 ; @TODO this is the tranformation factor, One send key equals Coordinate DELTA change
-    pauseTimeThreshold := 90
+    MA_moveDistThreshold := 2 ; @TODO CONFIG VAR
+    MA_HomeEndThreshold := 3.8*MA_moveDistThreshold ; @TODO CONFIG VAR
+    pauseTimeThreshold := 50
 }
 
 ResetRuntimeVars() {
@@ -131,13 +127,13 @@ ProcessMovement(x, y){
 }
 
 SendStrideMode(keyName) {
-    static repeatStrideThreshold := 7
+    static repeatStrideThreshold := 9 ; @TODO CONFIG VAR
     ;Tooltip clickStride: %clickStride% %i%
 
     if(clickStride = 0) { ; initial send mode
         ;Tooltip %mouseMoveCount% ; %abs_xSum% %abs_ySum%
         ; send one click
-        ;if (mouseMoveCount >= 3) {
+        ;if (mouseMoveCount >= 6) {
             SendArrowKey(keyName)
         ;} else {
          ;   SendHomeEndCom(keyName)
@@ -146,7 +142,7 @@ SendStrideMode(keyName) {
         ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
         ;Tooltip %abs_ySum%
-        if(!GetKeyState("Ctrl", "P") && (abs_ySum > 2*MA_moveDistThreshold || abs_xSum > 2*MA_moveDistThreshold)) { ; reached threshold fast
+        if(!GetKeyState("Ctrl", "P") && (abs_ySum > MA_HomeEndThreshold || abs_xSum > MA_HomeEndThreshold)) { ; reached threshold fast
             ;@TODO link factors to other values and make them static/global
                 ; #idea increase responsivness by using X/Y of this one movement and not the sum
             SendHomeEndCom(keyName)

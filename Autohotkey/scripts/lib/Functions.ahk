@@ -34,20 +34,20 @@ ExitScript(scriptName) {
 */
 LongPressCommand(pressKey, shortCmd, longCmd) {
     ;Tooltip Quick Cmd: %quickCmd% | Long Cmd: %longCmd%
-    KeyWait, %pressKey%, T0.3
+    KeyWait, %pressKey%, T0.2
     If ErrorLevel {
         if ("gosub" == SubStr(longCmd, 1, 5)) {
             longCmdLabel := SubStr(longCmd, 7)
             Gosub %longCmdLabel%
         } else {
-            Send %longCmd%
+            SendInput %longCmd%
         }
     } else {
         if ("gosub" == SubStr(shortCmd, 1, 5)) {
             shortCmdLabel := SubStr(shortCmd, 7)
             Gosub %shortCmdLabel%
         } else {
-            Send %shortCmd%
+            SendInput %shortCmd%
         }
     }
     Keywait, %pressKey%,
