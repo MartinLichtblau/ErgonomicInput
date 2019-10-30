@@ -70,7 +70,7 @@ $^s::
     @Title: AhkKeyhistory
     @Desc: open Autohotkey keyhistory
 */
-Insert:: KeyHistory
+*Insert:: KeyHistory
 $^r::
 	KeyWait, r, T0.3
 	If ErrorLevel {  

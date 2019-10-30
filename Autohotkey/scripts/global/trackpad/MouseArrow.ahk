@@ -6,6 +6,7 @@
 #SingleInstance force
 #Persistent
 
+#Include %A_WorkingDir%\lib\Functions.ahk
 Global mouseId, xSum, ySum, abs_xSum, abs_ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, MA_HomeEndThreshold, pauseTimeThreshold, mouseMoveCount
 return
 
@@ -32,7 +33,7 @@ ResetRuntimeVars() {
 
 Start_MouseArrow() {
     ;Tooltip Start_MouseArrow
-    SetSystemCursor("")
+    ; SetSystemCursor("IDC_IBEAM")
     MA_runflag := true
     ResetRuntimeVars()
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseArrowEvent"))
@@ -44,7 +45,7 @@ Stop_MouseArrow() {
     ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseArrowEvent"))
     AHI.UnsubscribeMouseMoveRelative(mouseId)
     ResetRuntimeVars()
-    restoreCursors()
+    ; setTimer RestoreCursors, -100
 }
 
 ResetXY_MouseArrow:

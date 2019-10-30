@@ -9,6 +9,7 @@ SetBatchLines -1
 ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
+#Include %A_WorkingDir%\lib\Functions.ahk
 Global mouseId, xSum, ySum, movementThreshold, MS_runflag, isCursorChanged
 return
 
@@ -34,6 +35,7 @@ ResetXY:
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
+    SetSystemCursor("IDC_SIZEALL")
     MS_runflag := true
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseMovement"))
 }
@@ -41,11 +43,10 @@ Start_MouseScroll() {
 Stop_MouseScroll() {
     ;Tooltip Stop_MouseScroll
     MS_runflag := false
-    ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseMovement"))
+    ; AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseMovement"))
     AHI.UnsubscribeMouseMoveRelative(mouseId)
     gosub ResetXY
-    isCursorChanged := false
-    restoreCursors()
+    setTimer RestoreCursors, -100
 }
 
 ; @Desc: run in parallel since it's a function
@@ -62,16 +63,12 @@ ExitOnInput() {
 MouseMovement(x, y) {
     if(MS_runflag) {
         ;Tooltip FixedAxisScrolling %x% %y%
-        xSum := xSum + x
-        ySum := ySum + y
-        abs_xSum := floor(ln(abs(xSum))) ; functions possible: ln/log = starts quick and slows down
-        abs_ySum := floor(ln(abs(ySum)))   ; sqrt or * x to start quick
-        ;Tooltip %abs_xSum% %abs_ySum%
+        xSum := xSum + (x)
+        ySum := ySum + (y)
+        abs_xSum := abs(xSum) ; functions possible: ln/log = starts quick and slows down
+        abs_ySum := abs(ySum)   ; sqrt or * x to start quick
+        ; Tooltip %abs_xSum% %abs_ySum%
         if(abs_xSum > movementThreshold || abs_ySum > movementThreshold) {
-            if(!isCursorChanged) {
-                isCursorChanged := true
-                SetSystemCursor("IDC_SIZEALL")
-            }
             FixedAxisScrolling(xSum, ySum, abs_xSum, abs_ySum)
         }
     }
@@ -85,25 +82,18 @@ MouseMovement(x, y) {
 FixedAxisScrolling(xSum, ySum, abs_xSum, abs_ySum) {
     if(abs_ySum >= abs_xSum) { ; up/down
         if (ySum > 0) {
-            ;AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down  ; #note AHI is slower
-            SendInput {WheelDown}
-            gosub ResetXY
+            MouseClick,WheelDown,,,%abs_xSum%,0,D,R
         } else {
-            ;AHI.SendMouseButtonEvent(mouseId, 5, 1) ; Wheel Up
-            SendInput {WheelUp}
-            gosub ResetXY
+            MouseClick,WheelUp,,,%abs_xSum%,0,D,R
         }
     } else { ; right/left
         if (xSum > 0) {
-            ;AHI.SendMouseButtonEvent(mouseId, 6, 1) ; Wheel Right
-            SendInput {WheelRight %abs_xSum%}
-            gosub ResetXY
+            SendInput {WheelRight}
         } else {
-            ;AHI.SendMouseButtonEvent(mouseId, 6, -1) ; Wheel Left
-            SendInput {WheelLeft %abs_xSum%}
-            gosub ResetXY
+            SendInput {WheelLeft}
         }
     }
+    gosub ResetXY
     ;Tooltip i=%i% | x: %x%  y: %y% | ySum: %ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
 }
 

@@ -1,5 +1,6 @@
 SetSystemCursor( Cursor = "", cx = 0, cy = 0 )
 {
+    ; API Specifications > https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-copyimage
 	BlankCursor := 0, SystemCursor := 0, FileCursor := 0 ; init
 
 	SystemCursors = 32512IDC_ARROW,32513IDC_IBEAM,32514IDC_WAIT,32515IDC_CROSS
@@ -66,10 +67,11 @@ SetSystemCursor( Cursor = "", cx = 0, cy = 0 )
 			{
 				Type = SystemCursor
 				CursorHandle := DllCall( "LoadCursor", Uint,0, Int,CursorID )
-				%Type%%A_Index% := DllCall( "CopyImage"
-				, Uint,CursorHandle, Uint,0x2, Int,cx, Int,cy, Uint,0 )
-				CursorHandle := DllCall( "CopyImage", Uint,%Type%%A_Index%, Uint,0x2, Int,0, Int,0, Int,0 )
+				; %Type%%A_Index% := DllCall( "CopyImage", Uint,CursorHandle, Uint,0x2, Int,cx, Int,cy, Uint,0 )
+				; CursorHandle := DllCall( "CopyImage", Uint,%Type%%A_Index%, Uint,0x2, Int,0, Int,0, Int,0 )
+				CursorHandle := DllCall( "CopyImage", Uint,CursorHandle, Uint,0x2, Int,0, Int,0, Uint,0x00000040)
 				DllCall( "SetSystemCursor", Uint,CursorHandle, Int,SubStr( A_Loopfield, 1, 5 ) )
+				DLLCall( "DestroyCursor", Uint,CursorHandle )
 			}
 			Else If FileCursor = 1
 			{
