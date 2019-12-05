@@ -39,3 +39,14 @@ $^z::
 $^y::
     SendInput ^z
     return
+
++^,::
+    output := StrReplace(clipboard, "`r`n", ", ")
+    SendInput %output%
+    return
+
++^.::
+    output := StrReplace(clipboard, "`r`n", ", ")
+    output := SubStr(output, 1, -2)  ;remove ending whitespace and comma
+    SendInput session_id = ANY(ARRAY[%output%])
+    return
