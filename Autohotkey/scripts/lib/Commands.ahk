@@ -252,8 +252,8 @@ MuteTabsToggle:
     return
 
 /*
-    @Title: MuteTabsToggle
-    @Desc: mute or unmute tabs on short press and send F11 on long press
+    @Title: TogglePresentationMode
+    @Desc: toggle between presentation mode, when active keeping PC awake
 */
 presentationModeActive := false
 TogglePresentationMode:
@@ -268,4 +268,27 @@ TogglePresentationMode:
 
     SendAwakeSignal:
         SendInput {Shift}
+    return
+
+
+/*
+    @Title: Dictation
+    @Desc: toggle windows 10 dictation feature and close it on click of any key other than the toggle key itself
+*/
+dictationActive := false
+Dictation:
+    if (!dictationActive) {
+       SendInput #h ; open dictation
+       dictationActive := true
+       Hotkey, $F10, off ; deactivate hotkey so input can detect
+       Input, key, L1 M V, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
+       if (ErrorLevel = "NewInput" or ErrorLevel = "Max" or InStr(ErrorLevel, "EndKey:"))
+       {
+          gosub Dictation
+       }
+    } else {
+        SendInput #h ; close dictation
+        dictationActive := false
+        Hotkey, $F10, on
+    }
     return

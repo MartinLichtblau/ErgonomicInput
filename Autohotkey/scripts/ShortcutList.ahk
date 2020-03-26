@@ -12,8 +12,8 @@ ShortcutList_Setup:
     global RIGHTDESKTOP_sc = "{LCtrl Down}{LWin Down}{Right}{LWin Up}{LCtrl Up}" ; switch one desktop to the right
     global LEFTTAB_sc = "^{PgUp}" ; switch one tab to the left
     global RIGHTTAB_sc = "^{PgDn}" ; switch one tab to the right
-    global GOBACK_sc := "{Browser_Back}"
-    global GOFORWARD_sc = "{Browser_Forward}"
+    global GOBACK_sc := "!{Left}"   ; "{Browser_Back}"
+    global GOFORWARD_sc = "!{Right}"  ; "{Browser_Forward}"
     global ADDRESSBAR_sc = "^l" ; focus address bar""
     global SEARCH_sc = "^f" ; search in app
     global TABSEARCH_sc = "!7"

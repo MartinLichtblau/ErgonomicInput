@@ -8,7 +8,7 @@
 SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
 #Persistent
-;Process, priority,, High
+Process, priority,, High
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off

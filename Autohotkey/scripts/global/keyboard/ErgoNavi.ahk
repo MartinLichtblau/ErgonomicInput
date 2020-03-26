@@ -73,7 +73,7 @@ ErgoNavi_Setup:
 
 ~MButton & i::
 ~RButton & r::
-    LongPressCommand("r", ADDRESSBAR_sc, SEARCH_sc)
+    SendInput %GOFORWARD_sc%
     return
 
 ~MButton & n::
@@ -81,7 +81,9 @@ ErgoNavi_Setup:
     AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
     return
     ; SendInput %LEFTTAB_sc% ;LongPressCommand("n", LEFTTAB_sc, "^1")
-~RButton & s:: SendInput ^l
+~RButton & s::
+  SendInput %GOBACK_sc%
+  return
 
 ~MButton & e::
     SendInput {RShift down}{Tab}{RShift up}

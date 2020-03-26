@@ -31,9 +31,8 @@ $F8::LongPressCommand("F8", "{F8}", "!+l")
 
 ;--------------------------------------------F9 - F12
 $F9:: LongPressCommand("F9", "{F9}", "gosub TogglePresentationMode")
-      ; Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
 
-$F10::LongPressCommand("F10", "{F10}", "#h")
+$F10::LongPressCommand("F10", "gosub Dictation", "{F10}")
 
 $F11:: LongPressCommand("F11", "{F11}", "gosub ReadMode")
 
@@ -42,6 +41,9 @@ $F12:: LongPressCommand("F12", "{F12}", "#^c")
 
 ;--------------------------------------------Home - Insert
 Home::
+    Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
+    return
+
     SetCursorIDC_SIZE()
     return
     SPI_SETCURSORS := 0x57
