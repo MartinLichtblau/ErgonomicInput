@@ -80,7 +80,7 @@ ms_MouseMovement(x, y) {
         That is so simply because with any move both X and Y are reset.
 */
 ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum) {
-    if(abs_ySum >= abs_xSum) { ; up/down
+    if(abs_ySum > abs_xSum) { ; up/down
         if (ms_ySum > 0) {
             MouseClick,WheelDown,,,%abs_xSum%,0,D,R
         } else {
@@ -110,7 +110,7 @@ ms_FreePlaneScrolling(x, y) {
     abs_ySum := abs(ms_ySum)
 
     if(abs_xSum > ms_movementThreshold || abs_ySum > ms_movementThreshold) {
-        if(abs_ySum >= abs_xSum) { ; up/down
+        if(abs_ySum > abs_xSum) { ; up/down
             if (ms_ySum > 0) {
                 AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down
                 ms_ySum := 0
