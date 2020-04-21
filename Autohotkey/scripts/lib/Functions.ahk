@@ -181,3 +181,24 @@ RestoreCursors:
 	DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
 	return
 
+SendArrowKey(keyName)
+{
+    if(keyName = "Right") {
+        AHI.SendKeyEvent(1, 333, 1)
+        AHI.SendKeyEvent(1, 333, 0)
+        ;Send {blind}{Right}
+    } else if(keyName = "Left") {
+        AHI.SendKeyEvent(1, 331, 1)
+        AHI.SendKeyEvent(1, 331, 0)
+        ;Send {blind}{Left}
+    } else if(keyName = "Down") {
+        AHI.SendKeyEvent(1, 336, 1)
+        AHI.SendKeyEvent(1, 336, 0)
+        ;Send {blind}{Down}
+    } else if(keyName = "Up") {
+        AHI.SendKeyEvent(1, 328, 1)
+        AHI.SendKeyEvent(1, 328, 0)
+        ;Send {blind}{Up}
+    }
+}
+

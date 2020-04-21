@@ -20,7 +20,7 @@ ma_InitVars_MouseArrow(mId) {
     ma_runflag := false
     mouseId := mId
     ma_moveDistThreshold := 3 ; @TODO CONFIG VAR
-    ma_HomeEndThreshold := 3.8*ma_moveDistThreshold ; @TODO CONFIG VAR
+    ma_HomeEndThreshold := 4*ma_moveDistThreshold ; @TODO CONFIG VAR
     ma_pauseTimeThreshold := 100
 }
 
@@ -107,7 +107,7 @@ ma_ProcessMovement(x, y){
     ma_abs_xSum := abs(ma_xSum)
     ma_abs_ySum := abs(ma_ySum)
     ma_mouseMoveCount++
-    Tooltip %ma_mouseMoveCount% %ma_abs_xSum% %ma_abs_ySum%
+    ;Tooltip %ma_mouseMoveCount% %ma_abs_xSum% %ma_abs_ySum%
 
     if(ma_abs_xSum > ma_moveDistThreshold || ma_abs_ySum > ma_moveDistThreshold) {
         if(ma_abs_ySum >= ma_abs_xSum) { ; up/down
@@ -163,23 +163,7 @@ ma_SendStrideMode(keyName) {
 ; #note sends per deful
 ma_SendArrowKey(keyName){
     ; Send {blind}{%keyName%} ; should work, but isn't recognized by A_PriorKey in Mbutton
-    if(keyName = "Right") {
-        AHI.SendKeyEvent(1, 333, 1)
-        AHI.SendKeyEvent(1, 333, 0)
-        ;Send {blind}{Right}
-    } else if(keyName = "Left") {
-        AHI.SendKeyEvent(1, 331, 1)
-        AHI.SendKeyEvent(1, 331, 0)
-        ;Send {blind}{Left}
-    } else if(keyName = "Down") {
-        AHI.SendKeyEvent(1, 336, 1)
-        AHI.SendKeyEvent(1, 336, 0)
-        ;Send {blind}{Down}
-    } else if(keyName = "Up") {
-        AHI.SendKeyEvent(1, 328, 1)
-        AHI.SendKeyEvent(1, 328, 0)
-        ;Send {blind}{Up}
-    }
+    SendArrowKey(keyName)
     gosub ma_ResetXY
 }
 
