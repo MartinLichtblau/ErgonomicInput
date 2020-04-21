@@ -57,34 +57,6 @@ return
 }
 
 /*
-    @Title: TypeArrow
-    @Desc: make arrow-keys accessible in the center
-*/
-Left:
-	Send {blind}{Left}
-return
-
-Up:
-	Send {blind}{Up}
-return
-
-Right:
-	Send {blind}{Right}
-return
-
-Down:
-	Send {blind}{Down}
-return
-
-Home:
-	Send {blind}{Home}
-return
-
-End:
-	Send {blind}{End}
-return
-
-/*
     @Title: MoveMouseToCaret
     #note would be nice, but pretty useless since nearly no app uses windows integrated caret function
 */

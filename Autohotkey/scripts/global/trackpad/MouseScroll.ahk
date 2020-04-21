@@ -24,7 +24,7 @@ Setup_MouseScroll(mId) {
 ms_InitVars(mId) {
     ms_runflag := false
     mouseId := mId
-    ms_movementThreshold := 1
+    ms_movementThreshold := 2
     gosub ms_ResetXY
 }
 
@@ -55,16 +55,11 @@ ms_ExitOnInput() {
     Stop_MouseScroll()
 }
 
-/*
-    @Title: FreePlaneScroll
-    @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
-    #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
-*/
 ms_MouseMovement(x, y) {
     if(ms_runflag) {
         ;Tooltip ms_FixedAxisScrolling %x% %y%
-        ms_xSum := ms_xSum + (x)
-        ms_ySum := ms_ySum + (y)
+        ms_xSum := ms_xSum + x
+        ms_ySum := ms_ySum + y
         abs_xSum := abs(ms_xSum) ; functions possible: ln/log = starts quick and slows down
         abs_ySum := abs(ms_ySum)   ; sqrt or * x to start quick
         ; Tooltip %abs_xSum% %abs_ySum%
@@ -80,7 +75,7 @@ ms_MouseMovement(x, y) {
         That is so simply because with any move both X and Y are reset.
 */
 ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum) {
-    if(abs_ySum > abs_xSum) { ; up/down
+    if(abs_ySum >= abs_xSum) { ; up/down
         if (ms_ySum > 0) {
             MouseClick,WheelDown,,,%abs_xSum%,0,D,R
         } else {
@@ -88,13 +83,13 @@ ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum) {
         }
     } else { ; right/left
         if (ms_xSum > 0) {
-            SendInput {WheelRight}
+            MouseClick,WheelRight,,,%abs_ySum%,0,D,R
         } else {
-            SendInput {WheelLeft}
+            MouseClick,WheelLeft,,,%abs_ySum%,0,D,R
         }
     }
+    ; Tooltip i=%i% | ms_xSum: %ms_xSum% | ms_ySum: %ms_ySum% | abs_xSum: %abs_xSum% | abs_ySum: %abs_ySum% ;top left is minus for x and y
     gosub ms_ResetXY
-    ;Tooltip i=%i% | x: %x%  y: %y% | ms_ySum: %ms_ySum% | abs_xSum: %abs_xSum% ;top left is minus for x and y
 }
 
 /*
@@ -110,7 +105,7 @@ ms_FreePlaneScrolling(x, y) {
     abs_ySum := abs(ms_ySum)
 
     if(abs_xSum > ms_movementThreshold || abs_ySum > ms_movementThreshold) {
-        if(abs_ySum > abs_xSum) { ; up/down
+        if(abs_ySum >= abs_xSum) { ; up/down
             if (ms_ySum > 0) {
                 AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down
                 ms_ySum := 0

@@ -16,44 +16,23 @@ ErgoNavi_Setup:
 ;--------------------------------------------RIGHT HAND
 ;--------------------SPECIAL KEYS
 ~MButton & n::
-~MButton & l:: Enter ; AHI doesn't make windows UAC work
+~MButton & l:: Enter
 
-~MButton & k::
-    AHI.SendKeyEvent(kbdId, backspaceSc, 1)
-    AHI.SendKeyEvent(kbdId, backspaceSc, 0)
-    return
+~MButton & k:: Backspace
 
-~MButton & h::
-  AHI.SendKeyEvent(kbdId, GetKeySC("Delete"), 1)
-  AHI.SendKeyEvent(kbdId, GetKeySC("Delete"), 0)
-  return
+~MButton & h::Delete
 
-~MButton & x::
-    SendInput {Esc}
-    return
+~MButton & x::Esc
 
-~MButton & u::
-    AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 1)
-    AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
-    return
+~MButton & u::Tab
 
 ~MButton & b::
   SendInput {RShift down}{Tab}{RShift up}
-    /*
-    AHI.SendKeyEvent(kbdId, GetKeySC("LShift"), 1)
-        AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 1)
-        AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
-        AHI.SendKeyEvent(kbdId, GetKeySC("LShift"), 0)
-    */
-    ; SendInput %RIGHTTAB_sc% ;LongPressCommand("e", RIGHTTAB_sc, "^9")
-    return
-
-;--------------------ARROW KEYS
-~MButton & e::
-  SendArrowKey("Up")
   return
 
-~MButton & sc034:: ; sc034 = .
+;--------------------ARROW KEYS
+~MButton & e:: SendArrowKey("Up")
+
 ~MButton & sc033:: ; sc033 = ,
   SendArrowKey("Down")
   return
@@ -65,6 +44,10 @@ ErgoNavi_Setup:
 ~MButton & i::
   SendArrowKey("Right")
   return
+
+~MButton & sc034:: Home ; sc034 == .
+
+~MButton & sc035:: End ; sc035 == -
 
 ;--------------------MOVE WINDOWS
 ~MButton & sc01B:: MoveWinBetweenScreens("sc01B") ; sc01B = +
@@ -79,9 +62,6 @@ ErgoNavi_Setup:
 ~MButton & sc019:: LongPressCommand("sc019", ADDRESSBAR_sc, SEARCH_sc) ; sc019 = ö
 
 ~MButton & j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
-
-~MButton & o::
-~MButton & sc035:: Tooltip vacant
 
 
 ;--------------------------------------------LEFT HAND
