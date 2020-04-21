@@ -7,58 +7,58 @@
 #Persistent
 
 #Include %A_WorkingDir%\lib\Functions.ahk
-Global mouseId, xSum, ySum, abs_xSum, abs_ySum, MA_runflag, clickStride, waitForMovementPause, MA_moveDistThreshold, MA_HomeEndThreshold, pauseTimeThreshold, mouseMoveCount
+Global mouseId, ma_xSum, ma_ySum, ma_abs_xSum, ma_abs_ySum, ma_runflag, ma_clickStride, ma_waitForMovementPause, ma_moveDistThreshold, ma_HomeEndThreshold, ma_pauseTimeThreshold, ma_mouseMoveCount
 return
 
 Setup_MouseArrow(mId) {
     ;Tooltip Setup_MouseScroll
-    InitVars_MouseArrow(mId)
+    ma_InitVars_MouseArrow(mId)
     ;ExitOnInput_MouseArrow
 }
 
-InitVars_MouseArrow(mId) {
-    MA_runflag := false
+ma_InitVars_MouseArrow(mId) {
+    ma_runflag := false
     mouseId := mId
-    MA_moveDistThreshold := 2 ; @TODO CONFIG VAR
-    MA_HomeEndThreshold := 3.8*MA_moveDistThreshold ; @TODO CONFIG VAR
-    pauseTimeThreshold := 50
+    ma_moveDistThreshold := 3 ; @TODO CONFIG VAR
+    ma_HomeEndThreshold := 3.8*ma_moveDistThreshold ; @TODO CONFIG VAR
+    ma_pauseTimeThreshold := 100
 }
 
-ResetRuntimeVars() {
-    clickStride := 0
-    waitForMovementPause := false
-    gosub ResetXY_MouseArrow
-    mouseMoveCount := 0
+ma_ResetRuntimeVars() {
+    ma_clickStride := 0
+    ma_waitForMovementPause := false
+    gosub ma_ResetXY
+    ma_mouseMoveCount := 0
 }
 
 Start_MouseArrow() {
     ;Tooltip Start_MouseArrow
     ; SetSystemCursor("IDC_IBEAM")
-    MA_runflag := true
-    ResetRuntimeVars()
+    ma_runflag := true
+    ma_ResetRuntimeVars()
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseArrowEvent"))
 }
 
 Stop_MouseArrow() {
     ;Tooltip Stop_MouseArrow
-    MA_runflag := false
+    ma_runflag := false
     ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseArrowEvent"))
     AHI.UnsubscribeMouseMoveRelative(mouseId)
-    ResetRuntimeVars()
+    ma_ResetRuntimeVars()
     ; setTimer RestoreCursors, -100
 }
 
-ResetXY_MouseArrow:
-    xSum := 0
-    ySum := 0
-    abs_xSum := 0
-    abs_ySum := 0
+ma_ResetXY:
+    ma_xSum := 0
+    ma_ySum := 0
+    ma_abs_xSum := 0
+    ma_abs_ySum := 0
     return
 
 ; @Desc: run in parallel since it's a function
 ExitOnInput_MouseArrow() {
     Input, UserInput, V L1 B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-    if(ErrorLevel)
+    if(ErrorLevel)d
         Stop_MouseArrow()
 }
 
@@ -71,26 +71,26 @@ ExitOnInput_MouseArrow() {
         ; DIRECTION and more
 MouseArrowEvent(x, y){
     static timeOfLastMouseEvent
-    if(!MA_runflag)
+    if(!ma_runflag)
         return ; Exit
 
     ; if user paused mouse movement for T then reset XY, so it starts fresh and not with e.g. x=29.
     timeDiffBetweenMoves  := A_TickCount-timeOfLastMouseEvent
     timeOfLastMouseEvent := A_TickCount ; timeOfLastMouseEvent becomes time of current MouseEvent
-    if(timeDiffBetweenMoves > pauseTimeThreshold) {
+    if(timeDiffBetweenMoves > ma_pauseTimeThreshold) {
         movementPaused := true
-        ResetRuntimeVars() ; @TODO all dirty, this even more
-        mouseMoveCount := 0
+        ma_ResetRuntimeVars() ; @TODO all dirty, this even more
+        ma_mouseMoveCount := 0
     } else {
         movementPaused := false
     }
 
     if(!movementPaused) {
-        if(!waitForMovementPause) {
-            ProcessMovement(x, y)
+        if(!ma_waitForMovementPause) {
+            ma_ProcessMovement(x, y)
         } else {
-            ; did not pause && since waitForMovementPause=true return. For @SendHomeEndCom
-            ;Tooltip waitForMovementPause
+            ; did not pause && since ma_waitForMovementPause=true return. For @ma_SendHomeEndCom
+            ;Tooltip ma_waitForMovementPause
             return ; Exit ; #note return statement causes immense delay and breaking hence breaking timers
         }
     }
@@ -100,60 +100,60 @@ MouseArrowEvent(x, y){
         ; Means: timeframes without movment symbolize/represent release of key.
 }
 
-ProcessMovement(x, y){
+ma_ProcessMovement(x, y){
     ; @TODO don't work with negative numbers at all, instead ste a flag xNeg, yNeg
-    global xSum := xSum + x*1.5 ; multipled by a factor to boost right/left movements so they are as sensitive as up/down
-    global ySum := ySum + y
-    abs_xSum := abs(xSum)
-    abs_ySum := abs(ySum)
-    mouseMoveCount++
-    ;Tooltip %mouseMoveCount% %abs_xSum% %abs_ySum%
+    ma_xSum := ma_xSum + x ; multipled by a factor to boost right/left movements so they are as sensitive as up/down
+    ma_ySum := ma_ySum + y
+    ma_abs_xSum := abs(ma_xSum)
+    ma_abs_ySum := abs(ma_ySum)
+    ma_mouseMoveCount++
+    Tooltip %ma_mouseMoveCount% %ma_abs_xSum% %ma_abs_ySum%
 
-    if(abs_xSum > MA_moveDistThreshold || abs_ySum > MA_moveDistThreshold) {
-        if(abs_ySum >= abs_xSum) { ; up/down
-            if (ySum > 0) {
-                SendStrideMode("Down")
+    if(ma_abs_xSum > ma_moveDistThreshold || ma_abs_ySum > ma_moveDistThreshold) {
+        if(ma_abs_ySum >= ma_abs_xSum) { ; up/down
+            if (ma_ySum > 0) {
+                ma_SendStrideMode("Down")
             } else {
-                SendStrideMode("Up")
+                ma_SendStrideMode("Up")
             }
         } else { ; right/left
-            if (xSum > 0) {
-                SendStrideMode("Right")
+            if (ma_xSum > 0) {
+                ma_SendStrideMode("Right")
             } else {
-                SendStrideMode("Left")
+                ma_SendStrideMode("Left")
             }
         }
     }
-    ;Tooltip i=%i% | x: %x%  y: %y% | xSum: %xSum% ;top left is minus for x and y
+    ;Tooltip i=%i% | x: %x%  y: %y% | ma_xSum: %ma_xSum% ;top left is minus for x and y
 }
 
-SendStrideMode(keyName) {
+ma_SendStrideMode(keyName) {
     static repeatStrideThreshold := 9 ; @TODO CONFIG VAR
-    ;Tooltip clickStride: %clickStride% %i%
+    ;Tooltip, ma_clickStride: %ma_clickStride% %i%,,1000,2
 
-    if(clickStride = 0) { ; initial send mode
-        ;Tooltip %mouseMoveCount% ; %abs_xSum% %abs_ySum%
+    if(ma_clickStride = 0) { ; initial send mode
+        ;Tooltip %ma_mouseMoveCount% ; %ma_abs_xSum% %ma_abs_ySum%
         ; send one click
-        ;if (mouseMoveCount >= 6) {
-            SendArrowKey(keyName)
+        ;if (ma_mouseMoveCount >= 6) {
+            ma_SendArrowKey(keyName)
         ;} else {
-         ;   SendHomeEndCom(keyName)
+         ;   ma_SendHomeEndCom(keyName)
         ;}
-    } else if(clickStride > repeatStrideThreshold) { ; @TODO time based seems better to grasp.
+    } else if(ma_clickStride > repeatStrideThreshold) { ; @TODO time based seems better to grasp.
         ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
-        ;Tooltip %abs_ySum%
-        if(!GetKeyState("Ctrl", "P") && (abs_ySum > MA_HomeEndThreshold || abs_xSum > MA_HomeEndThreshold)) { ; reached threshold fast
+        ;Tooltip %ma_abs_ySum%
+        if(!GetKeyState("Ctrl", "P") && (ma_abs_ySum > ma_HomeEndThreshold || ma_abs_xSum > ma_HomeEndThreshold)) { ; reached threshold fast
             ;@TODO link factors to other values and make them static/global
                 ; #idea increase responsivness by using X/Y of this one movement and not the sum
-            SendHomeEndCom(keyName)
+            ma_SendHomeEndCom(keyName)
         } else { ; reached threshold normal
-            SendArrowKey(keyName)
+            ma_SendArrowKey(keyName)
         }
     } else {
-        gosub ResetXY
+        gosub ma_ResetXY
     }
-    clickStride++
+    ma_clickStride++
 }
 
 ;right := GetKeySc("Right") ; 333
@@ -161,7 +161,7 @@ SendStrideMode(keyName) {
 ;up := GetKeySc("up") ; 328
 ;down := GetKeySc("down") ; 336
 ; #note sends per deful
-SendArrowKey(keyName){
+ma_SendArrowKey(keyName){
     ; Send {blind}{%keyName%} ; should work, but isn't recognized by A_PriorKey in Mbutton
     if(keyName = "Right") {
         AHI.SendKeyEvent(1, 333, 1)
@@ -180,12 +180,12 @@ SendArrowKey(keyName){
         AHI.SendKeyEvent(1, 328, 0)
         ;Send {blind}{Up}
     }
-    gosub ResetXY
+    gosub ma_ResetXY
 }
 
 ;home := GetKeySc("home") ; 327
 ;end := GetKeySc("end") ; 335
-SendHomeEndCom(keyName) {
+ma_SendHomeEndCom(keyName) {
     if(keyName = "Right") {
         Send {blind}{End}
     } else if(keyName = "Left") {
@@ -195,8 +195,8 @@ SendHomeEndCom(keyName) {
     } else if(keyName = "Up") {
         Send {blind}{LCtrl down}{Home}{LCtrl up}
     }
-    gosub ResetXY
-    clickStride := 0
+    gosub ma_ResetXY
+    ma_clickStride := 0
     ; enforce break, not reacting to new input. until mouse event stop for stride timeframe
-    waitForMovementPause := true
+    ma_waitForMovementPause := true
 }

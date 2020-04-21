@@ -48,14 +48,14 @@ ErgoNavi_Setup:
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
     }
-    SendInput 7
+    SendInput 9
     return
 
 ~RButton & g::
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
     }
-    SendInput 9
+    SendInput 7
     return
     ; OpenTabWOSelection("g") ; LongPressCommand("g", "^t", "^n")
 ~MButton & j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
