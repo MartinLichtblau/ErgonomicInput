@@ -61,7 +61,7 @@ $^s::
 		Sleep 1000
 		Reload
 	} else {
-		SendInput ^s  
+		SendInput ^s
 	}
 	KeyWait, s,
     return

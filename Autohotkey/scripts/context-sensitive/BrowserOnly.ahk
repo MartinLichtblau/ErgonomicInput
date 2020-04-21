@@ -28,7 +28,7 @@ $!c::
     return
 
 ;---------------------------------Chrome: Print to Article---------------------------------------------------------
-$^p:: PrintInChromeToFolder("C:\Users\marti\Google Drive\Diary\Professional Life\Academic\General Literature\Read Literature")
+; $^p:: PrintInChromeToFolder("C:\Users\marti\Google Drive\Diary\Professional Life\Academic\General Literature\Read Literature")
 
 ; -----------------------------------Open link in same tab------------------------------------
 /*
@@ -168,5 +168,31 @@ return
 	WinClip.SetHTML("<i>" cliptxt " <a href=" clipurl ">(" title ")</a></i>")
     return
 
+;---------------------------------Text-Website-URL Copy---------------------------------------------------------
+^+m::
+    clipboard = ; Empty clipboard
+    Send ^c
+    ClipWait, 0.5
+    if(ErrorLevel) { ; if nothing copied, nothing was selected, means: copy only URL
+      cliptxt := 0
+    } else {
+      cliptxt := clipboard
+    }
+
+    Send ^l
+    Sleep 100 ; wait until address bar is focused
+    clipboard = ; Empty clipboard
+    Send ^c
+    ClipWait, 0.5
+    clipurl := clipboard
+    Send {f6}{f6}
+
+    if(cliptxt = 0) {
+      cliptxt = %clipurl%
+    }
+
+    prunedCliptxt := RegExReplace(cliptxt, "\s*(\n|\r\n)", A_Space)
+    clipboard = [%prunedCliptxt%](%clipurl%)
+    return
 
 #IfWinActive ;; end of condition IfWinActive

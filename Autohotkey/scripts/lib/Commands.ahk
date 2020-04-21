@@ -280,7 +280,7 @@ Dictation:
     if (!dictationActive) {
        SendInput #h ; open dictation
        dictationActive := true
-       Hotkey, $F10, off ; deactivate hotkey so input can detect
+       Hotkey, $F9, off ; deactivate hotkey so input can detect
        Input, key, L1 M V, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
        if (ErrorLevel = "NewInput" or ErrorLevel = "Max" or InStr(ErrorLevel, "EndKey:"))
        {
@@ -289,6 +289,6 @@ Dictation:
     } else {
         SendInput #h ; close dictation
         dictationActive := false
-        Hotkey, $F10, on
+        Hotkey, $F9, on
     }
     return

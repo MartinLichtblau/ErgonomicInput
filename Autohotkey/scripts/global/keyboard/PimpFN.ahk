@@ -30,9 +30,9 @@ $F7::LongPressCommand("F7", "{F7}", "{Media_Next}")
 $F8::LongPressCommand("F8", "{F8}", "!+l")
 
 ;--------------------------------------------F9 - F12
-$F9:: LongPressCommand("F9", "{F9}", "gosub TogglePresentationMode")
+$F9:: LongPressCommand("F9", "gosub Dictation", "^l")
 
-$F10::LongPressCommand("F10", "gosub Dictation", "{F10}")
+$F10::LongPressCommand("F10", "{F10}", "gosub TogglePresentationMode")
 
 $F11:: LongPressCommand("F11", "{F11}", "gosub ReadMode")
 
@@ -43,29 +43,6 @@ $F12:: LongPressCommand("F12", "{F12}", "#^c")
 Home::
     Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
     return
-
-    SetCursorIDC_SIZE()
-    return
-    SPI_SETCURSORS := 0x57
-	v := DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
-	Tooltip SPI_SETCURSORS %v%
-	Sleep 1000
-	Tooltip
-	return
-
-
-    SetSystemCursor("IDC_HAND")
-    return
-
-
-
-
-/*
-RestoreCursors:
-	SPI_SETCURSORS := 0x57
-	DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
-	return
-*/
 
 ; *Insert::
 
