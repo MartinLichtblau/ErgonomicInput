@@ -14,18 +14,21 @@ BrowserTricks_Setup:
     return
 
 
-
 #IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
+
+; Copy link of notion block, making it globally accessible and enabling transclusion
++^g::
+    Send {/}copy{Enter}
+    Sleep 400
+    StringGetPos, pos, clipboard, #
+    nplink := SubStr(clipboard, pos +2)
+    blockLink = https://www.notion.so/%nplink%
+    clipboard = %blockLink%
+    SendInput {Space}{U+1F310} ; 🌐
+    return
 
 ; -----------------------------------Two translation modes------------------------------------
 $!t::ChangeTranslateModeOnLongPress("t")
-
-; -----------------------------------Combine: Add to Keep && Highlight------------------------------------
-$!c::
-    SendInput !c
-    ;SendInput !2 ; use +Super_Simple_Highlighter
-    SendInput h ; use +Memex
-    return
 
 ;---------------------------------Chrome: Print to Article---------------------------------------------------------
 ; $^p:: PrintInChromeToFolder("C:\Users\marti\Google Drive\Diary\Professional Life\Academic\General Literature\Read Literature")

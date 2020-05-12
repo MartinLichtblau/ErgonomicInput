@@ -69,7 +69,7 @@ return
     @Desc: moves mouse cursor in center of active window, if it isn't already above it / within bounds
 */
 CenterMouseOnActiveWindow:
-    Sleep 50 ; wait for GUI
+    Sleep 100 ; wait for GUI
     activeWinId := WinExist("A")
     MouseGetPos,,, winIdUnderMouse
     if (activeWinId != winIdUnderMouse) { ; check if mouse above active window
@@ -157,16 +157,18 @@ ReadMode:
             Sleep 100
             SendInput find{Tab}
             Sleep 100
-            SendRaw [„“"‘](.*?)[“"”
-            Sleep 150
-            SendRaw ]
+            ; Lookup unicode of quotation marks, which are special characters, so ahk understands.
+              ; https://unicode-table.com/en/
+            Send [{U+201C}{U+0022}{U+201E}](.*?)[{U+201D}{U+0022}
+            Sleep 500
+            Send {Blind}{Text}]
             Sleep 100
             Send {Enter}
     }
 
     Send {F11}
     ;Send !r ; color for reading #
-    Send #^c ; use windows display filters to inverse colors
+    ;Send #^c ; use windows display filters to inverse colors
 
     ; activate tool for text markup/annotation/highlighting
     ; Send !h ; Hypothesis
@@ -248,16 +250,26 @@ TogglePresentationMode:
     @Desc: toggle windows 10 dictation feature and close it on click of any key other than the toggle key itself
 */
 dictationActive := false
+dicStartTime := 0
 Dictation:
     if (!dictationActive) {
-       SendInput #h ; open dictation
-       dictationActive := true
-       Hotkey, $F9, off ; deactivate hotkey so input can detect
-       Input, key, L1 M V, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-       if (ErrorLevel = "NewInput" or ErrorLevel = "Max" or InStr(ErrorLevel, "EndKey:"))
-       {
+        dicStartTime := A_TickCount
+        SendInput #h ; open dictation
+        dictationActive := true
+        Hotkey, $F9, off ; deactivate hotkey so input can detect
+        Loop {
+            dicOpenSince := A_TickCount - dicStartTime
+            if (A_TimeIdle < dicOpenSince-100) {
+                goto Dictation
+            }
+            Sleep, 100
+        }
+        /*
+        Input, key, L1 M V, {LButton}{RButton}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
+        if (ErrorLevel = "NewInput" or ErrorLevel = "Max" or InStr(ErrorLevel, "EndKey:")) {
           gosub Dictation
-       }
+        }
+        */
     } else {
         SendInput #h ; close dictation
         dictationActive := false

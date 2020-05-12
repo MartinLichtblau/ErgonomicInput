@@ -44,6 +44,10 @@ Home::
     Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
     return
 
+End::
+    MouseSpy()
+    return
+
 ; *Insert::
 
 
