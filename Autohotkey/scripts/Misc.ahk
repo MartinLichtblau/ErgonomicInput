@@ -24,10 +24,11 @@ Misc_Setup:
 */
 ShellWinMessage(wParam, lParam) {
     WinGetTitle, title, ahk_id %lParam%
+    ; tooltip Title: %title% ++ %lParam% ++ %wParam%
     if (wParam = 4 || wParam = 32772) {
-        if (Title != "") {
+        ; if (Title != "") {
             gosub CenterMouseOnActiveWindow
-        }
+        ; }
     }
 }
 
