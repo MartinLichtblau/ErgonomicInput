@@ -180,14 +180,16 @@ SpaceShiftEvent(state) {
     if(state) {
         if(!shiftSpaceDown) {
             AHI.SendKeyEvent(kbdId, lShiftSc, 1)
+            Send {LShift Down}
             shiftSpaceDown := true
             timeOfInitDown := A_TickCount
         }
     } else {
         AHI.SendKeyEvent(kbdId, lShiftSc, 0)
+        Send {LShift Up}
         shiftSpaceDown := false
         pressDuration := A_TickCount - timeOfInitDown
-        Sleep 1 ; #Alt1.2 =fix wait so it recognizes the LShift up event ; 0 or 1 ms seems to make a bigger difference
+        ;Sleep 1 ; #Alt1.2 =fix wait so it recognizes the LShift up event ; 0 or 1 ms seems to make a bigger difference
         ;Tooltip %A_TimeIdleKeyboard% %A_TimeIdlePhysical% %pressDuration% %A_PriorKey%
         if(A_PriorKey == "LShift" && pressDuration < 200) { ; A_TimeIdleKeyboard >= pressDuration && doesn't work since fast typing overlap
             AHI.SendKeyEvent(kbdId, spaceSc, 1)
