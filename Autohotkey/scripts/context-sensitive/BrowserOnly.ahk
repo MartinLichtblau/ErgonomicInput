@@ -16,9 +16,15 @@ BrowserTricks_Setup:
 
 #IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
 
+PgUp::Send  {WheelUp 17}
+PgDn::Send  {WheelDown 17}
+; +Space::Send {WheelDown 5}
+
 ; Copy link of notion block, making it globally accessible and enabling transclusion
 +^g::
-    Send {/}copy{Enter}
+    SendInput {/}copy
+    Sleep 100
+    SendInput {Enter}
     Sleep 400
     StringGetPos, pos, clipboard, #
     nplink := SubStr(clipboard, pos +2)
@@ -174,7 +180,7 @@ return
 ;---------------------------------Text-Website-URL Copy---------------------------------------------------------
 ^+m::
     clipboard = ; Empty clipboard
-    Send ^c
+    SendInput ^c
     ClipWait, 0.5
     if(ErrorLevel) { ; if nothing copied, nothing was selected, means: copy only URL
       cliptxt := 0
@@ -182,13 +188,13 @@ return
       cliptxt := clipboard
     }
 
-    Send ^l
+    SendInput ^l
     Sleep 100 ; wait until address bar is focused
     clipboard = ; Empty clipboard
-    Send ^c
+    SendInput ^c
     ClipWait, 0.5
     clipurl := clipboard
-    Send {f6}{f6}
+    SendInput {f6}{f6}
 
     if(cliptxt = 0) {
       cliptxt = %clipurl%
