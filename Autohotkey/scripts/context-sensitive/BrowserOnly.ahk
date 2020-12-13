@@ -173,12 +173,13 @@ return
 
     if (clipurl == "")
         Tooltip "clipurl is empty"
-	WinClip.Clear()
-	WinClip.SetHTML("<i>" cliptxt " <a href=" clipurl ">(" title ")</a></i>")
+	;WinClip.Clear()
+	;WinClip.SetHTML("<i>" cliptxt " <a href=" clipurl ">(" title ")</a></i>")
+	clipboard = *%cliptxt%* ([%title%](%clipurl%))
     return
 
 ;---------------------------------Text-Website-URL Copy---------------------------------------------------------
-^+m::
+^+k::
     clipboard = ; Empty clipboard
     SendInput ^c
     ClipWait, 0.5

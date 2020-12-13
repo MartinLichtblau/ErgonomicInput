@@ -250,20 +250,24 @@ TogglePresentationMode:
     @Desc: toggle windows 10 dictation feature and close it on click of any key other than the toggle key itself
 */
 dictationActive := false
-dicStartTime := 0
+;dicStartTime := 0
 Dictation:
+    ;tooltip Dictation %dictationActive%
     if (!dictationActive) {
-        dicStartTime := A_TickCount
-        SendInput #h ; open dictation
+        ;dicStartTime := A_TickCount
+        Send #h ; open dictation
         dictationActive := true
-        Hotkey, $F9, off ; deactivate hotkey so input can detect
+        ;Hotkey, $F9, off ; deactivate hotkey so input can detect
+        Sleep 300 ; needs to be bigger than A_TimeIdle < 100 for unknown reason, perhaps two different time-scales
+        ;tooltip %A_TimeIdle%
         Loop {
-            dicOpenSince := A_TickCount - dicStartTime
-            if (A_TimeIdle < dicOpenSince-100) {
+            ;dicOpenSince := A_TickCount - dicStartTime
+            if (A_TimeIdle < 100) { ; A_TimeIdle detects if any input happened
                 goto Dictation
             }
-            Sleep, 100
+            Sleep 200
         }
+
         /*
         Input, key, L1 M V, {LButton}{RButton}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
         if (ErrorLevel = "NewInput" or ErrorLevel = "Max" or InStr(ErrorLevel, "EndKey:")) {
@@ -271,8 +275,8 @@ Dictation:
         }
         */
     } else {
-        SendInput #h ; close dictation
+        Send #h ; close dictation
         dictationActive := false
-        Hotkey, $F9, on
+        ;Hotkey, $F9, on
     }
     return

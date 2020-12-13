@@ -129,6 +129,9 @@ ErgoNavi_Setup:
 
 ~RButton & v:: SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
 
+~ Ctrl & w::
+    LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc)
+    return
 ~RButton & x::
     LongPressCommand("x", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return

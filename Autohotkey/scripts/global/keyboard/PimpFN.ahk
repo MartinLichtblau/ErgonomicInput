@@ -30,7 +30,9 @@ $F7::LongPressCommand("F7", "{Media_Next}", "{F7}")
 $F8::LongPressCommand("F8", "!+l", "{F8}")
 
 ;--------------------------------------------F9 - F12
-$F9:: LongPressCommand("F9", "gosub Dictation", "^l")
+$F9::
+    gosub Dictation
+    return
 
 $F10::LongPressCommand("F10", "{F10}", "gosub TogglePresentationMode")
 
@@ -41,7 +43,10 @@ $F12:: LongPressCommand("F12", "{F12}", "#^c")
 
 ;--------------------------------------------Home - Insert
 Home::
-    Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
+    ; Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
+    {
+    DllCall("LockWorkStation")
+    }
     return
 
 End::
