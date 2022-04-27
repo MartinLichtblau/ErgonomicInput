@@ -30,7 +30,7 @@ SpecialKeys_Setup:
     AHI.SubscribeKey(kbdId, printScreenSc, true, Func("PrintScreenEvent"))
     AHI.SubscribeKey(kbdId, rAltSc, true, Func("RAltEvent"))
     AHI.SubscribeKey(kbdId, rCtrlSc, true, Func("RCtrlEvent"))
-    AHI.SubscribeKey(kbdId, FnSc, true, Func("FnEvent")) ; 355 = FN
+;    AHI.SubscribeKey(kbdId, FnSc, true, Func("FnEvent")) ; 355 = FN
     AHI.SubscribeKey(kbdId, GetKeySC("q"), true, Func("QEvent"))
     AHI.SubscribeKey(kbdId, GetKeySC("w"), true, Func("WEvent"))
     return
@@ -161,10 +161,32 @@ RCtrlEvent(state) {
 
 FnEvent(state) {
    if(state) {
-        AHI.SendKeyEvent(kbdId, escSc, 1)
+;         MouseClick,WheelDown,,,7,0,D,R
+;        AHI.SendKeyEvent(kbdId, GetKeySC("Down"), 1)
     } else {
-        AHI.SendKeyEvent(kbdId, escSc, 0)
+;        AHI.SendKeyEvent(kbdId, GetKeySC("Down"), 0)
+;        SendInput {Home}
     }
+}
+
+sc163:: Autoscroll()
+
+Autoscroll() {
+        ;MouseClick,WheelDown,,,3,0,D,R
+        ;SendInput {Down}
+        ; StartTime := A_TickCount
+       ; KeyWait, sc163
+        ;px_down := A_TickCount - StartTime
+        scroll_speed := 30
+        ;tooltip %px_down% %StartTime% %A_TickCount%
+        CoordMode, Mouse, Screen
+        MouseGetPos, X, Y
+        SendInput {MButton}
+        Sleep 100
+        ; tooltip %A_Cursor% ; Arrow is normal pointer and middle scroll is unknown
+        Y += scroll_speed ; move cursor 30px down to initiate slow down scroll
+        DllCall("SetCursorPos", "int", X, "int", Y)
+        return
 }
 
 /*

@@ -16,10 +16,6 @@ BrowserTricks_Setup:
 
 #IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
 
-PgUp::Send  {WheelUp 17}
-PgDn::Send  {WheelDown 17}
-; +Space::Send {WheelDown 5}
-
 ; Copy link of notion block, making it globally accessible and enabling transclusion
 +^g::
     SendInput {/}copy
@@ -56,36 +52,32 @@ Return
 ;RELEVANT ;---------------------------Opening new tab with currently marked text-------------------------------------
 $<^t::
 	KeyWait,t,T0.3
-    If ErrorLevel
-	{
+    If ErrorLevel {
 		cliptemp := clipboard
-		Send ^c
+		SendInput ^c
 
 		;Open content in new tab
-		Send ^l
-		Sleep 100
-		Send ^a^v!{Enter}
+		SendInput ^l
+		Sleep 300
+		SendInput ^v!{Enter} ;SendInput ^a^v!{Enter}
+
 
 		;If hotkey still pressed translate it
-		Sleep 400
-		If(GetKeyState("t", "P"))
-		{
+		Sleep 1000
+		If(GetKeyState("t", "P")) {
 			clipboard=https://translate.google.de/?source=osdd#en/de/%clipboard%
 			ClipWait
-			Send ^l
+			SendInput ^l
 			Sleep 400
-			Send ^v
-			Send {ENTER}
+			SendInput ^v
+			SendInput {ENTER}
 		}
-
 		clipboard := clipTemp
-	}
-	ELSE
-	{
+	} else {
 		SendInput ^t
 	}
 	KeyWait,t, ;not L, since that means logical. Physical is default!
-Return
+return
 
 ; RELEVANT ;------------------------Opening Bookmarks-bar to delete or save tab / URL-------------------------------------------------
 <^d::

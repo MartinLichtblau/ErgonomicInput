@@ -41,13 +41,39 @@ $^y::
     SendInput ^z
     return
 
-+^,::
-    output := StrReplace(clipboard, "`r`n", ", ")
-    SendInput %output%
+Tab & Right::
+    SendInput %RIGHTTAB_sc%
+    return
+Tab & Down::
+    SendInput %LEFTTAB_sc%
+    return
+;Tab up::SendInput {Tab}
+$*Tab::Tab
+;$*Tab up::return
+;$*Tab::
+    AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 1)
+    AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
     return
 
-+^.::
-    output := StrReplace(clipboard, "`r`n", ", ")
-    output := SubStr(output, 1, -2)  ;remove ending whitespace and comma
-    SendInput session_id = ANY(ARRAY[%output%])
-    return
+SendInput {Tab}
+
+; What is this code about? Well, I didn't use it lately, so...
+;+^,::
+;    output := StrReplace(clipboard, "`r`n", ", ")
+;    SendInput %output%
+;    return
+;
+;+^.::
+;    output := StrReplace(clipboard, "`r`n", ", ")
+;    output := SubStr(output, 1, -2)  ;remove ending whitespace and comma
+;    SendInput session_id = ANY(ARRAY[%output%])
+;    return
+
+/*
+    @Title: PageButtonScroll
+*/
+;PgUp::SendInput {WheelUp 3} ;{WheelUp 17} ; {Up 15}
+PgUp:: MouseClick,WheelUp,,,3,0,D,R
+;PgDn::SendInput {WheelDown 5} ;{WheelDown 17} ; {Down 15}
+PgDn::MouseClick,WheelDown,,,3,0,D,R
+; +Space::Send {WheelDown 5}

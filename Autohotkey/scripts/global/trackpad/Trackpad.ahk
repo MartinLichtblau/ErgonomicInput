@@ -28,67 +28,62 @@ Trackpad_Setup:
     return
 
 
-
+global trackpadLButtonDown := false
 MButtonEvent(state) {
     ;Tooltip MButtonEvent %state%
 	if(state){
         AHI.SendMouseButtonEvent(trackpadId, 0, 1) ; LButton down
+        trackpadLButtonDown := true
 	}
     else {
         AHI.SendMouseButtonEvent(trackpadId, 0, 0) ; LButton up
+        trackpadLButtonDown := false
     }
 }
 
+global trackpadMButtonDown := false
 RButtonEvent(state) {
     if(state) {
+        global downTime := A_TickCount
         AHI.SendMouseButtonEvent(trackpadId, 2, 1) ; MButton down
+        trackpadMButtonDown := true
         Start_MouseArrow()
     } else {
         Stop_MouseArrow()
         AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
+        pressDuration := A_TickCount - downTime
+        noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
+        if (pressDuration < 200 && noKeyInputBetween) {
+            Send {MButton down}
+            Sleep 50
+            Send {MButton up}
+        }
+        trackpadMButtonDown := false
     }
 }
 
+global trackpadRButtonDown := false
 LButtonEvent(state) {
 	if(state) {
+        global downTime := A_TickCount
         AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
+        trackpadRButtonDown := true
         Start_MouseScroll()
 	} else {
 	    Stop_MouseScroll()
         AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
+        gosub AltTabRelease
+        pressDuration := A_TickCount - downTime
+        noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
+        if (pressDuration < 200 && noKeyInputBetween) {
+            SendInput {RButton}
+        }
+        trackpadRButtonDown := false
 	}
 }
 
-/*
-    @Title LButtonScroll
-    @Desc:
-        - hold Lbutton to scroll by moving mouse
-        - LButton makes MButton click
-    @Reason: like this the right hand can scroll easily and the MButton-key is good enough for left clicks
-*/
-$*MButton:: return
-$*MButton up::
-    gosub AltTabRelease
-    ;gosub showKeyVars
-    ; if (A_PriorKey == "MButton" && A_TimeSincePriorHotkey < 200) {
-    if (A_PriorHotkey == "$*MButton" && A_TimeSincePriorHotkey < 200) {
-        Send {MButton down}
-        Sleep 50
-        Send {MButton up}
-    }
-    return
-
-/*
-    @Title RButtonScroll
-    @Desc: hold Rbutton to scroll by moving mouse
-    #note: I can't make it work like LButton. The left hardware trackpad button seems to be the problem. I tried everything!
-        after reboot all ok
-*/
-$*RButton::
-    return
-$*RButton up::
-    gosub AltTabRelease
-    if (A_PriorKey == "RButton" && A_TimeSincePriorHotkey < 200) {
-        SendInput {RButton}
-    }
-    return
+;$*RButton::
+;    return
+;$*RButton up::
+;
+;    return

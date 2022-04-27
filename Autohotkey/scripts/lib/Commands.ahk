@@ -134,39 +134,44 @@ OpenTabWOSelection(pressKey) {
 MoveWinBetweenScreens(pressKey) {
     KeyWait, %pressKey%, T0.3
     If ErrorLevel {
+        WinMaximize, A
+    } else {
+        ; SendInput {%pressKey% UP} ; need a workaround to suppress Windows magnifier being triggered by Win+
+        ; alternative is getting keystate and releasing LShift and LWin only after +key is physically released.
         SendInput {LWin Down}{LShift Down}{RIGHT}{LShift Up}{LWin Up}
-        Sleep 100
+        Sleep 50
         WinMaximize, A
         gosub CenterMouseOnActiveWindow
-    } else {
-        WinMaximize, A
     }
     KeyWait, %pressKey%
 }
+; Lwin & sc01B::
+; sc01B & Lwin::
+return ; to turn off Windows magnifier shortcut
+; Alternative
+
 
 /*
     @Title: ReadMode
     @Desc: one shortcut to activate the optimal environment for reading
 */
-readModeActive := false
 ReadMode:
-    readModeActive := !readModeActive
-    if(readModeActive) {
-            ; Highlight all quotes since often most concise part of whole text
-            Send ^l
-            Sleep 100
-            SendInput find{Tab}
-            Sleep 100
-            ; Lookup unicode of quotation marks, which are special characters, so ahk understands.
-              ; https://unicode-table.com/en/
-            Send [{U+201C}{U+0022}{U+201E}](.*?)[{U+201D}{U+0022}
-            Sleep 500
-            Send {Blind}{Text}]
-            Sleep 100
-            Send {Enter}
-    }
-
-    Send {F11}
+    ; Highlight all quotes since often most concise part of whole text
+    Send ^l
+    Sleep 100
+    SendInput [{U+201C}{U+0022}{U+201E}](.*?)[{U+201D}{U+201C}{U+0022}
+    SendInput ^a^c
+    SendInput find{Tab}
+    Sleep 100
+    ; Lookup unicode of quotation marks, which are special characters, so ahk understands.
+      ; https://unicode-table.com/en/
+    SendInput ^v
+    Sleep 500
+    SendInput {Blind}{Text}] ; Text mode
+    Sleep 500
+    Send {Enter}
+    Send {F6}{F6}
+    ;Send {F11}
     ;Send !r ; color for reading #
     ;Send #^c ; use windows display filters to inverse colors
 
@@ -174,7 +179,6 @@ ReadMode:
     ; Send !h ; Hypothesis
     ; Send !l ; Liner
     ; use Worldbrains Mememx
-
     return
 
 /*
@@ -249,34 +253,25 @@ TogglePresentationMode:
     @Title: Dictation
     @Desc: toggle windows 10 dictation feature and close it on click of any key other than the toggle key itself
 */
-dictationActive := false
-;dicStartTime := 0
 Dictation:
     ;tooltip Dictation %dictationActive%
-    if (!dictationActive) {
-        ;dicStartTime := A_TickCount
-        Send #h ; open dictation
-        dictationActive := true
-        ;Hotkey, $F9, off ; deactivate hotkey so input can detect
-        Sleep 300 ; needs to be bigger than A_TimeIdle < 100 for unknown reason, perhaps two different time-scales
-        ;tooltip %A_TimeIdle%
-        Loop {
-            ;dicOpenSince := A_TickCount - dicStartTime
-            if (A_TimeIdle < 100) { ; A_TimeIdle detects if any input happened
-                goto Dictation
-            }
-            Sleep 200
+    Send #h ; open dictation
+    Sleep 300 ; needs to be bigger than A_TimeIdle < 100 for unknown reasons
+    Loop {
+;        tooltip %A_TimeIdle%
+;        if (A_TimeIdle < 100) { ; A_TimeIdle detects if any input happened
+;            ; Dirty workaround to close dictation bar by pressing Win key instead of ESC
+;            SendInput {Lwin}
+;            Sleep 100
+;            SendInput {LWin}
+;            return
+;        }
+        if (A_TimeIdle < 100) { ; A_TimeIdle detects if any input happened
+            ; tooltip Stop!
+            SendInput #a ; #r works and #a is a responsive and efficient Alternative and opens Quick Settings
+            Sleep 150
+            SendInput {Esc}
+            break
         }
-
-        /*
-        Input, key, L1 M V, {LButton}{RButton}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-        if (ErrorLevel = "NewInput" or ErrorLevel = "Max" or InStr(ErrorLevel, "EndKey:")) {
-          gosub Dictation
-        }
-        */
-    } else {
-        Send #h ; close dictation
-        dictationActive := false
-        ;Hotkey, $F9, on
+        Sleep 200
     }
-    return

@@ -14,13 +14,16 @@ ErgoNavi_Setup:
     return
 
 ;--------------------------------------------RIGHT HAND
+#if trackpadMButtonDown
+$*MButton:: return
+
 ;--------------------SPECIAL KEYS
 ~MButton & n::
 ~MButton & l:: Enter
 
-~MButton & k:: Backspace
+~MButton & k:: Delete
 
-~MButton & h::Delete
+~MButton & h:: Backspace
 
 ~MButton & x::Esc
 
@@ -63,26 +66,31 @@ ErgoNavi_Setup:
 
 ~MButton & j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 
+#if
 
 ;--------------------------------------------LEFT HAND
-~RButton & 3:: SendInput %LEFTDESKTOP_sc%
+#if trackpadRButtonDown
+$*RButton:: return
 
-~RButton & 4:: SendInput %RIGHTDESKTOP_sc%
+RButton & 3:: Send %LEFTDESKTOP_sc%
+
+RButton & 4:: Send %RIGHTDESKTOP_sc%
 
 ~RButton & 5:: SendInput %WINVIEW_sc%
 
 ~RButton & w::
+    LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
+    return
 
 ~RButton & q::
-    Gosub gotoKeep
     return
 
 ~RButton & f::
+    LongPressCommand("f", REOPENCLOSEDTAB_sc, RELOAD_sc)
+    return
+
 ~RButton & a::
-    if (!GetKeyState("LAlt")) {
-        SendInput {LAlt down}
-    }
-    SendInput 9
+    SendInput %LEFTTAB_sc% ;LongPressCommand("s", LEFTTAB_sc, "^1")
     return
 
 ~RButton & g::
@@ -105,15 +113,16 @@ ErgoNavi_Setup:
   SendInput %GOBACK_sc%
   return
 
-~RButton & t:: SendInput %LEFTTAB_sc% ;LongPressCommand("s", LEFTTAB_sc, "^1")
+~RButton & t::
+    SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
+    return
 
 ~RButton & d::
     if (!GetKeyState("LAlt")) {
-        SendInput {LAlt down}
-    }
-    SendInput 8
-    return
-        ; LongPressCommand("d", CLOSETAB_sc, CLOSEWINDOW_sc)
+            SendInput {LAlt down}
+        }
+        SendInput 8
+        return
 
 ~RButton & z::
     SendInput %GOFORWARD_sc%
@@ -127,30 +136,24 @@ ErgoNavi_Setup:
     gosub AltTab
     return
 
-~RButton & v:: SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
+~RButton & v::
+    if (!GetKeyState("LAlt")) {
+        SendInput {LAlt down}
+    }
+    SendInput 9
+    return
+
+~RButton & x::Esc
+
+~RButton & Space::
+    gosub AltTab
+    return
+
+#if
 
 ~ Ctrl & w::
-    LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc)
-    return
-~RButton & x::
-    LongPressCommand("x", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
-    return
+   LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc)
+   return
 
 ;--------------------------------------------MISC
 ; $*RButton Up:: gosub AltTabRelease ; @TODO in conflict with @Trackpad MButton hotkeys. #open.merge
-
-gotoKeep:
-    SendInput %TABSEARCH_sc%
-    Sleep 300
-    SendInput Calendar
-    Sleep 100
-    SendInput {Enter}
-    Sleep 300
-    SendInput %LEFTTAB_sc%
-    Sleep 200
-    SendInput ^l
-    Sleep 200
-    SendRaw https://keep.google.com/#search  ;https://keep.google.com/{#}home
-    Sleep 100
-    SendInput {Enter}
-    return
