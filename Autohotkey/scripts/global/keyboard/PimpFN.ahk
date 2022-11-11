@@ -27,7 +27,7 @@ $F6::LongPressCommand("F6","{Media_Play_Pause}",  "{F6}")
 
 $F7::LongPressCommand("F7", "{Media_Next}", "{F7}")
 
-$F8::LongPressCommand("F8", "!+l", "{F8}")
+$F8::LongPressCommand("F8", "!l", "{F8}")
 
 ;--------------------------------------------F9 - F12
 $F9::LongPressCommand("F9", "gosub Dictation", "{F9}")
@@ -38,26 +38,27 @@ $F11::LongPressCommand("F11", "gosub ReadMode", "{F11}")
 
 $F12::LongPressCommand("F12", "#^c", "{F12}")
 
-
 ;--------------------------------------------Home - Insert
-Home::
-    {
-    DllCall("LockWorkStation")
-    }
-    return
+Home:: LongPressCommand("Home", "gosub ReadMode", "{Home}")
 
-End::
-    ;Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
-    ; MouseSpy()
-    SendInput #a
-    return
-Insert::
-		run ms-settings:sound
-		sleep, 1000
-		;send {Tab 6}
-		;send {Space}
-		return
+End::LongPressCommand("End", "#a", "{End}") ; open quick Windows quick settings
+MoveCursorToLeft()
 
+;MoveCursorToShow()
+touchscreenId := AHI.GetMouseId(0x056A, 0x5146)
+AHI.SendMouseButtonEvent(touchscraeenId, 1, 1)
+AHI.SendMouseButtonEvent(touchscreenId, 1, 0)
+;MouseMove, 1, 50,R
+;DllCall("SetCursorPos", "int", 5, "int", 5)
+;AHI.SendMouseMove(trackpadId, 5, 5)
+Return
 
+MoveCursorToShow() ;Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk ;LongPressCommand("End", "#a", "{End}") ; open quick Windows quick settings
+; Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
+; LongPressCommand("End", "gosub OpenSoundSettings", "{End}")
+; MouseSpy()
+return
+
+Insert:: DllCall("LockWorkStation")
 
 ;--------------------------------------------Specific Functions

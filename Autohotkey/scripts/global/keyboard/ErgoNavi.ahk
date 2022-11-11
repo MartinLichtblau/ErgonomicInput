@@ -18,82 +18,78 @@ ErgoNavi_Setup:
 $*MButton:: return
 
 ;--------------------SPECIAL KEYS
-~MButton & n::
-~MButton & l:: Enter
+*l:: Enter
+*Space:: Enter
 
-~MButton & k:: Delete
+*h:: Backspace
 
-~MButton & h:: Backspace
+*x:: Delete
 
-~MButton & x::Esc
+*u::Tab
 
-~MButton & u::Tab
-
-~MButton & b::
+*b::
   SendInput {RShift down}{Tab}{RShift up}
   return
 
 ;--------------------ARROW KEYS
-~MButton & e:: SendArrowKey("Up")
+*n:: SendArrowKey("Up")
+*k:: SendArrowKey("Left")
+*e:: SendArrowKey("Right")
+*m:: SendArrowKey("Down")
 
-~MButton & sc033:: ; sc033 = ,
-  SendArrowKey("Down")
-  return
+*i:: Home
+*o:: End
 
-~MButton & m::
-  SendArrowKey("Left")
-  return
+sc033::SendInput {Enter} ; sc033 = ,
 
-~MButton & i::
-  SendArrowKey("Right")
-  return
+sc034::SendInput #. ; sc034 == .
 
-~MButton & sc034:: Home ; sc034 == .
-
-~MButton & sc035:: End ; sc035 == -
+sc035:: return ; sc035 == -
 
 ;--------------------MOVE WINDOWS
-~MButton & sc01B:: MoveWinBetweenScreens("sc01B") ; sc01B = +
+sc01B:: MoveWinBetweenScreens("sc01B") ; sc01B = +
 
-~MButton & sc02B:: WinOrganizeRight("sc02B") ; sc02B = #
+sc02B:: WinOrganizeRight("sc02B") ; sc02B = #
 
-~MButton & sc028:: WinOrganizeLeft("sc028") ; sc028 = ä
+sc028:: WinOrganizeLeft("sc028") ; sc028 = ä
 
 ;--------------------MISC
-;~MButton & sc01A:: LongPressCommand("sc01A", ADDRESSBAR_sc, SEARCH_sc) ; sc01A = ü
+sc01A:: LongPressCommand("sc01A", ADDRESSBAR_sc, SEARCH_sc) ; sc01A = ü
 
-~MButton & sc019:: LongPressCommand("sc019", ADDRESSBAR_sc, SEARCH_sc) ; sc019 = ö
+sc019:: LongPressCommand("sc019", "{AppsKey}", SEARCH_sc) ; sc019 = ö
 
-~MButton & j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
+j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
+
+
+; Shift::SendInput {Enter}
 
 #if
 
 ;--------------------------------------------LEFT HAND
 #if trackpadRButtonDown
-$*RButton:: return
 
-RButton & 3:: Send %LEFTDESKTOP_sc%
+3:: Send %LEFTDESKTOP_sc%
 
-RButton & 4:: Send %RIGHTDESKTOP_sc%
+4:: Send %RIGHTDESKTOP_sc%
 
-~RButton & 5:: SendInput %WINVIEW_sc%
+5:: SendInput %WINVIEW_sc%
 
-~RButton & w::
+w::
     LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
 
-~RButton & q::
-    return
+q:: return
 
-~RButton & f::
+f::
     LongPressCommand("f", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
 
-~RButton & a::
+a::
     SendInput %LEFTTAB_sc% ;LongPressCommand("s", LEFTTAB_sc, "^1")
     return
 
-~RButton & g::
+g::
+    MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
     }
@@ -101,57 +97,63 @@ RButton & 4:: Send %RIGHTDESKTOP_sc%
     return
     ; OpenTabWOSelection("g") ; LongPressCommand("g", "^t", "^n")
 
-~RButton & p::
-    LongPressCommand("p", ADDRESSBAR_sc, SEARCH_sc)
+p::
+    goto SearchBookmarks
     return
 
-~RButton & r::
-    SendInput %GOFORWARD_sc%
+r::
+    SendInput ^+r
     return
 
-~RButton & s::
-  SendInput %GOBACK_sc%
-  return
+s::
+      if (!GetKeyState("LCtrl")) {
+              SendInput {LCtrl down}
+          }
+          SendInput {Tab}
+          return
 
-~RButton & t::
+t::
     SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
     return
 
-~RButton & d::
+d::
+    MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
             SendInput {LAlt down}
         }
         SendInput 8
         return
 
-~RButton & z::
-    SendInput %GOFORWARD_sc%
+z::
+    SendInput %GOFORWARD_sc% ;!{Right} ; Browser_Forward ;%GOFORWARD_sc%
     return
 
-~RButton & y::
-    SendInput %GOBACK_sc%
+y::
+    SendInput %GOBACK_sc% ;!{Left} ; %Browser_Back% %GOBACK_sc%
     return
 
-~RButton & c::
+c::
+    MoveCursorToLeft()
     gosub AltTab
     return
 
-~RButton & v::
+v::
+    MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
     }
     SendInput 9
     return
 
-~RButton & x::Esc
+x::Esc
 
-~RButton & Space::
+Space::
     gosub AltTab
     return
 
 #if
 
-~ Ctrl & w::
+~Ctrl & w::
    LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc)
    return
 

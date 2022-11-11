@@ -10,7 +10,7 @@ ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
 #Include %A_WorkingDir%\lib\Functions.ahk
-Global mouseId, ms_xSum, ms_ySum, ms_movementThreshold, ms_runflag, ms_isCursorChanged
+Global mouseId, ms_xSum, ms_ySum, ms_movementThreshold, ms_runflag, ms_isCursorChanged, output_stepSize
 return
 
 
@@ -24,7 +24,7 @@ Setup_MouseScroll(mId) {
 ms_InitVars(mId) {
     ms_runflag := false
     mouseId := mId
-    ms_movementThreshold := 2
+    ms_movementThreshold := 1
     gosub ms_ResetXY
 }
 
@@ -46,7 +46,7 @@ Stop_MouseScroll() {
     ; AHI.SubscribeMouseMoveRelative(mouseId, false, Func("ms_MouseMovement"))
     AHI.UnsubscribeMouseMoveRelative(mouseId)
     gosub ms_ResetXY
-    setTimer RestoreCursors, -100
+    setTimer RestoreCursor, -100
 }
 
 ; @Desc: run in parallel since it's a function
@@ -63,6 +63,7 @@ ms_MouseMovement(x, y) {
         abs_xSum := abs(ms_xSum) ; functions possible: ln/log = starts quick and slows down
         abs_ySum := abs(ms_ySum)   ; sqrt or * x to start quick
         ; Tooltip %abs_xSum% %abs_ySum%
+        ;Tooltip %ms_xSum% %ms_ySum%
         if(abs_xSum > ms_movementThreshold || abs_ySum > ms_movementThreshold) {
             ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum)
         }
@@ -76,10 +77,10 @@ ms_MouseMovement(x, y) {
 */
 ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum) {
     if(abs_ySum >= abs_xSum) { ; up/down
-        if (ms_ySum > 0) {
-            MouseClick,WheelDown,,,%abs_xSum%,0,D,R
+        if (ms_ySum > 0) { ; @TODO write if to use better scrolling (postmw) for Chrome
+            MouseClick,WheelDown,,,%abs_xSum%,0,D,R ;PostMW(-ms_ySum)
         } else {
-            MouseClick,WheelUp,,,%abs_xSum%,0,D,R
+            MouseClick,WheelUp,,,%abs_xSum%,0,D,R ;PostMW(-ms_ySum)
         }
     } else { ; right/left
         if (ms_xSum > 0) {
@@ -88,8 +89,18 @@ ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum) {
             MouseClick,WheelLeft,,,%abs_ySum%,0,D,R
         }
     }
-    ; Tooltip i=%i% | ms_xSum: %ms_xSum% | ms_ySum: %ms_ySum% | abs_xSum: %abs_xSum% | abs_ySum: %abs_ySum% ;top left is minus for x and y
+    ;Tooltip i=%output_stepSize% | ms_xSum: %ms_xSum% | ms_ySum: %ms_ySum% | abs_xSum: %abs_xSum% | abs_ySum: %abs_ySum% ;top left is minus for x and y
     gosub ms_ResetXY
+}
+
+PostMW(delta)
+{ ;http://msdn.microsoft.com/en-us/library/windows/desktop/ms645617(v=vs.85).aspx
+  CoordMode, Mouse, Screen
+  MouseGetPos, x, y
+  Modifiers := 0x8*GetKeyState("ctrl") | 0x1*GetKeyState("lbutton") | 0x10*GetKeyState("mbutton")
+              |0x2*GetKeyState("rbutton") | 0x4*GetKeyState("shift") | 0x20*GetKeyState("xbutton1")
+              |0x40*GetKeyState("xbutton2")
+  PostMessage, 0x20A, delta << 16 | Modifiers, y << 16 | x ,, A
 }
 
 /*

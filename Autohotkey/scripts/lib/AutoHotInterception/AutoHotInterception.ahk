@@ -3,12 +3,25 @@
 class AutoHotInterception {
 	_contextManagers := {}
 
-	__New(cls := "Manager") {
+	__New() {
 		bitness := A_PtrSize == 8 ? "x64" : "x86"
 		dllName := "interception.dll"
-		dllFile := A_LineFile "\..\" bitness "\" dllName
+		if (A_IsCompiled){
+			dllFile := A_LineFile "\..\Lib\" bitness "\" dllName
+			FileCreateDir, Lib
+			FileInstall, Lib\AutoHotInterception.dll, Lib\AutoHotInterception.dll
+			if (bitness == "x86"){
+				FileCreateDir, Lib\x86
+				FileInstall, Lib\x86\interception.dll, Lib\x86\interception.dll
+			} else {
+				FileCreateDir, Lib\x64
+				FileInstall, Lib\x64\interception.dll, Lib\x64\interception.dll
+			}
+		} else {
+			dllFile := A_LineFile "\..\" bitness "\" dllName
+		}
 		if (!FileExist(dllFile)) {
-			MsgBox % "Unable to find lib\" bitness "\" dllName ", exiting...`nYou should extract both x86 and x64 folders from the library folder in interception.zip into AHI's lib folder."
+			MsgBox % "Unable to find " dllFile ", exiting...`nYou should extract both x86 and x64 folders from the library folder in interception.zip into AHI's lib folder."
 			ExitApp
 		}
 
@@ -22,16 +35,20 @@ class AutoHotInterception {
 		DllCall("FreeLibrary", "Ptr", hModule)
 
 		dllName := "AutoHotInterception.dll"
-		dllFile := A_LineFile "\..\" dllName
-		hintMessage := "Try right-clicking lib\" dllName ", select Properties, and if there is an 'Unblock' checkbox, tick it`nAlternatively, running Unblocker.ps1 in the lib folder (ideally as admin) can do this for you."
+		if (A_IsCompiled){
+			dllFile := A_LineFile "\..\Lib\" dllName
+		} else {
+			dllFile := A_LineFile "\..\" dllName
+		}
+		hintMessage := "Try right-clicking " dllFile ", select Properties, and if there is an 'Unblock' checkbox, tick it`nAlternatively, running Unblocker.ps1 in the lib folder (ideally as admin) can do this for you."
 		if (!FileExist(dllFile)) {
-			MsgBox % "Unable to find lib\" dllName ", exiting..."
+			MsgBox % "Unable to find " dllFile ", exiting..."
 			ExitApp
 		}
 
 		asm := CLR_LoadLibrary(dllFile)
 		try {
-			this.Instance := asm.CreateInstance("AutoHotInterception." cls)
+			this.Instance := asm.CreateInstance("AutoHotInterception.Manager")
 		}
 		catch {
 			MsgBox % dllName " failed to load`n`n" hintMessage
@@ -156,12 +173,28 @@ class AutoHotInterception {
 		this.Instance.UnsubscribeKey(id, code)
 	}
 
+	SubscribeKeyboard(id, block, callback, concurrent := false) {
+		this.Instance.SubscribeKeyboard(id, block, callback, concurrent)
+	}
+	
+	UnsubscribeKeyboard(id){
+		this.Instance.UnsubscribeKeyboard(id)
+	}
+
 	SubscribeMouseButton(id, btn, block, callback, concurrent := false) {
 		this.Instance.SubscribeMouseButton(id, btn, block, callback, concurrent)
 	}
 
 	UnsubscribeMouseButton(id, btn){
 		this.Instance.UnsubscribeMouseButton(id, btn)
+	}
+
+	SubscribeMouseButtons(id, block, callback, concurrent := false) {
+		this.Instance.SubscribeMouseButtons(id, block, callback, concurrent)
+	}
+	
+	UnsubscribeMouseButtons(id){
+		this.Instance.UnsubscribeMouseButtons(id)
 	}
 
 	SubscribeMouseMove(id, block, callback, concurrent := false) {
@@ -191,12 +224,22 @@ class AutoHotInterception {
 	; ------------- Context Mode ----------------
 	; Creates a context class to make it easy to turn on/off the hotkeys
 	CreateContextManager(id) {
-		if (this._contextManagers.ContainsKey(id)) {
+		if (this._contextManagers.HasKey(id)) {
 			Msgbox % "ID " id " already has a Context Manager"
 			ExitApp
 		}
 		cm := new this.ContextManager(this, id)
 		this._contextManagers[id] := cm
+		return cm
+	}
+
+	RemoveContextManager(id) {
+		if (!this._contextManagers.HasKey(id)) {
+			Msgbox % "ID " id " does not have a Context Manager"
+			ExitApp
+		}
+		this._contextManagers[id].Remove()
+		this._contextManagers.Delete(id)
 		return cm
 	}
 
@@ -212,6 +255,10 @@ class AutoHotInterception {
 		OnContextCallback(state) {
 			Sleep 0
 			this.IsActive := state
+		}
+		
+		Remove(){
+			this.parent.Instance.RemoveContextCallback(this.id)
 		}
 	}
 }

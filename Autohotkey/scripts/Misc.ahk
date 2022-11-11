@@ -11,9 +11,10 @@ Misc_Setup:
     ; RegisterShellHookWindow #ref: https://autohotkey.com/board/topic/60521-how-to-activate-the-window-currently-under-mouse-cursor/
     Gui +LastFound
     hWnd := WinExist()
-    DllCall("RegisterShellHookWindow", UInt,Hwnd)
+    DllCall("RegisterShellHookWindow", UInt,Hwnd) ; better version at https://www.autohotkey.com/boards/viewtopic.php?t=59149
     MsgNum := DllCall("RegisterWindowMessage", Str,"SHELLHOOK")
     OnMessage(MsgNum, "ShellWinMessage")
+    sendTabOnRelease := 1
     return
 
 
@@ -21,11 +22,19 @@ Misc_Setup:
 /*
     @Title: ShellWinMessage
     @Desc: subscribed to get called when active/focused window changes
+    @Parameter: See https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registershellhookwindow
+        wParam = what happend
+        lParam = which window was involved
 */
-ShellWinMessage(wParam, lParam) {
+ShellWinMessage(wParam, lParam, yParam, xParam) {
+    ;Sleep 100
     WinGetTitle, title, ahk_id %lParam%
-    ; tooltip Title: %title% ++ %lParam% ++ %wParam%
-    if (wParam = 4 || wParam = 32772) {
+    WinGetClass, class, ahk_id %lParam%
+    WinGet, Pid, PID, ahk_id %lParam%
+    WinGet, Process, ProcessName, ahk_id %lParam%
+    ;WinGet, ActiveControlList, ControlList, ahk_id %lParam% ; rarely works nore explanatory if it does
+    ;tooltip %yParam% %xParam% | wParam: %wParam% | lParam: %lParam% | PID: %Pid% | Title: %title% | Class: %class% | Process: %Process% | Controls: %ActiveControlList%, 0, 3000 ;, 20 ; tooltip NR. 20
+    if (wParam = 4 || wParam = 32772 || wParam = 54 || wParam = 53 || wParam = 16) {
         ; if (Title != "") {
             gosub CenterMouseOnActiveWindow
         ; }
@@ -41,21 +50,24 @@ $^y::
     SendInput ^z
     return
 
+sendTabOnRelease = 1
 Tab & Right::
+    sendTabOnRelease := 0
     SendInput %RIGHTTAB_sc%
     return
 Tab & Down::
+    sendTabOnRelease := 0
     SendInput %LEFTTAB_sc%
     return
-;Tab up::SendInput {Tab}
-$*Tab::Tab
-;$*Tab up::return
-;$*Tab::
-    AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 1)
-    AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
+Tab & PgDn::
+    sendTabOnRelease := 0
+    SendInput !{Right}
     return
-
-SendInput {Tab}
+$Tab::
+    if sendTabOnRelease
+        SendInput {Tab} ;     AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 1) AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
+    sendTabOnRelease := 1
+    return
 
 ; What is this code about? Well, I didn't use it lately, so...
 ;+^,::
@@ -73,7 +85,21 @@ SendInput {Tab}
     @Title: PageButtonScroll
 */
 ;PgUp::SendInput {WheelUp 3} ;{WheelUp 17} ; {Up 15}
-PgUp:: MouseClick,WheelUp,,,3,0,D,R
+PgUp::
+    MouseClick,WheelUp,,,3,0,D,R
+    return
+
 ;PgDn::SendInput {WheelDown 5} ;{WheelDown 17} ; {Down 15}
-PgDn::MouseClick,WheelDown,,,3,0,D,R
+PgDn::
+    MouseClick,WheelDown,,,3,0,D,R
+    return
 ; +Space::Send {WheelDown 5}
+
+!WheelUp::
+    SendInput %LEFTTAB_sc%
+    return
+
+!WheelDown::
+    SendInput %RIGHTTAB_sc%
+    return
+

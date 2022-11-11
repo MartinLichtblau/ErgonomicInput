@@ -123,63 +123,65 @@ WatchCursor:
     ToolTip, xpos:%xpos% ypos:%ypos%`n ahk_id %id%`nahk_class %class%`n%title%`nControl: %control%
 return
 
-SystemCursor(OnOff=1)   ; INIT = "I","Init"; OFF = 0,"Off"; TOGGLE = -1,"T","Toggle"; ON = others
-{
-    static AndMask, XorMask, $, h_cursor
-        ,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13 ; system cursors
-        , b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13   ; blank cursors
-        , h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13   ; handles of default cursors
-    if (OnOff = "Init" or OnOff = "I" or $ = "")       ; init when requested or at first call
-    {
-        $ = h                                          ; active default cursors
-        VarSetCapacity( h_cursor,4444, 1 )
-        VarSetCapacity( AndMask, 32*4, 0xFF )
-        VarSetCapacity( XorMask, 32*4, 0 )
-        system_cursors = 32512,32513,32514,32515,32516,32642,32643,32644,32645,32646,32648,32649,32650
-        StringSplit c, system_cursors, `,
-        Loop %c0%
-        {
-            h_cursor   := DllCall( "LoadCursor", "uint",0, "uint",c%A_Index% )
-            h%A_Index% := DllCall( "CopyImage",  "uint",h_cursor, "uint",2, "int",0, "int",0, "uint",0 )
-            b%A_Index% := DllCall("CreateCursor","uint",0, "int",0, "int",0
-                , "int",32, "int",32, "uint",&AndMask, "uint",&XorMask )
-        }
-    }
-    if (OnOff = 0 or OnOff = "Off" or $ = "h" and (OnOff < 0 or OnOff = "Toggle" or OnOff = "T"))
-        $ = b  ; use blank cursors
-    else
-        $ = h  ; use the saved cursors
+; Source:   Serenity - https://autohotkey.com/board/topic/32608-changing-the-system-cursor/
+; Modified: iseahound - https://www.autohotkey.com/boards/viewtopic.php?t=75867
 
-    Loop %c0%
-    {
-        h_cursor := DllCall( "CopyImage", "uint",%$%%A_Index%, "uint",2, "int",0, "int",0, "uint",0 )
-        DllCall( "SetSystemCursor", "uint",h_cursor, "uint",c%A_Index% )
-    }
+SetSystemCursor(Cursor := "", cx := 0, cy := 0) {
+
+   static SystemCursors := {APPSTARTING: 32650, ARROW: 32512, CROSS: 32515, HAND: 32649, HELP: 32651, IBEAM: 32513, NO: 32648
+                        ,  SIZEALL: 32646, SIZENESW: 32643, SIZENS: 32645, SIZENWSE: 32642, SIZEWE: 32644, UPARROW: 32516, WAIT: 32514}
+
+   if (Cursor = "") {
+      VarSetCapacity(AndMask, 128, 0xFF), VarSetCapacity(XorMask, 128, 0)
+
+      for CursorName, CursorID in SystemCursors {
+         CursorHandle := DllCall("CreateCursor", "ptr", 0, "int", 0, "int", 0, "int", 32, "int", 32, "ptr", &AndMask, "ptr", &XorMask, "ptr")
+         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
+      }
+      return
+   }
+
+   if (Cursor ~= "^(IDC_)?(?i:AppStarting|Arrow|Cross|Hand|Help|IBeam|No|SizeAll|SizeNESW|SizeNS|SizeNWSE|SizeWE|UpArrow|Wait)$") {
+      Cursor := RegExReplace(Cursor, "^IDC_")
+
+      if !(CursorShared := DllCall("LoadCursor", "ptr", 0, "ptr", SystemCursors[Cursor], "ptr"))
+         throw Exception("Error: Invalid cursor name")
+
+      for CursorName, CursorID in SystemCursors {
+         CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", cx, "int", cy, "uint", 0, "ptr")
+         DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
+      }
+      return
+   }
+
+   if FileExist(Cursor) {
+      SplitPath Cursor,,, Ext ; auto-detect type
+      if !(uType := (Ext = "ani" || Ext = "cur") ? 2 : (Ext = "ico") ? 1 : 0)
+         throw Exception("Error: Invalid file type")
+
+      if (Ext = "ani") {
+         for CursorName, CursorID in SystemCursors {
+            CursorHandle := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x10, "ptr")
+            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
+         }
+      } else {
+         if !(CursorShared := DllCall("LoadImage", "ptr", 0, "str", Cursor, "uint", uType, "int", cx, "int", cy, "uint", 0x8010, "ptr"))
+            throw Exception("Error: Corrupted file")
+
+         for CursorName, CursorID in SystemCursors {
+            CursorHandle := DllCall("CopyImage", "ptr", CursorShared, "uint", 2, "int", 0, "int", 0, "uint", 0, "ptr")
+            DllCall("SetSystemCursor", "ptr", CursorHandle, "int", CursorID) ; calls DestroyCursor
+         }
+      }
+      return
+   }
+
+   throw Exception("Error: Invalid file path or cursor name")
 }
 
-SetCursorIDC_SIZE()
-{
-    SystemCursors = 32512IDC_ARROW,32513IDC_IBEAM,32514IDC_WAIT,32515IDC_CROSS
-    	,32516IDC_UPARROW,32640IDC_SIZE,32641IDC_ICON,32642IDC_SIZENWSE
-    	,32643IDC_SIZENESW,32644IDC_SIZEWE,32645IDC_SIZENS,32646IDC_SIZEALL
-    	,32648IDC_NO,32649IDC_HAND,32650IDC_APPSTARTING,32651IDC_HELP
-
-    NewCursorID := 32646
-    CursorHandle := DllCall( "LoadCursor", Uint,0, Int,NewCursorID )
-    Loop, Parse, SystemCursors, `,
-    {
-        CursorHandle := DllCall( "LoadCursor", Uint,0, Int,NewCursorID )
-
-        CursorHandle := DllCall( "CopyImage", Uint,CursorHandle, Uint,0x2, Int,0, Int,0, Int,0 )
-        res := DllCall( "SetSystemCursor", Uint,CursorHandle, Int,SubStr( A_Loopfield, 1, 5 ) )
-        DLLCall( "DestroyCursor", Uint,CursorHandle )
-    }
+RestoreCursor() {
+   return DllCall("SystemParametersInfo", "uint", SPI_SETCURSORS := 0x57, "uint", 0, "ptr", 0, "uint", 0)
 }
-
-RestoreCursors:
-	SPI_SETCURSORS := 0x57
-	DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
-	return
 
 SendArrowKey(keyName)
 {
@@ -202,3 +204,36 @@ SendArrowKey(keyName)
     }
 }
 
+MoveCursorToShow(){
+    touchscreenId := AHI.GetMouseId(0x056A, 0x5146)
+    ;AHI.SendMouseMoveAbsolute(touchscreenId, 30000, 30000)
+    ;SetSystemCursor("")
+    ;RestoreCursors()
+    AHI.SendMouseMove(touchscreenId, 4, 50)
+    Sleep 1000
+
+    AHI.SendMouseButtonEvent(touchscreenId, 0, 1) ;SendInput {LButton Down}
+    Sleep 100 ; Essential, or click won't be recognized
+    AHI.SendMouseButtonEvent(touchscreenId, 0, 0) ;SendInput {LButton Up}
+    ;AHI.SendMouseMove(trackpadId, 1, -100)
+    ;AHI.SendMouseMove(trackpadId, 1, 100)
+    ;MouseMove, 0,100,, R
+    ;Sleep 10
+    ;MouseMove, 0,-100,, R
+    ;SendInput {LButton}
+    ;MouseGetPos,,, WinUMID
+    ;tooltip %WinUMID%
+    ;WinActivate, ahk_id %WinUMID%
+
+        ;if(%A_Cursor% = Unknown){
+        ;MouseMove, 0,-1,, R ; move cursor up 1px, only to make it show up, in case touch was shown before.
+        ;SetSystemCursor("")
+        ;sleep 1000
+        ;SendInput {LButton}
+        ; DllCall("ShowCursor", Int,1)
+        ;}
+}
+
+MoveCursorToLeft(){
+    MouseMove, 0, 1000,
+}

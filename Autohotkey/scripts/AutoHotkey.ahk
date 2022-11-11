@@ -8,7 +8,7 @@
 SetWorkingDir, %A_ScriptDir%
 #SingleInstance force
 #Persistent
-Process, priority,, High
+Process, priority,, Realtime
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 SetBatchLines -1
 ListLines Off
@@ -18,6 +18,7 @@ ListLines Off
 SetKeyDelay 0 ; , -1 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
 	; but then in some scripts you need to add delays manually (mostly if interacts with UI)
 SetMouseDelay, 0
+DetectHiddenWindows, Off
 
 /*
     @Title: SetupIncludedAutoExecutes
@@ -27,8 +28,8 @@ SetMouseDelay, 0
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
 
-GoSub, SpecialKeys_Setup
 GoSub, Trackpad_Setup
+GoSub, SpecialKeys_Setup
 GoSub, ShortcutList_Setup
 GoSub, Misc_Setup
 
@@ -54,17 +55,23 @@ return ; end of auto-execute section
     @Title: ReloadAhk
     @Desc: reload Autohotkey, including all scripts
 */
+;Del::ReloadAhk()
 $^s::
 	KeyWait, s, T0.3
 	if ErrorLevel {
-		SplashTextOn,,, Reloading Autohotkey....
-		Sleep 1000
-		Reload
+        ReloadAhk()
 	} else {
 		SendInput ^s
 	}
 	KeyWait, s,
     return
+
+ReloadAhk() {
+    SplashTextOn,,, Reloading Autohotkey....
+	Sleep 1000
+	Reload
+	return
+}
 
 /*
     @Title: AhkKeyhistory

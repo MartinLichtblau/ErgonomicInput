@@ -10,21 +10,21 @@
 #Include %A_WorkingDir%\global\trackpad\MouseScroll.ahk
 #Include %A_WorkingDir%\global\trackpad\MouseArrow.ahk
 
-Global trackpadId
+global trackpadId
 
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
 
-    global AHI
     if(AHI == "")
-        global AHI := new AutoHotInterception()
+        global AHI
+        AHI := new AutoHotInterception()
     trackpadId := AHI.GetMouseId(0x0000, 0x0000)
     AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 0, true, Func("LButtonEvent"))
     Setup_MouseScroll(trackpadId)
-    Setup_MouseArrow(trackpadId)
+    ;Setup_MouseArrow(trackpadId)
     return
 
 
@@ -43,14 +43,15 @@ MButtonEvent(state) {
 
 global trackpadMButtonDown := false
 RButtonEvent(state) {
+    ;Tooltip RButtonEvent %state%
     if(state) {
         global downTime := A_TickCount
-        AHI.SendMouseButtonEvent(trackpadId, 2, 1) ; MButton down
+        ;AHI.SendMouseButtonEvent(trackpadId, 2, 1) ; MButton down
         trackpadMButtonDown := true
-        Start_MouseArrow()
+        Start_MouseArrow(trackpadId)
     } else {
         Stop_MouseArrow()
-        AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
+        ;AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
         pressDuration := A_TickCount - downTime
         noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
         if (pressDuration < 200 && noKeyInputBetween) {
@@ -64,19 +65,22 @@ RButtonEvent(state) {
 
 global trackpadRButtonDown := false
 LButtonEvent(state) {
+    ;Tooltip LButtonEvent %state%, 400, 100
 	if(state) {
         global downTime := A_TickCount
-        AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
+        ;AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
         trackpadRButtonDown := true
         Start_MouseScroll()
 	} else {
 	    Stop_MouseScroll()
-        AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
+        ;AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
         gosub AltTabRelease
         pressDuration := A_TickCount - downTime
         noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
         if (pressDuration < 200 && noKeyInputBetween) {
             SendInput {RButton}
+        } else if (GetKeyState("LCtrl")) {
+            SendInput {LCtrl up} ; necessary for making press-hold-switch-release-select commands like for tab switching possible
         }
         trackpadRButtonDown := false
 	}

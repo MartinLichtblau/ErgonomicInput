@@ -12,15 +12,17 @@ return
     @note: integrated AltTab function only works without ~, hence without letting the modifier pass through.
 */
 AltTab:
+    ;Tooltip AltTab
 	if WinExist("Task Switching") { ; in german if WinExist("Programmumschaltung")
         ;Tooltip "just tab"
-        Send {Tab}
+        SendInput {Tab}
 	} else {
 		;Tooltip "Open menu"
-		Send {Alt Down}{Tab}
+		SendInput {Alt Down}{Tab}
 	}
 return
 AltTabRelease:
+    ;Tooltip AltTabRelease
     if (GetKeyState("LAlt")) {
         ;if (A_PriorHotkey == "~RButton & t" || A_PriorHotkey == "~RButton & s") ; #delete: just a dirty fix for the slowly opening Quicktabs extension
         ;    Sleep 200
@@ -141,7 +143,7 @@ MoveWinBetweenScreens(pressKey) {
         SendInput {LWin Down}{LShift Down}{RIGHT}{LShift Up}{LWin Up}
         Sleep 50
         WinMaximize, A
-        gosub CenterMouseOnActiveWindow
+        ;gosub CenterMouseOnActiveWindow ; do it all with ShellWinMessage instead
     }
     KeyWait, %pressKey%
 }
@@ -157,20 +159,20 @@ return ; to turn off Windows magnifier shortcut
 */
 ReadMode:
     ; Highlight all quotes since often most concise part of whole text
-    Send ^l
-    Sleep 100
-    SendInput [{U+201C}{U+0022}{U+201E}](.*?)[{U+201D}{U+201C}{U+0022}
-    SendInput ^a^c
-    SendInput find{Tab}
-    Sleep 100
+    Send +^f
+    Sleep 200
+    SendInput [{U+201C}{U+0022}{U+201E}](.*?)[{U+201D}{U+201C}{U+0022}]
+    ;SendInput ^a^c
+    ;SendInput find{Tab}
+    ;Sleep 100
     ; Lookup unicode of quotation marks, which are special characters, so ahk understands.
       ; https://unicode-table.com/en/
-    SendInput ^v
-    Sleep 500
-    SendInput {Blind}{Text}] ; Text mode
-    Sleep 500
-    Send {Enter}
-    Send {F6}{F6}
+    ;SendInput ^v
+    ;Sleep 500
+    ;SendInput {Blind}{Text}] ; Text mode
+    Sleep 1500
+    Send {Esc} ;Send {Enter}
+    ;Send {F6}{F6}
     ;Send {F11}
     ;Send !r ; color for reading #
     ;Send #^c ; use windows display filters to inverse colors
@@ -221,10 +223,10 @@ muteToggle := false
 MuteTabsToggle:
     muteToggle := !muteToggle
     if(muteToggle) {
-        SendInput +!,
+        SendInput !3
         ; Tooltip mute all but current tab
     } else {
-        SendInput +!.
+        SendInput !4
         ; Tooltip unmute all tabs
     }
     return
@@ -275,3 +277,23 @@ Dictation:
         }
         Sleep 200
     }
+    return
+
+/*
+    @Title: OpenWindowsSetting-Sound
+    @Desc: Opens sound settings in Windows 11
+*/
+OpenSoundSettings:
+    run ms-settings:sound
+	sleep, 1000
+	;send {Tab 6}
+	;send {Space}
+	return
+
+SearchBookmarks:
+    SendInput ^l
+    Sleep 50
+    SendInput bm
+    Sleep 50
+    SendInput {Space}
+    return

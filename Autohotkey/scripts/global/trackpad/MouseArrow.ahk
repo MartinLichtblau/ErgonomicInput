@@ -19,8 +19,8 @@ Setup_MouseArrow(mId) {
 ma_InitVars_MouseArrow(mId) {
     ma_runflag := false
     mouseId := mId
-    ma_moveDistThreshold := 3 ; @TODO CONFIG VAR
-    ma_HomeEndThreshold := 4*ma_moveDistThreshold ; @TODO CONFIG VAR
+    ma_moveDistThreshold := 16 ; @TODO CONFIG VAR ! MOST important user config !! Def: Movement is accumulated and this is the threshold when arrows are send
+    ma_HomeEndThreshold := 2*ma_moveDistThreshold ; @TODO CONFIG VAR
     ma_pauseTimeThreshold := 100
 }
 
@@ -31,9 +31,10 @@ ma_ResetRuntimeVars() {
     ma_mouseMoveCount := 0
 }
 
-Start_MouseArrow() {
+Start_MouseArrow(mId) {
     ;Tooltip Start_MouseArrow
     ; SetSystemCursor("IDC_IBEAM")
+    Setup_MouseArrow(mId)
     ma_runflag := true
     ma_ResetRuntimeVars()
     AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseArrowEvent"))
@@ -70,6 +71,7 @@ ExitOnInput_MouseArrow() {
         ; has ever been is naive and such thinking won't lead to innovation. Trackpad has: VELOCITY, DISTANCE/FORCE per time
         ; DIRECTION and more
 MouseArrowEvent(x, y){
+    ;Tooltip MouseArrowEvent
     static timeOfLastMouseEvent
     if(!ma_runflag)
         return ; Exit
@@ -103,7 +105,7 @@ MouseArrowEvent(x, y){
 ma_ProcessMovement(x, y){
     ; @TODO don't work with negative numbers at all, instead ste a flag xNeg, yNeg
     ma_xSum := ma_xSum + x ; multipled by a factor to boost right/left movements so they are as sensitive as up/down
-    ma_ySum := ma_ySum + y
+    ma_ySum := ma_ySum + y * 0.7
     ma_abs_xSum := abs(ma_xSum)
     ma_abs_ySum := abs(ma_ySum)
     ma_mouseMoveCount++
@@ -128,31 +130,18 @@ ma_ProcessMovement(x, y){
 }
 
 ma_SendStrideMode(keyName) {
-    static repeatStrideThreshold := 9 ; @TODO CONFIG VAR
     ;Tooltip, ma_clickStride: %ma_clickStride% %i%,,1000,2
 
-    if(ma_clickStride = 0) { ; initial send mode
-        ;Tooltip %ma_mouseMoveCount% ; %ma_abs_xSum% %ma_abs_ySum%
-        ; send one click
-        ;if (ma_mouseMoveCount >= 6) {
-            ma_SendArrowKey(keyName)
-        ;} else {
-         ;   ma_SendHomeEndCom(keyName)
-        ;}
-    } else if(ma_clickStride > repeatStrideThreshold) { ; @TODO time based seems better to grasp.
         ; if it's bigger switch to other mode like in windows the keyboard auto repeat inertia t
         ; send further clicks if above stride_threshold
         ;Tooltip %ma_abs_ySum%
-        if(!GetKeyState("Ctrl", "P") && (ma_abs_ySum > ma_HomeEndThreshold || ma_abs_xSum > ma_HomeEndThreshold)) { ; reached threshold fast
+        if((ma_abs_ySum > ma_HomeEndThreshold || ma_abs_xSum > ma_HomeEndThreshold) && !GetKeyState("Ctrl", "P")) { ; reached threshold fast
             ;@TODO link factors to other values and make them static/global
                 ; #idea increase responsivness by using X/Y of this one movement and not the sum
             ma_SendHomeEndCom(keyName)
         } else { ; reached threshold normal
             ma_SendArrowKey(keyName)
         }
-    } else {
-        gosub ma_ResetXY
-    }
     ma_clickStride++
 }
 

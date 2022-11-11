@@ -3,7 +3,7 @@
     @Desc: fundamental changes of special keys, concerning mapping and behavior
     #Maturity:7
 */
-#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+;#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
 
 SpecialKeys_Setup:
     #SingleInstance force
@@ -13,7 +13,8 @@ SpecialKeys_Setup:
     global spaceSc, tabSc, lShiftSc, capslockSc, lAltSc, lCtrlSc, lWinSc, printScreenSc, rAltSc, rCtrlSc, r2c1Sc, FnSc
         , escSc, enterSc, deleteSc, backspaceSc
     if(AHI == "")
-        global AHI := new AutoHotInterception()
+        global AHI
+        AHI := new AutoHotInterception()
     global kbdId = 1 ; use 1st/primary keyboard to intercept and also for output
     Gosub GetAllKeySc
 
@@ -169,6 +170,7 @@ FnEvent(state) {
     }
 }
 
+; Fn Key Press
 sc163:: Autoscroll()
 
 Autoscroll() {
@@ -177,14 +179,19 @@ Autoscroll() {
         ; StartTime := A_TickCount
        ; KeyWait, sc163
         ;px_down := A_TickCount - StartTime
-        scroll_speed := 30
+        move_distance := 60
         ;tooltip %px_down% %StartTime% %A_TickCount%
+        ;MoveCursorToShow()
+
         CoordMode, Mouse, Screen
         MouseGetPos, X, Y
+        MouseMove, 0, 0,, R ;DllCall("SetCursorPos", "int", X, "int", Y+1)
+        Y -= move_distance ; move cursor 30px UP first
+        DllCall("SetCursorPos", "int", X, "int", Y)
         SendInput {MButton}
         Sleep 100
         ; tooltip %A_Cursor% ; Arrow is normal pointer and middle scroll is unknown
-        Y += scroll_speed ; move cursor 30px down to initiate slow down scroll
+        Y += move_distance ; move cursor 30px down to initiate slow down scroll
         DllCall("SetCursorPos", "int", X, "int", Y)
         return
 }
@@ -225,9 +232,10 @@ SpaceShiftEvent(state) {
     #note use send instead of SendInput so that Input commands are able to detect it
 */
 
-<+Del::
+/*<+Del::
     SendInput {LCtrl down}{Del}{LCtrl up}
     return
+*/
 
 <+BS::
     SendInput {LCtrl down}{BS}{LCtrl up}

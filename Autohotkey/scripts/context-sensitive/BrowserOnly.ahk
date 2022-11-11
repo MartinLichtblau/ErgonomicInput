@@ -14,8 +14,10 @@ BrowserTricks_Setup:
     return
 
 
-#IfWinActive, ahk_exe Chrome.exe ;; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
-
+;GroupAdd, BrowserGroup, ahk_exe Chrome.exe
+;GroupAdd, BrowserGroup, ahk_exe vivaldi.exe
+;#IfWinActive ahk_group BrowserGroup
+#If (!trackpadRButtonDown && !trackpadMButtonDown) && (WinActive("ahk_exe Chrome.exe") || WinActive("ahk_exe vivaldi.exe") || WinActive("ahk_exe msedge.exe")) ; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
 ; Copy link of notion block, making it globally accessible and enabling transclusion
 +^g::
     SendInput {/}copy
@@ -80,15 +82,15 @@ $<^t::
 return
 
 ; RELEVANT ;------------------------Opening Bookmarks-bar to delete or save tab / URL-------------------------------------------------
-<^d::
-	KeyWait, d, T0.3                         	  
+^d::
+	KeyWait, d, T0.3
     If ErrorLevel {
 		Send ^d
 		KeyWait, d, L
 		Sleep 100
 		Send {Tab}{Tab}{Tab}{Tab}{Enter} ;Delete Bookmark
 	} else {
-		Send !+b  ;Open bookmark extension to add website
+		SendInput !1  ;Open bookmark extension to add website
 	}
 	KeyWait, d,
 return
@@ -96,13 +98,13 @@ return
 ^+c::
     clipboard = ; Empty clipboard
     Send ^c
-    ClipWait, 0.5
+    ClipWait, 0.1
     if(ErrorLevel) { ; if nothing copied, nothing was selected, means: copy only URL
         Send ^l
     	Sleep 50 ; wait until address bar is focused
     	clipboard = ; Empty clipboard
         Send ^c
-    	Send {f6}{f6}
+    	Send {Esc}
     	return
     }
 
@@ -113,7 +115,7 @@ return
     Send ^c
     ClipWait, 0.5
     clipurl := clipboard
-	Send {f6}{f6}
+	Send {Esc}
 	; IfInString, clipurl, metapdf
 	; 	SendInput 1 ;Annotate
 
@@ -187,7 +189,7 @@ return
     SendInput ^c
     ClipWait, 0.5
     clipurl := clipboard
-    SendInput {f6}{f6}
+    SendInput {Esc} ;{f6}{f6}
 
     if(cliptxt = 0) {
       cliptxt = %clipurl%
