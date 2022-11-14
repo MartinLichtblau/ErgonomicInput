@@ -78,10 +78,9 @@ w::
     LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
 
-q::
-    SendInput ^l ;+^s ;(Vivaldi Quick Search)
-    return
-s
+q::return
+
+
 f::
     LongPressCommand("f", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
@@ -104,15 +103,17 @@ p::
     return
 
 r::
+    if (!GetKeyState("LCtrl")) {
+      SendInput {LCtrl down}
+    }
+    SendInput {Tab}
+    return
     SendInput ^+r
     return
 
 s::
-    if (!GetKeyState("LCtrl")) {
-          SendInput {LCtrl down}
-      }
-      SendInput {Tab}
-      return
+    SendInput !d ; or ^l ;+^s ;(Vivaldi Quick Search)
+    return
 
 t::
     SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
