@@ -15,8 +15,29 @@ Misc_Setup:
     MsgNum := DllCall("RegisterWindowMessage", Str,"SHELLHOOK")
     OnMessage(MsgNum, "ShellWinMessage")
     sendTabOnRelease := 1
+    SetTimer, ChangePowerPlan, 50
     return
 
+
+PowerPlan := 0
+ChangePowerPlan() {
+    global PowerPlan
+    ;tooltip %A_Cursor%
+    if (A_TimeIdlePhysical < 5000 || trackpadRButtonDown || trackpadMButtonDown) {
+        if (powerPlan != 2){
+            SendInput !^2
+            powerPlan := 2
+            Tooltip 2, 0,0
+        }
+    } else {
+        if (powerPlan != 3 && A_Cursor != "Unknown"){
+            SendInput !^3
+            powerPlan := 3
+            Tooltip 3, 0,0
+        }
+    }
+    return
+}
 
 
 /*
@@ -34,7 +55,7 @@ ShellWinMessage(wParam, lParam, yParam, xParam) {
     WinGet, Process, ProcessName, ahk_id %lParam%
     ;WinGet, ActiveControlList, ControlList, ahk_id %lParam% ; rarely works nore explanatory if it does
     ;tooltip %yParam% %xParam% | wParam: %wParam% | lParam: %lParam% | PID: %Pid% | Title: %title% | Class: %class% | Process: %Process% | Controls: %ActiveControlList%, 0, 3000 ;, 20 ; tooltip NR. 20
-    if (wParam = 4 || wParam = 32772 || wParam = 54 || wParam = 53 || wParam = 16) {
+    if (wParam = 4 || wParam = 32772 || wParam = 54 || wParam = 53) { ; remove wParam = 16 since it reacts to invisibles
         ; if (Title != "") {
             gosub CenterMouseOnActiveWindow
         ; }
@@ -103,3 +124,4 @@ PgDn::
     SendInput %RIGHTTAB_sc%
     return
 
+; >>>>>>>>>>>>>>>>>>>>>>>>>>> Programming (related) addons

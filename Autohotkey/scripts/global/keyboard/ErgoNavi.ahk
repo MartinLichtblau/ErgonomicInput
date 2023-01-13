@@ -141,7 +141,7 @@ c::
     return
 
 v::
-    MoveCursorToLeft()
+    ; MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
     }

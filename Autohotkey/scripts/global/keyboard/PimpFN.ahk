@@ -14,9 +14,9 @@ PimpFN_setup:
 ;--------------------------------------------F1 - F4
 $F1::LongPressCommand("F1", "{Volume_Mute}", "{F1}")
 
-$F2::LongPressCommand("F2", "{Volume_Down}", "{F2}")
+$F2::LongPressCommand("F2", "{Volume_Down 4}", "{F2}")
 
-$F3::LongPressCommand("F3", "{Volume_Up}", "{F3}")
+$F3::LongPressCommand("F3", "{Volume_Up 4}", "{F3}")
 
 $F4::LongPressCommand("F4", "gosub MuteTabsToggle", "{F4}")
 
