@@ -15,29 +15,46 @@ Misc_Setup:
     MsgNum := DllCall("RegisterWindowMessage", Str,"SHELLHOOK")
     OnMessage(MsgNum, "ShellWinMessage")
     sendTabOnRelease := 1
-    SetTimer, ChangePowerPlan, 50
+    SetTimer, ChangePowerPlan, 75
+    powerPlan := 1
+    global ActivateDVFS := true
     return
 
 
-PowerPlan := 0
+/*
+    Change Power Plan using Throttlestop. Goal: Do DVFS based on factors like user input
+*/
+
 ChangePowerPlan() {
-    global PowerPlan
+    if (!ActivateDVFS) {
+        return
+    }
     ;tooltip %A_Cursor%
-    if (A_TimeIdlePhysical < 5000 || trackpadRButtonDown || trackpadMButtonDown) {
-        if (powerPlan != 2){
-            SendInput !^2
-            powerPlan := 2
-            Tooltip 2, 0,0
+    ;BlockInput, On
+    ;Sleep 10
+    if (A_TimeIdlePhysical < 3000 || trackpadRButtonDown || trackpadMButtonDown) {
+        if (powerPlan != 1){
+            SendInput +!1
+            powerPlan := 1
+            ;Tooltip 1, 0,0
         }
     } else {
-        if (powerPlan != 3 && A_Cursor != "Unknown"){
-            SendInput !^3
-            powerPlan := 3
-            Tooltip 3, 0,0
+        if (powerPlan != 4 && Autoscroll != 1){ ; && A_Cursor != "Unknown"
+            SendInput +!4
+            powerPlan := 4
+            ;Tooltip 4, 0,0
         }
     }
+    ;BlockInput, Off
     return
 }
+
+^!1::
+    ActivateDVFS := !ActivateDVFS
+    tooltip DVFS %ActivateDVFS%
+    SetTimer, RemoveToolTip, -3000
+    return
+
 
 
 /*
@@ -55,7 +72,7 @@ ShellWinMessage(wParam, lParam, yParam, xParam) {
     WinGet, Process, ProcessName, ahk_id %lParam%
     ;WinGet, ActiveControlList, ControlList, ahk_id %lParam% ; rarely works nore explanatory if it does
     ;tooltip %yParam% %xParam% | wParam: %wParam% | lParam: %lParam% | PID: %Pid% | Title: %title% | Class: %class% | Process: %Process% | Controls: %ActiveControlList%, 0, 3000 ;, 20 ; tooltip NR. 20
-    if (wParam = 4 || wParam = 32772 || wParam = 54 || wParam = 53) { ; remove wParam = 16 since it reacts to invisibles
+    if (wParam = 4 || wParam = 54 || wParam = 53) { ; remove wParam = 16 since it reacts to invisibles + remove  || wParam = 32772 (cause it centers cursor top left when switching desktops)
         ; if (Title != "") {
             gosub CenterMouseOnActiveWindow
         ; }
@@ -124,4 +141,12 @@ PgDn::
     SendInput %RIGHTTAB_sc%
     return
 
+
+
+
+
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>> Programming (related) addons
+
+; Exception handling for swith Desktop: if Win+Ctrl+3/4 is pressed, then do nothing
+;*^#3:: Tooltip 3
+;*#^4:: Tooltip 4

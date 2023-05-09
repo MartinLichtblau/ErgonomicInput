@@ -1,0 +1,9 @@
+diff a/Autohotkey/scripts/global/trackpad/Trackpad.ahk b/Autohotkey/scripts/global/trackpad/Trackpad.ahk	(rejected hunks)
+@@ -65,6 +65,7 @@
+ 
+ global trackpadRButtonDown := false
+ LButtonEvent(state) {
++    SendInput {blank}
+     ;Tooltip LButtonEvent %state%, 400, 100
+ 	if(state) {
+         global downTime := A_TickCount

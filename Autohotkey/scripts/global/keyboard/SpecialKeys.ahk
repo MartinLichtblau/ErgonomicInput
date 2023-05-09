@@ -173,13 +173,14 @@ FnEvent(state) {
 ; Fn Key Press
 sc163:: Autoscroll()
 
+Global Autoscroll := 0
 Autoscroll() {
         ;MouseClick,WheelDown,,,3,0,D,R
         ;SendInput {Down}
         ; StartTime := A_TickCount
        ; KeyWait, sc163
         ;px_down := A_TickCount - StartTime
-        move_distance := 60
+        move_distance := 80
         ;tooltip %px_down% %StartTime% %A_TickCount%
         ;MoveCursorToShow()
 
@@ -193,6 +194,18 @@ Autoscroll() {
         ; tooltip %A_Cursor% ; Arrow is normal pointer and middle scroll is unknown
         Y += move_distance ; move cursor 30px down to initiate slow down scroll
         DllCall("SetCursorPos", "int", X, "int", Y)
+        if (A_Cursor == "Unknown") {
+            Autoscroll := 1
+            Loop
+            {
+                Sleep, 100
+                 ;tooltip : %Autoscroll% %A_Cursor%
+                if (A_Cursor != "Unknown")
+                    break
+            }
+        }
+        Autoscroll := 0
+        ;tooltip : %Autoscroll% %A_Cursor%
         return
 }
 

@@ -68,9 +68,24 @@ j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 ;--------------------------------------------LEFT HAND
 #if trackpadRButtonDown
 
-3:: Send %LEFTDESKTOP_sc%
+3::
+    SendInput %LEFTDESKTOP_sc%
+    ;Keywait, 3
+    return
 
-4:: Send %RIGHTDESKTOP_sc%
+    /**
+    if (!GetKeyState("LCtrl") && !GetKeyState("LWin")) {
+       Tooltip here
+       Send {LCtrl Down}{LWin Down}
+    }
+    SendInput {Left}
+    return
+    */
+
+4::
+    SendInput %RIGHTDESKTOP_sc%
+    ;Keywait, 4
+    return
 
 5:: SendInput %WINVIEW_sc%
 
@@ -120,12 +135,13 @@ t::
     return
 
 d::
-    MoveCursorToLeft()
+    ; MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
-            SendInput {LAlt down}
-        }
-        SendInput 8
-        return
+        SendInput {LAlt down}
+    }
+    SendInput 9
+    return
+
 
 z::
     SendInput %GOFORWARD_sc% ;!{Right} ; Browser_Forward ;%GOFORWARD_sc%
@@ -141,12 +157,12 @@ c::
     return
 
 v::
-    ; MoveCursorToLeft()
+    MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
-        SendInput {LAlt down}
-    }
-    SendInput 9
-    return
+            SendInput {LAlt down}
+        }
+        SendInput 8
+        return
 
 x::Esc
 

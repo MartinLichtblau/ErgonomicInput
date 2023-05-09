@@ -41,7 +41,7 @@ MButtonEvent(state) {
     }
 }
 
-global bm  := false
+global trackpadMButtonDown := false
 RButtonEvent(state) {
     ;Tooltip RButtonEvent %state%
     if(state) {
@@ -65,7 +65,6 @@ RButtonEvent(state) {
 
 global trackpadRButtonDown := false
 LButtonEvent(state) {
-    SendInput {blank}
     ;Tooltip LButtonEvent %state%, 400, 100
 	if(state) {
         global downTime := A_TickCount

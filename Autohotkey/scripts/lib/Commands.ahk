@@ -160,7 +160,7 @@ return ; to turn off Windows magnifier shortcut
 ReadMode:
     ; Highlight all quotes since often most concise part of whole text
     Send +^f
-    Sleep 200
+    Sleep 800
     SendInput [{U+201C}{U+0022}{U+201E}](.*?)[{U+201D}{U+201C}{U+0022}]
     ;SendInput ^a^c
     ;SendInput find{Tab}
@@ -297,3 +297,8 @@ SearchBookmarks:
     Sleep 50
     SendInput {Space}
     return
+
+
+RemoveToolTip:
+ToolTip
+return
