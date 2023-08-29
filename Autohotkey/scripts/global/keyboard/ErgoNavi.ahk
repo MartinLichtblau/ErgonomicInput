@@ -101,7 +101,11 @@ f::
     return
 
 a::
-    SendInput %LEFTTAB_sc% ;LongPressCommand("s", LEFTTAB_sc, "^1")
+    if WinActive("ahk_exe explorer.exe") {  
+        SendInput ^+{Tab}
+    } else {
+        SendInput %LEFTTAB_sc% ;LongPressCommand("s", LEFTTAB_sc, "^1")
+    } 
     return
 
 g::
@@ -131,7 +135,11 @@ s::
     return
 
 t::
-    SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
+    if WinActive("ahk_exe explorer.exe") {  
+        SendInput ^{Tab}
+    } else {
+        SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
+    } 
     return
 
 d::
