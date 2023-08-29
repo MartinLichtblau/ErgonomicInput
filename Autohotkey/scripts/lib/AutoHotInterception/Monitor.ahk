@@ -3,7 +3,7 @@ Script to show data flowing from Interception
 */
 #SingleInstance force
 #Persistent
-#include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+#include Lib\AutoHotInterception.ahk
 
 OutputDebug DBGVIEWCLEAR
 

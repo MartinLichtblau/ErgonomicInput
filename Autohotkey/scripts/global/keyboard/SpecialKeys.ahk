@@ -3,7 +3,7 @@
     @Desc: fundamental changes of special keys, concerning mapping and behavior
     #Maturity:7
 */
-;#include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+;#include %A_ScriptDir%\lib\AutoHotInterception\lib\AutoHotInterception.ahk
 
 SpecialKeys_Setup:
     #SingleInstance force
