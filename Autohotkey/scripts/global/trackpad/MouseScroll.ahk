@@ -9,7 +9,7 @@ SetBatchLines -1
 ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
-#Include %A_WorkingDir%\lib\Functions.ahk
+#Include %A_ScriptDir%\lib\Functions.ahk
 Global mouseId, ms_xSum, ms_ySum, ms_movementThreshold, ms_runflag, ms_isCursorChanged, output_stepSize
 return
 

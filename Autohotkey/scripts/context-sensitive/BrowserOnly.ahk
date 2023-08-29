@@ -3,14 +3,14 @@
     @Desc: expand and adapt functions only present in browsers
     @Maturity:3
 */
-#Include %A_WorkingDir%\lib\WinClipAPI.ahk
-#Include %A_WorkingDir%\lib\WinClip.ahk
+#Include %A_ScriptDir%\lib\WinClipAPI.ahk
+#Include %A_ScriptDir%\lib\WinClip.ahk
 wc := new WinClip
 
 BrowserTricks_Setup:
     #SingleInstance force
     #Persistent
-    #Include %A_WorkingDir%\lib\Commands.ahk
+    #Include %A_ScriptDir%\lib\Commands.ahk
     return
 
 

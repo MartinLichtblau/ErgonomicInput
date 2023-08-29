@@ -6,7 +6,7 @@
 Misc_Setup:
     #SingleInstance force
     #Persistent
-    #Include %A_WorkingDir%\lib\Commands.ahk
+    #Include %A_ScriptDir%\lib\Commands.ahk
 
     ; RegisterShellHookWindow #ref: https://autohotkey.com/board/topic/60521-how-to-activate-the-window-currently-under-mouse-cursor/
     Gui +LastFound

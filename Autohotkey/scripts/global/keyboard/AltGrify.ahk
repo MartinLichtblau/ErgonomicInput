@@ -9,7 +9,7 @@
 AltGrify_Setup:
     #SingleInstance force
     #Persistent
-    #Include %A_WorkingDir%\lib\Functions.ahk
+    #Include %A_ScriptDir%\lib\Functions.ahk
     return
 
 #IF !trackpadMButtonDown AND !trackpadRButtonDown

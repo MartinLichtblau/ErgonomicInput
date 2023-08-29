@@ -6,7 +6,7 @@
 #SingleInstance force
 #Persistent
 
-#Include %A_WorkingDir%\lib\Functions.ahk
+#Include %A_ScriptDir%\lib\Functions.ahk
 Global mouseId, ma_xSum, ma_ySum, ma_abs_xSum, ma_abs_ySum, ma_runflag, ma_clickStride, ma_waitForMovementPause, ma_moveDistThreshold, ma_HomeEndThreshold, ma_pauseTimeThreshold, ma_mouseMoveCount
 return
 

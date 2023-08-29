@@ -9,8 +9,8 @@ ErgoNavi_Setup:
     #SingleInstance force
     #Persistent
     ;Process,priority,,High
-    #Include %A_WorkingDir%\lib\Commands.ahk
-    #Include %A_WorkingDir%\lib\Functions.ahk
+    #Include %A_ScriptDir%\lib\Commands.ahk
+    #Include %A_ScriptDir%\lib\Functions.ahk
     return
 
 ;--------------------------------------------RIGHT HAND

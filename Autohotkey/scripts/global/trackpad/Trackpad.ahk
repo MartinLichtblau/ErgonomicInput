@@ -4,11 +4,11 @@
     @Recommendation: for right-handed, swap left and right button in windows, so right trackpoint-hand has LButton underneath
     #note don't know how to do all that only for trackpad
 */
-#include %A_WorkingDir%\lib\AutoHotInterception\AutoHotInterception.ahk
-#Include %A_WorkingDir%\lib\Commands.ahk
-#Include %A_WorkingDir%\lib\Functions.ahk
-#Include %A_WorkingDir%\global\trackpad\MouseScroll.ahk
-#Include %A_WorkingDir%\global\trackpad\MouseArrow.ahk
+#include %A_ScriptDir%\lib\AutoHotInterception\AutoHotInterception.ahk
+#Include %A_ScriptDir%\lib\Commands.ahk
+#Include %A_ScriptDir%\lib\Functions.ahk
+#Include %A_ScriptDir%\global\trackpad\MouseScroll.ahk
+#Include %A_ScriptDir%\global\trackpad\MouseArrow.ahk
 
 global trackpadId
 

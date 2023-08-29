@@ -7,8 +7,8 @@
 PimpFN_setup:
     #SingleInstance force
     #Persistent
-    #Include %A_WorkingDir%\lib\Commands.ahk
-    #Include %A_WorkingDir%\lib\Functions.ahk
+    #Include %A_ScriptDir%\lib\Commands.ahk
+    #Include %A_ScriptDir%\lib\Functions.ahk
     return
 
 ;--------------------------------------------F1 - F4
@@ -53,8 +53,8 @@ AHI.SendMouseButtonEvent(touchscreenId, 1, 0)
 ;AHI.SendMouseMove(trackpadId, 5, 5)
 Return
 
-MoveCursorToShow() ;Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk ;LongPressCommand("End", "#a", "{End}") ; open quick Windows quick settings
-; Run %A_WorkingDir%\lib\AutoHotInterception\Monitor.ahk
+MoveCursorToShow() ;Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk ;LongPressCommand("End", "#a", "{End}") ; open quick Windows quick settings
+; Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
 ; LongPressCommand("End", "gosub OpenSoundSettings", "{End}")
 ; MouseSpy()
 return
