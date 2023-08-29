@@ -25,13 +25,8 @@ ms_InitVars(mId) {
     ms_runflag := false
     mouseId := mId
     ms_movementThreshold := 1
-    gosub ms_ResetXY
 }
 
-ms_ResetXY:
-    ms_xSum := 0
-    ms_ySum := 0
-    return
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
@@ -45,7 +40,6 @@ Stop_MouseScroll() {
     ms_runflag := false
     ; AHI.SubscribeMouseMoveRelative(mouseId, false, Func("ms_MouseMovement"))
     AHI.UnsubscribeMouseMoveRelative(mouseId)
-    gosub ms_ResetXY
     setTimer RestoreCursor, -100
 }
 
@@ -58,15 +52,8 @@ ms_ExitOnInput() {
 ms_MouseMovement(x, y) {
     if(ms_runflag) {
         ;Tooltip ms_FixedAxisScrolling %x% %y%
-        ms_xSum := ms_xSum + x
-        ms_ySum := ms_ySum + y
-        abs_xSum := abs(ms_xSum) ; functions possible: ln/log = starts quick and slows down
-        abs_ySum := abs(ms_ySum)   ; sqrt or * x to start quick
-        ; Tooltip %abs_xSum% %abs_ySum%
-        ;Tooltip %ms_xSum% %ms_ySum%
-        if(abs_xSum > ms_movementThreshold || abs_ySum > ms_movementThreshold) {
-            ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum)
-        }
+        ms_FixedAxisScrolling(1.5*x, 2.2*y) ;ms_FixedAxisScrolling(1.1**x, 1.3**y)
+
     }
 }
 
@@ -75,22 +62,21 @@ ms_MouseMovement(x, y) {
     @Desc: scrolls on fixed axis, hence diagonal movements aren't possible like on an unrestricted plane.
         That is so simply because with any move both X and Y are reset.
 */
-ms_FixedAxisScrolling(ms_xSum, ms_ySum, abs_xSum, abs_ySum) {
-    if(abs_ySum >= abs_xSum) { ; up/down
-        if (ms_ySum > 0) { ; @TODO write if to use better scrolling (postmw) for Chrome
-            MouseClick,WheelDown,,,%abs_xSum%,0,D,R ;PostMW(-ms_ySum)
+ms_FixedAxisScrolling(x, y) {
+    if(abs(y) >= abs(x)) { ; up/down
+        if (y > 0) { ; @TODO write if to use better scrolling (postmw) for Chrome
+            PostMW(-y) ;MouseClick,WheelDown,,,%abs_xSum%,0,D,R ;
         } else {
-            MouseClick,WheelUp,,,%abs_xSum%,0,D,R ;PostMW(-ms_ySum)
+            PostMW(-y) ;MouseClick,WheelUp,,,%abs_xSum%,0,D,R ;
         }
     } else { ; right/left
-        if (ms_xSum > 0) {
-            MouseClick,WheelRight,,,%abs_ySum%,0,D,R
+        if (x > 0) {
+            MouseClick,WheelRight,,,%x%,0,D,R
         } else {
-            MouseClick,WheelLeft,,,%abs_ySum%,0,D,R
+            MouseClick,WheelLeft,,,abs(x),0,D,R
         }
     }
     ;Tooltip i=%output_stepSize% | ms_xSum: %ms_xSum% | ms_ySum: %ms_ySum% | abs_xSum: %abs_xSum% | abs_ySum: %abs_ySum% ;top left is minus for x and y
-    gosub ms_ResetXY
 }
 
 PostMW(delta)

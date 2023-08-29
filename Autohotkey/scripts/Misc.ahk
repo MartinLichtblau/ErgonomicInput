@@ -15,8 +15,8 @@ Misc_Setup:
     MsgNum := DllCall("RegisterWindowMessage", Str,"SHELLHOOK")
     OnMessage(MsgNum, "ShellWinMessage")
     sendTabOnRelease := 1
-    SetTimer, ChangePowerPlan, 75
-    powerPlan := 1
+    SetTimer, ChangePowerPlan, 10
+    global powerPlan := 1
     global ActivateDVFS := true
     return
 
@@ -29,10 +29,12 @@ ChangePowerPlan() {
     if (!ActivateDVFS) {
         return
     }
+    ;tooltip powerPlan %powerPlan%
     ;tooltip %A_Cursor%
     ;BlockInput, On
     ;Sleep 10
     if (A_TimeIdlePhysical < 3000 || trackpadRButtonDown || trackpadMButtonDown) {
+        ;tooltip A_TimeIdlePhysical %A_TimeIdlePhysical%
         if (powerPlan != 1){
             SendInput +!1
             powerPlan := 1

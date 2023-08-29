@@ -199,4 +199,11 @@ return
     clipboard = [%prunedCliptxt%](%clipurl%)
     return
 
+; Open link in new foreground tab with right click
+#IF (A_Cursor == "Unknown")
+RButton::
+    SendInput {LCtrl down}{LShift down}{LButton down}{LButton up}{LCtrl up}{LShift up} ; Navigate one tab back in chrome
+    return
+
+
 #IfWinActive ;; end of condition IfWinActive

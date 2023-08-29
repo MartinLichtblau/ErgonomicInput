@@ -68,7 +68,6 @@ $^s::
 
 ReloadAhk() {
     SplashTextOn,,, Reloading Autohotkey....
-	Sleep 1000
 	Reload
 	return
 }

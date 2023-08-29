@@ -59,7 +59,7 @@ RButtonEvent(state) {
             Sleep 50
             Send {MButton up}
         }
-        trackpadMButtonDown := false
+        trackpadMButtonDown := false ; @TODO #bug sometimes this var doesn't get reset. Probably because no event is fired.
     }
 }
 
@@ -78,7 +78,9 @@ LButtonEvent(state) {
         pressDuration := A_TickCount - downTime
         noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
         if (pressDuration < 200 && noKeyInputBetween) {
-            SendInput {RButton}
+            ;SendInput {RButton}
+            AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
+            AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
         } else if (GetKeyState("LCtrl")) {
             SendInput {LCtrl up} ; necessary for making press-hold-switch-release-select commands like for tab switching possible
         }

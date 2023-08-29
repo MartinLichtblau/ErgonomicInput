@@ -10,8 +10,8 @@ ShortcutList_Setup:
     global WINVIEW_sc = "#{Tab}" ; Opening overview showing all desktop and open windows
     global LEFTDESKTOP_sc = "{LCtrl Down}{LWin Down}{Left}{LWin Up}{LCtrl Up}" ; switch one desktop to the left
     global RIGHTDESKTOP_sc = "{LCtrl Down}{LWin Down}{Right}{LWin Up}{LCtrl Up}" ; switch one desktop to the right
-    global LEFTTAB_sc = "^{PgUp}" ; switch one tab to the left
-    global RIGHTTAB_sc = "^{PgDn}" ; switch one tab to the right
+    global LEFTTAB_sc = "^{PgUp}" ; "^+{Tab}" ; switch one tab to the left
+    global RIGHTTAB_sc = "^{PgDn}" ; "^{Tab}" ; switch one tab to the right
     global GOBACK_sc := "{Browser_Back}" ; "!{Left}"
     global GOFORWARD_sc = "{Browser_Forward}" ; "!{Right}"
     global ADDRESSBAR_sc = "^l" ; focus address bar""

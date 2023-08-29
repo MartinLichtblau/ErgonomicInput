@@ -196,15 +196,9 @@ Autoscroll() {
         DllCall("SetCursorPos", "int", X, "int", Y)
         if (A_Cursor == "Unknown") {
             Autoscroll := 1
-            Loop
-            {
-                Sleep, 100
-                 ;tooltip : %Autoscroll% %A_Cursor%
-                if (A_Cursor != "Unknown")
-                    break
-            }
+        } else {
+            Autoscroll := 0
         }
-        Autoscroll := 0
         ;tooltip : %Autoscroll% %A_Cursor%
         return
 }
