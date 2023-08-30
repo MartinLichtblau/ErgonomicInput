@@ -10,163 +10,44 @@ SpecialKeys_Setup:
     #Persistent
 
     ; Init Variables
-    global spaceSc, tabSc, lShiftSc, capslockSc, lAltSc, lCtrlSc, lWinSc, printScreenSc, rAltSc, rCtrlSc, r2c1Sc, FnSc
-        , escSc, enterSc, deleteSc, backspaceSc
     if(AHI == "")
         global AHI
         AHI := new AutoHotInterception()
     global kbdId = 1 ; use 1st/primary keyboard to intercept and also for output
-    Gosub GetAllKeySc
-
-    ; Subscribe to Keys
-    AHI.SubscribeKey(kbdId, spaceSc, true, Func("SpaceShiftEvent"))
-    AHI.SubscribeKey(kbdId, lShiftSc, true, Func("LShiftEvent"))
-    AHI.SubscribeKey(kbdId, rShiftSc, true, Func("RShiftEvent"))
-    AHI.SubscribeKey(kbdId, tabSc, true, Func("TabEvent"))
-    AHI.SubscribeKey(kbdId, r2c1Sc, true, Func("KeyUnderEscEvent"))
-    AHI.SubscribeKey(kbdId, capslockSc, true, Func("CapslockEvent"))
-    AHI.SubscribeKey(kbdId, lAltSc, true, Func("LAltEvent"))
-    AHI.SubscribeKey(kbdId, lCtrlSc, true, Func("LCtrlEvent"))
-    AHI.SubscribeKey(kbdId, lWinSc, true, Func("LWinEvent"))
-    AHI.SubscribeKey(kbdId, printScreenSc, true, Func("PrintScreenEvent"))
-    AHI.SubscribeKey(kbdId, rAltSc, true, Func("RAltEvent"))
-    AHI.SubscribeKey(kbdId, rCtrlSc, true, Func("RCtrlEvent"))
-;    AHI.SubscribeKey(kbdId, FnSc, true, Func("FnEvent")) ; 355 = FN
-    AHI.SubscribeKey(kbdId, GetKeySC("q"), true, Func("QEvent"))
-    AHI.SubscribeKey(kbdId, GetKeySC("w"), true, Func("WEvent"))
+    RemapSpecialKeys()
+    RemapOtherKeys()
     return
 
-GetAllKeySc:
-    spaceSc := GetKeySC("Space")
-    tabSc := GetKeySC("Tab")
-    lShiftSc := GetKeySC("LShift")
-    rShiftSc := GetKeySC("RShift")
-    capslockSc := GetKeySC("Capslock")
-    lAltSc := GetKeySC("LAlt")
-    lCtrlSc := GetKeySC("LCtrl")
-    lWinSc := GetKeySC("LWin")
-    printScreenSc := GetKeySC("PrintScreen")
-    rAltSc := GetKeySC("RAlt")
-    rCtrlSc := GetKeySC("RCtrl")
-    r2c1Sc := GetKeySC("^")
-    FnSc := 355
-    escSc := GetKeySC("Esc")
-    enterSc := GetKeySC("Enter")
-    deleteSc := GetKeySC("Delete")
-    backspaceSc := GetKeySC("Backspace")
-    return
+RemapSpecialKeys() {
+    MapKeyAtoB("LShift", "Tab")
+    MapKeyAtoB("RShift", "Tab")
+    MapKeyAtoB("Tab", "Backspace")
+    MapKeyAtoB("^", "Delete")
+    MapKeyAtoB("Capslock", "Enter")
+    MapKeyAtoB("LAlt", "LCtrl")
+    MapKeyAtoB("LCtrl", "LWin")
+    MapKeyAtoB("^", "Delete")
+    MapKeyAtoB("LWin", "LAlt")
+    MapKeyAtoB("PrintScreen", "LAlt")
+    MapKeyAtoB("RAlt", "Lctrl")
+    MapKeyAtoB("RCtrl", "AppsKey")
+    AHI.SubscribeKey(kbdId, GetKeySC("Space"), true, Func("SpaceShiftEvent"))    
+}
 
-WEvent(state) {
+RemapOtherKeys() {
+    MapKeyAtoB("q", "w")
+    MapKeyAtoB("w", "q")
+}
+
+MapKeyAtoB(a, b) {
+    AHI.SubscribeKey(kbdId, GetKeySC(a), true, Func("KeyEvent").bind(GetKeySC(b)))
+}
+
+KeyEvent(b, state) {
     if(state) {
-        AHI.SendKeyEvent(kbdId, GetKeySC("q"), 1)
+        AHI.SendKeyEvent(kbdId, b, 1)
     } else {
-        AHI.SendKeyEvent(kbdId, GetKeySC("q"), 0)
-    }
-}
-
-QEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, GetKeySC("w"), 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, GetKeySC("w"), 0)
-    }
-}
-
-LShiftEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, tabSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, tabSc, 0)
-    }
-}
-
-RShiftEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, tabSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, tabSc, 0)
-    }
-}
-
-TabEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, backspaceSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, backspaceSc, 0)
-    }
-}
-
-KeyUnderEscEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, deleteSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, deleteSc, 0)
-    }
-}
-
-CapslockEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, enterSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, enterSc, 0)
-    }
-}
-
-LAltEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
-    }
-}
-
-LCtrlEvent(state) {
-    if(state) {
-        AHI.SendKeyEvent(kbdId, lWinSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, lWinSc, 0)
-    }
-}
-
-LWinEvent(state) {
-   if(state) {
-        AHI.SendKeyEvent(kbdId, lAltSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, lAltSc, 0)
-    }
-}
-
-PrintScreenEvent(state) {
-   if(state) {
-        AHI.SendKeyEvent(kbdId, lAltSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, lAltSc, 0)
-    }
-}
-
-RAltEvent(state) {
-   if(state) {
-        AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
-    }
-}
-
-RCtrlEvent(state) {
-   if(state) {
-        AHI.SendKeyEvent(kbdId, GetKeySC("AppsKey"), 1)
-    } else {
-        AHI.SendKeyEvent(kbdId, GetKeySC("AppsKey"), 0)
-    }
-}
-
-FnEvent(state) {
-   if(state) {
-;         MouseClick,WheelDown,,,7,0,D,R
-;        AHI.SendKeyEvent(kbdId, GetKeySC("Down"), 1)
-    } else {
-;        AHI.SendKeyEvent(kbdId, GetKeySC("Down"), 0)
-;        SendInput {Home}
+        AHI.SendKeyEvent(kbdId, b, 0)
     }
 }
 
@@ -215,21 +96,21 @@ SpaceShiftEvent(state) {
     static timeOfInitDown
     if(state) {
         if(!shiftSpaceDown) {
-            AHI.SendKeyEvent(kbdId, lShiftSc, 1)
+            AHI.SendKeyEvent(kbdId, GetKeySC("LShift"), 1)
             ; Send {LShift Down}
             shiftSpaceDown := true
             timeOfInitDown := A_TickCount
         }
     } else {
-        AHI.SendKeyEvent(kbdId, lShiftSc, 0)
+        AHI.SendKeyEvent(kbdId, GetKeySC("LShift"), 0)
         ; Send {LShift Up}
         shiftSpaceDown := false
         ; pressDuration := A_TickCount - timeOfInitDown
         Sleep 1 ; #Alt1.2 =fix wait so it recognizes the LShift up event ; 0 or 1 ms seems to make a bigger difference
         ;Tooltip %A_TimeIdleKeyboard% %A_TimeIdlePhysical% %pressDuration% %A_PriorKey%
         if(A_PriorKey == "LShift" && (A_TickCount - timeOfInitDown) < 200) { ; A_TimeIdleKeyboard >= pressDuration && doesn't work since fast typing overlap
-            AHI.SendKeyEvent(kbdId, spaceSc, 1)
-            AHI.SendKeyEvent(kbdId, spaceSc, 0)
+            AHI.SendKeyEvent(kbdId, GetKeySC("Space"), 1)
+            AHI.SendKeyEvent(kbdId, GetKeySC("Space"), 0)
         }
     }
 }
