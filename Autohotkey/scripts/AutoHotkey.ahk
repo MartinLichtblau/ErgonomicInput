@@ -60,18 +60,14 @@ Ahi_Setup:
     @Desc: reload Autohotkey, including all scripts
 */
 ;Del::ReloadAhk()
-$^s::
-	KeyWait, s, T0.3
-	if ErrorLevel {
-        ReloadAhk()
-	} else {
-		SendInput ^s
-	}
-	KeyWait, s,
+^Esc::
+    ReloadAhk()
     return
 
 ReloadAhk() {
     SplashTextOn,,, Reloading Autohotkey....
+    KeyWait,Ctrl,
+    Tooltip Ctrl released
 	Reload
 	return
 }
