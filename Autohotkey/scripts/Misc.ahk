@@ -143,6 +143,9 @@ PgDn::
     SendInput %RIGHTTAB_sc%
     return
 
+; Fn Key Press
+sc163:: Autoscroll()
+
 
 
 
@@ -152,3 +155,10 @@ PgDn::
 ; Exception handling for swith Desktop: if Win+Ctrl+3/4 is pressed, then do nothing
 ;*^#3:: Tooltip 3
 ;*#^4:: Tooltip 4
+
+
+
+; ‒-------------- TEMP only
+^!2:: 
+    Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
+    return

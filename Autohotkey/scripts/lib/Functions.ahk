@@ -237,3 +237,33 @@ MoveCursorToShow(){
 MoveCursorToLeft(){
     MouseMove, 0, 1000,
 }
+
+Global Autoscroll := 0
+Autoscroll() {
+        ;MouseClick,WheelDown,,,3,0,D,R
+        ;SendInput {Down}
+        ; StartTime := A_TickCount
+       ; KeyWait, sc163
+        ;px_down := A_TickCount - StartTime
+        move_distance := 80
+        ;tooltip %px_down% %StartTime% %A_TickCount%
+        ;MoveCursorToShow()
+
+        CoordMode, Mouse, Screen
+        MouseGetPos, X, Y
+        MouseMove, 0, 0,, R ;DllCall("SetCursorPos", "int", X, "int", Y+1)
+        Y -= move_distance ; move cursor 30px UP first
+        DllCall("SetCursorPos", "int", X, "int", Y)
+        SendInput {MButton}
+        Sleep 100
+        ; tooltip %A_Cursor% ; Arrow is normal pointer and middle scroll is unknown
+        Y += move_distance ; move cursor 30px down to initiate slow down scroll
+        DllCall("SetCursorPos", "int", X, "int", Y)
+        if (A_Cursor == "Unknown") {
+            Autoscroll := 1
+        } else {
+            Autoscroll := 0
+        }
+        ;tooltip : %Autoscroll% %A_Cursor%
+        return
+}
