@@ -73,7 +73,7 @@ Return
 		}
 		clipboard := clipTemp
 	} else {
-		SendInput {blank}t
+		SendInput {blank}^t
 	}
 	KeyWait,t, ;not L, since that means logical. Physical is default!
 return
