@@ -52,31 +52,28 @@ Return
 */
 
 ;RELEVANT ;---------------------------Opening new tab with currently marked text-------------------------------------
-$<^t::
+^t::
 	KeyWait,t,T0.3
     If ErrorLevel {
 		cliptemp := clipboard
-		SendInput ^c
-
+		SendInput {blank}c
 		;Open content in new tab
-		SendInput ^l
-		Sleep 300
-		SendInput ^v!{Enter} ;SendInput ^a^v!{Enter}
-
-
+		SendInput {blank}l
+		Sleep 100
+		SendInput {blank}v!{Enter} ;SendInput ^a^v!{Enter}
 		;If hotkey still pressed translate it
-		Sleep 1000
+		;Sleep 300
 		If(GetKeyState("t", "P")) {
 			clipboard=https://translate.google.de/?source=osdd#en/de/%clipboard%
-			ClipWait
-			SendInput ^l
-			Sleep 400
-			SendInput ^v
+			SendInput {blank}l
+			;Sleep 400
+            ClipWait
+			SendInput {blank}v
 			SendInput {ENTER}
 		}
 		clipboard := clipTemp
 	} else {
-		SendInput ^t
+		SendInput {blank}t
 	}
 	KeyWait,t, ;not L, since that means logical. Physical is default!
 return
