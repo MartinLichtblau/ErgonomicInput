@@ -26,7 +26,6 @@ RemapSpecialKeys() {
     MapKeyAtoB("Capslock", "Enter")
     MapKeyAtoB("LAlt", "LCtrl")
     MapKeyAtoB("LCtrl", "LWin")
-    MapKeyAtoB("^", "Delete")
     MapKeyAtoB("LWin", "LAlt")
     MapKeyAtoB("PrintScreen", "LAlt")
     MapKeyAtoB("RAlt", "Lctrl")
@@ -51,38 +50,6 @@ KeyEvent(b, state) {
     }
 }
 
-; Fn Key Press
-sc163:: Autoscroll()
-
-Global Autoscroll := 0
-Autoscroll() {
-        ;MouseClick,WheelDown,,,3,0,D,R
-        ;SendInput {Down}
-        ; StartTime := A_TickCount
-       ; KeyWait, sc163
-        ;px_down := A_TickCount - StartTime
-        move_distance := 80
-        ;tooltip %px_down% %StartTime% %A_TickCount%
-        ;MoveCursorToShow()
-
-        CoordMode, Mouse, Screen
-        MouseGetPos, X, Y
-        MouseMove, 0, 0,, R ;DllCall("SetCursorPos", "int", X, "int", Y+1)
-        Y -= move_distance ; move cursor 30px UP first
-        DllCall("SetCursorPos", "int", X, "int", Y)
-        SendInput {MButton}
-        Sleep 100
-        ; tooltip %A_Cursor% ; Arrow is normal pointer and middle scroll is unknown
-        Y += move_distance ; move cursor 30px down to initiate slow down scroll
-        DllCall("SetCursorPos", "int", X, "int", Y)
-        if (A_Cursor == "Unknown") {
-            Autoscroll := 1
-        } else {
-            Autoscroll := 0
-        }
-        ;tooltip : %Autoscroll% %A_Cursor%
-        return
-}
 
 /*
     @Title: SpaceShift
@@ -115,38 +82,6 @@ SpaceShiftEvent(state) {
     }
 }
 
-/*
-    @Title: SpaceErase like Ctrl to erase whole words
-    #note use send instead of SendInput so that Input commands are able to detect it
-*/
-
-/*<+Del::
-    SendInput {LCtrl down}{Del}{LCtrl up}
-    return
-*/
-
 <+BS::
     SendInput {LCtrl down}{BS}{LCtrl up}
-    return
-    /*
-    AHI.SendKeyEvent(kbdId, lShiftSc, 0) ; up so only Ctrl
-    @Desc: Because of it superior position it should be usable+Bs is pressed
-    AHI.SendKeyEvent(kbdId, lCtrlSc, 1)
-    AHI.SendKeyEvent(kbdId, backspaceSc, 1)
-    AHI.SendKeyEvent(kbdId, backspaceSc, 0)
-    AHI.SendKeyEvent(kbdId, lCtrlSc, 0)
-    AHI.SendKeyEvent(kbdId, lShiftSc, 1) ; set it to down as it was before. #risk: it could have been
-        ; physically released while the hotkey was pressed, leaving it in an inconsistent state.
-    return
-    */
-
-
-/*
-    @Title: CtrlShift
-*/
-~LShift & ~LCtrl up::
-~LCtrl & ~LShift up::
-    if(A_PriorKey == "LControl" || A_PriorKey == "LShift") {
-        SendInput {Enter}
-    }
     return
