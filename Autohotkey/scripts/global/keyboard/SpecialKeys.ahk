@@ -3,16 +3,10 @@
     @Desc: fundamental changes of special keys, concerning mapping and behavior
     #Maturity:7
 */
-;#include %A_ScriptDir%\lib\AutoHotInterception\lib\AutoHotInterception.ahk
 
 SpecialKeys_Setup:
     #SingleInstance force
     #Persistent
-
-    ; Init Variables
-    if(AHI == "")
-        global AHI
-        AHI := new AutoHotInterception()
     global kbdId = 1 ; use 1st/primary keyboard to intercept and also for output
     RemapSpecialKeys()
     RemapOtherKeys()

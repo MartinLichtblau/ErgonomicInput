@@ -4,7 +4,6 @@
     @Recommendation: for right-handed, swap left and right button in windows, so right trackpoint-hand has LButton underneath
     #note don't know how to do all that only for trackpad
 */
-#include %A_ScriptDir%\lib\AutoHotInterception\lib\AutoHotInterception.ahk
 #Include %A_ScriptDir%\lib\Commands.ahk
 #Include %A_ScriptDir%\lib\Functions.ahk
 #Include %A_ScriptDir%\global\trackpad\MouseScroll.ahk
@@ -15,10 +14,6 @@ global trackpadId
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
-
-    if(AHI == "")
-        global AHI
-        AHI := new AutoHotInterception()
     trackpadId := AHI.GetMouseId(0x0000, 0x0000)
     AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
     AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
