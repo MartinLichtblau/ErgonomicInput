@@ -9,41 +9,34 @@
 #Include %A_ScriptDir%\global\trackpad\MouseScroll.ahk
 #Include %A_ScriptDir%\global\trackpad\MouseArrow.ahk
 
-global trackpadId
-
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
-    trackpadId := AHI.GetMouseId(0x0000, 0x0000)
-    AHI.SubscribeMouseButton(trackpadId, 2, true, Func("MButtonEvent"))
-    AHI.SubscribeMouseButton(trackpadId, 1, true, Func("RButtonEvent"))
-    AHI.SubscribeMouseButton(trackpadId, 0, true, Func("LButtonEvent"))
-    Setup_MouseScroll(trackpadId)
+    SetupAllTrackpads()
     ;Setup_MouseArrow(trackpadId)
     return
 
-
 global trackpadLButtonDown := false
-MButtonEvent(state) {
-    ;Tooltip MButtonEvent %state%
+MButtonEvent(tpId, state) {
+    ;Tooltip MButtonEvent %state% %tpId%
 	if(state){
-        AHI.SendMouseButtonEvent(trackpadId, 0, 1) ; LButton down
+        AHI.SendMouseButtonEvent(tpId, 0, 1) ; LButton down
         trackpadLButtonDown := true
 	}
     else {
-        AHI.SendMouseButtonEvent(trackpadId, 0, 0) ; LButton up
+        AHI.SendMouseButtonEvent(tpId, 0, 0) ; LButton up
         trackpadLButtonDown := false
     }
 }
 
 global trackpadMButtonDown := false
-RButtonEvent(state) {
+RButtonEvent(tpId, state) {
     ;Tooltip RButtonEvent %state%
     if(state) {
         global downTime := A_TickCount
         ;AHI.SendMouseButtonEvent(trackpadId, 2, 1) ; MButton down
         trackpadMButtonDown := true
-        Start_MouseArrow(trackpadId)
+        Start_MouseArrow(tpId)
     } else {
         Stop_MouseArrow()
         ;AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
@@ -59,7 +52,7 @@ RButtonEvent(state) {
 }
 
 global trackpadRButtonDown := false
-LButtonEvent(state) {
+LButtonEvent(tpId, state) {
     ;Tooltip LButtonEvent %state%, 400, 100
 	if(state) {
         global downTime := A_TickCount
@@ -74,8 +67,8 @@ LButtonEvent(state) {
         noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
         if (pressDuration < 200 && noKeyInputBetween) {
             ;SendInput {RButton}
-            AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
-            AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
+            AHI.SendMouseButtonEvent(tpId, 1, 1) ; RButton down
+            AHI.SendMouseButtonEvent(tpId, 1, 0) ; RButton up
         } else if (GetKeyState("LCtrl")) {
             SendInput {LCtrl up} ; necessary for making press-hold-switch-release-select commands like for tab switching possible
         }
@@ -83,8 +76,12 @@ LButtonEvent(state) {
 	}
 }
 
-;$*RButton::
-;    return
-;$*RButton up::
-;
-;    return
+SetupAllTrackpads() {
+    trackpadIds := GetAllAhiTrackpadIds()
+    for key, tpId in trackpadIds {
+        AHI.SubscribeMouseButton(tpId, 2, true, Func("MButtonEvent").bind(tpId))
+        AHI.SubscribeMouseButton(tpId, 1, true, Func("RButtonEvent").bind(tpId))
+        AHI.SubscribeMouseButton(tpId, 0, true, Func("LButtonEvent").bind(tpId))
+        Setup_MouseScroll(tpId)
+    } 
+}

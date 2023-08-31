@@ -267,3 +267,18 @@ Autoscroll() {
         ;tooltip : %Autoscroll% %A_Cursor%
         return
 }
+
+GetAllAhiTrackpadIds() {
+    DeviceList := AHI.GetDeviceList()
+    TrackpadIdList := {}
+    for key, device in DeviceList {
+        If (device.isMouse) {
+            If InStr(device.Handle, "ACPI\VEN_LEN") {
+                ; Tooltip % device.id device.isMouse 
+                TrackpadIdList.push(device.id)
+                ;Tooltip % TrackpadIdList.Length()
+            }
+        }
+    }
+    return TrackpadIdList
+}
