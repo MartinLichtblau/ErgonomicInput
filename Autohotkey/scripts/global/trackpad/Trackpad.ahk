@@ -58,9 +58,9 @@ LButtonEvent(tpId, state) {
         global downTime := A_TickCount
         ;AHI.SendMouseButtonEvent(trackpadId, 1, 1) ; RButton down
         trackpadRButtonDown := true
-        Start_MouseScroll()
+        Start_MouseScroll(tpId)
 	} else {
-	    Stop_MouseScroll()
+	    Stop_MouseScroll(tpId)
         ;AHI.SendMouseButtonEvent(trackpadId, 1, 0) ; RButton up
         gosub AltTabRelease
         pressDuration := A_TickCount - downTime
@@ -77,11 +77,14 @@ LButtonEvent(tpId, state) {
 }
 
 SetupAllTrackpads() {
-    trackpadIds := GetAllAhiTrackpadIds()
+    ;trackpadIds := GetAllAhiTrackpadIds()
+    trackpadIds := {}
+    trackpadIds.push(AHI.GetMouseIdFromHandle("ACPI\VEN_LEN&DEV_009A"))
+    trackpadIds.push(AHI.GetMouseIdFromHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_01&Col01"))
     for key, tpId in trackpadIds {
         AHI.SubscribeMouseButton(tpId, 2, true, Func("MButtonEvent").bind(tpId))
         AHI.SubscribeMouseButton(tpId, 1, true, Func("RButtonEvent").bind(tpId))
         AHI.SubscribeMouseButton(tpId, 0, true, Func("LButtonEvent").bind(tpId))
         Setup_MouseScroll(tpId)
-    } 
+    }
 }

@@ -268,15 +268,19 @@ Autoscroll() {
         return
 }
 
+
 GetAllAhiTrackpadIds() {
+    static knowTrackpadHandles := ["HID\VID_17EF&PID_60EE&REV_0127&MI_01&Col01", "ACPI\VEN_LEN"]
     DeviceList := AHI.GetDeviceList()
     TrackpadIdList := {}
     for key, device in DeviceList {
         If (device.isMouse) {
-            If InStr(device.Handle, "ACPI\VEN_LEN") {
-                ; Tooltip % device.id device.isMouse 
-                TrackpadIdList.push(device.id)
-                ;Tooltip % TrackpadIdList.Length()
+            for i, trackpadHandle in knowTrackpadHandles {
+                If InStr(device.Handle, trackpadHandle) {
+                    ;Tooltip % device.id trackpadHandle
+                    TrackpadIdList.push(device.id)
+                    ;Tooltip % TrackpadIdList.Length()
+                }
             }
         }
     }

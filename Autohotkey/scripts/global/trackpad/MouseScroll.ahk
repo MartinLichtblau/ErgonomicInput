@@ -10,7 +10,7 @@ ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
 #Include %A_ScriptDir%\lib\Functions.ahk
-Global mouseId, ms_xSum, ms_ySum, ms_movementThreshold, ms_runflag, ms_isCursorChanged, output_stepSize
+Global ms_xSum, ms_ySum, ms_movementThreshold, ms_runflag, ms_isCursorChanged, output_stepSize
 return
 
 
@@ -23,30 +23,29 @@ Setup_MouseScroll(mId) {
 
 ms_InitVars(mId) {
     ms_runflag := false
-    mouseId := mId
     ms_movementThreshold := 1
 }
 
 
-Start_MouseScroll() {
+Start_MouseScroll(tpId) {
     ;Tooltip MS_Start
     SetSystemCursor("IDC_SIZEALL")
     ms_runflag := true
-    AHI.SubscribeMouseMoveRelative(mouseId, true, Func("ms_MouseMovement"))
+    AHI.SubscribeMouseMoveRelative(tpId, true, Func("ms_MouseMovement"))
 }
 
-Stop_MouseScroll() {
+Stop_MouseScroll(tpId) {
     ;Tooltip Stop_MouseScroll
     ms_runflag := false
     ; AHI.SubscribeMouseMoveRelative(mouseId, false, Func("ms_MouseMovement"))
-    AHI.UnsubscribeMouseMoveRelative(mouseId)
+    AHI.UnsubscribeMouseMoveRelative(tpId)
     setTimer RestoreCursor, -100
 }
 
 ; @Desc: run in parallel since it's a function
 ms_ExitOnInput() {
     Input, UserInput, V L1 B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}
-    Stop_MouseScroll()
+    ;Stop_MouseScroll()
 }
 
 ms_MouseMovement(x, y) {
