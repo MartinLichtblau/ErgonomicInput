@@ -162,3 +162,7 @@ sc163:: Autoscroll()
 ^!2:: 
     Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
     return
+
+;^!3:: tooltip A shortcut to test new functions.
+
+
