@@ -7,36 +7,55 @@
 SpecialKeys_Setup:
     #SingleInstance force
     #Persistent
-    global kbdId = 1 ; use 1st/primary keyboard to intercept and also for output
-    RemapSpecialKeys()
-    RemapOtherKeys()
+    SetupAllKeyboards()
+    ;ApplyMappingsToKeyboard(AHI.GetKeyboardIdFromHandle("ACPI\VEN_LEN&DEV_0071"), getKeyboardMappings())
     return
 
-RemapSpecialKeys() {
-    MapKeyAtoB("LShift", "Tab")
-    MapKeyAtoB("RShift", "Tab")
-    MapKeyAtoB("Tab", "Backspace")
-    MapKeyAtoB("^", "Delete")
-    MapKeyAtoB("Capslock", "Enter")
-    MapKeyAtoB("LAlt", "LCtrl")
-    MapKeyAtoB("LCtrl", "LWin")
-    MapKeyAtoB("LWin", "LAlt")
-    MapKeyAtoB("PrintScreen", "LAlt")
-    MapKeyAtoB("RAlt", "Lctrl")
-    MapKeyAtoB("RCtrl", "AppsKey")
-    AHI.SubscribeKey(kbdId, GetKeySC("Space"), true, Func("SpaceShiftEvent"))    
+getKeyboardMappings() {
+    static mappings := [["LShift", "Tab"]
+        ,["RShift", "Tab"]
+        ,["Tab", "Backspace"]
+        ,["^", "Delete"]
+        ,["Capslock", "Enter"]
+        ,["LAlt", "LCtrl"]
+        ,["LCtrl", "LWin"]
+        ,["LWin", "LAlt"]
+        ,["PrintScreen", "LAlt"]
+        ,["RAlt", "Lctrl"]
+        ,["RCtrl", "AppsKey"]
+        ,["q", "w"]
+        ,["w", "q"]]
+    return mappings
 }
 
-RemapOtherKeys() {
-    MapKeyAtoB("q", "w")
-    MapKeyAtoB("w", "q")
+SetupAllKeyboards() {
+    keyboardIds := {}
+    keyboardIds.push(AHI.GetKeyboardIdFromHandle("ACPI\VEN_LEN&DEV_0071"))
+    keyboardIds.push(AHI.GetKeyboardIdFromHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_00"))
+    RemapAllKeyboards(keyboardIds)
 }
 
-MapKeyAtoB(a, b) {
-    AHI.SubscribeKey(kbdId, GetKeySC(a), true, Func("KeyEvent").bind(GetKeySC(b)))
+RemapAllKeyboards(keyboardIds) {
+    for index, kbdId in keyboardIds {
+        ApplyMappingsToKeyboard(kbdId, getKeyboardMappings())
+    }
 }
 
-KeyEvent(b, state) {
+ApplyMappingsToKeyboard(kbdId, mappings) {
+    ;tooltip % kbdId mappings[8][1] mappings[8][2]    
+    for index, mapping in getKeyboardMappings() {
+        MapKeyAtoB(mapping[1], mapping[2], kbdId)
+    }
+    AHI.SubscribeKey(kbdId, GetKeySC("Space"), true, Func("SpaceShiftEvent").bind(kbdId))
+}
+
+MapKeyAtoB(a, b, kbdId) {
+    ;tooltip % kbdId a b
+    AHI.SubscribeKey(kbdId, GetKeySC(a), true, Func("KeyEvent").bind(GetKeySC(b), kbdId))
+}
+
+KeyEvent(b, kbdId, state) {
+    ;tooltip % b kbdId state
     if(state) {
         AHI.SendKeyEvent(kbdId, b, 1)
     } else {
@@ -53,7 +72,7 @@ KeyEvent(b, state) {
         see: #Alt1.1, #Alt1.2
 */
 global shiftSpaceDown := false
-SpaceShiftEvent(state) {
+SpaceShiftEvent(kbdId, state) {
     static timeOfInitDown
     if(state) {
         if(!shiftSpaceDown) {
