@@ -15,7 +15,7 @@ Misc_Setup:
     MsgNum := DllCall("RegisterWindowMessage", Str,"SHELLHOOK")
     OnMessage(MsgNum, "ShellWinMessage")
     sendTabOnRelease := 1
-    SetTimer, ChangePowerPlan, 10
+    ;SetTimer, ChangePowerPlan, 10
     global powerPlan := 1
     global ActivateDVFS := true
     return
@@ -163,6 +163,26 @@ sc163:: Autoscroll()
     Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
     return
 
-;^!3:: tooltip A shortcut to test new functions.
+^!3::
+    tooltip  % GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")
+    return
 
 
+#IF GetKeyState("u", "p")
+l::
+    ToggleLbutton()
+    return  
+#IF
+
+ToggleLbutton() {
+    static LButtonDown := true
+    If(LButtonDown) {
+        SendInput {LButton Up}
+        LButtonDown := false
+    } Else {
+        SendInput {LButton Down}
+        LButtonDown := true
+    }
+}
+
+!::LButton

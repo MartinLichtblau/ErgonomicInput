@@ -80,8 +80,8 @@ LButtonEvent(tpId, state) {
 SetupTrackpad(tpId) {
     if tpId <= 0
         return
-    AHI.SubscribeMouseButton(tpId, 2, true, Func("MButtonEvent").bind(tpId))
-    AHI.SubscribeMouseButton(tpId, 1, true, Func("RButtonEvent").bind(tpId))
+    AHI.SubscribeMouseButton(tpId, 2, true, Func("RButtonEvent").bind(tpId))
+    AHI.SubscribeMouseButton(tpId, 1, true, Func("MButtonEvent").bind(tpId))
     AHI.SubscribeMouseButton(tpId, 0, true, Func("LButtonEvent").bind(tpId))
     Setup_MouseScroll(tpId)
 }
