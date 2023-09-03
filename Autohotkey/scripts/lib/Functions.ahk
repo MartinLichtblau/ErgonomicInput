@@ -186,22 +186,17 @@ RestoreCursor() {
 SendArrowKey(keyName)
 {
     if(keyName = "Right") {
-        AHI.SendKeyEvent(1, 333, 1)
-        AHI.SendKeyEvent(1, 333, 0)
-        ;Send {blind}{Right}
+        keySc := 333
     } else if(keyName = "Left") {
-        AHI.SendKeyEvent(1, 331, 1)
-        AHI.SendKeyEvent(1, 331, 0)
-        ;Send {blind}{Left}
+        keySc := 331
     } else if(keyName = "Down") {
-        AHI.SendKeyEvent(1, 336, 1)
-        AHI.SendKeyEvent(1, 336, 0)
-        ;Send {blind}{Down}
+        keySc := 336
     } else if(keyName = "Up") {
-        AHI.SendKeyEvent(1, 328, 1)
-        AHI.SendKeyEvent(1, 328, 0)
-        ;Send {blind}{Up}
+        keySc := 328
     }
+    AHI.SendKeyEvent(1, keySc, 1)
+    AHI.SendKeyEvent(1, keySc, 0)
+    ;Send {blind}{Right}
 }
 
 MoveCursorToShow(){
@@ -269,20 +264,28 @@ Autoscroll() {
 }
 
 
-GetAllAhiTrackpadIds() {
-    static knowTrackpadHandles := ["HID\VID_17EF&PID_60EE&REV_0127&MI_01&Col01", "ACPI\VEN_LEN"]
+GetAhiDeviceIdByHandle(handle) {
+    for dix, device in AHI.GetDeviceList() {
+        If InStr(device.Handle, handle) {
+            return device.id
+        }
+    }
+    return 0
+}
+
+/*
+GetAhiDeviceIdsByHandle(deviceHandles) {
     DeviceList := AHI.GetDeviceList()
-    TrackpadIdList := {}
-    for key, device in DeviceList {
-        If (device.isMouse) {
-            for i, trackpadHandle in knowTrackpadHandles {
-                If InStr(device.Handle, trackpadHandle) {
-                    ;Tooltip % device.id trackpadHandle
-                    TrackpadIdList.push(device.id)
-                    ;Tooltip % TrackpadIdList.Length()
-                }
+    FoundDeviceIds := {}
+    for dix, device in DeviceList {
+        for hix, handle in deviceHandles {
+            If InStr(device.Handle, handle) {
+                ;Tooltip % device.id trackpadHandle
+                FoundDeviceIds.push(device.id)
+                ;Tooltip % TrackpadIdList.Length()
             }
         }
     }
     return TrackpadIdList
 }
+*/

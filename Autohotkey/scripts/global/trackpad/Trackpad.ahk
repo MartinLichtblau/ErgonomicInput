@@ -12,7 +12,8 @@
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
-    SetupAllTrackpads()
+    SetupTrackpad(GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")) ; Lenovo X1 Yoga G3 Trackpad
+    SetupTrackpad(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_01&Col01")) ; Lenovo Bluetooth TrackPoint Keyboard II
     ;Setup_MouseArrow(trackpadId)
     return
 
@@ -76,15 +77,11 @@ LButtonEvent(tpId, state) {
 	}
 }
 
-SetupAllTrackpads() {
-    ;trackpadIds := GetAllAhiTrackpadIds()
-    trackpadIds := {}
-    trackpadIds.push(AHI.GetMouseIdFromHandle("ACPI\VEN_LEN&DEV_009A"))
-    trackpadIds.push(AHI.GetMouseIdFromHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_01&Col01"))
-    for key, tpId in trackpadIds {
-        AHI.SubscribeMouseButton(tpId, 2, true, Func("MButtonEvent").bind(tpId))
-        AHI.SubscribeMouseButton(tpId, 1, true, Func("RButtonEvent").bind(tpId))
-        AHI.SubscribeMouseButton(tpId, 0, true, Func("LButtonEvent").bind(tpId))
-        Setup_MouseScroll(tpId)
-    }
+SetupTrackpad(tpId) {
+    if tpId <= 0
+        return
+    AHI.SubscribeMouseButton(tpId, 2, true, Func("MButtonEvent").bind(tpId))
+    AHI.SubscribeMouseButton(tpId, 1, true, Func("RButtonEvent").bind(tpId))
+    AHI.SubscribeMouseButton(tpId, 0, true, Func("LButtonEvent").bind(tpId))
+    Setup_MouseScroll(tpId)
 }

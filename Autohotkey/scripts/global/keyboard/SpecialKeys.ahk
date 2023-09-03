@@ -29,19 +29,13 @@ getKeyboardMappings() {
 }
 
 SetupAllKeyboards() {
-    keyboardIds := {}
-    keyboardIds.push(AHI.GetKeyboardIdFromHandle("ACPI\VEN_LEN&DEV_0071"))
-    keyboardIds.push(AHI.GetKeyboardIdFromHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_00"))
-    RemapAllKeyboards(keyboardIds)
-}
-
-RemapAllKeyboards(keyboardIds) {
-    for index, kbdId in keyboardIds {
-        ApplyMappingsToKeyboard(kbdId, getKeyboardMappings())
-    }
+    ApplyMappingsToKeyboard(GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_0071"), getKeyboardMappings()) ; Lenovo X1 Yoga G3 Keyboard
+    ApplyMappingsToKeyboard(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_00"), getKeyboardMappings()) ; Lenovo Bluetooth TrackPoint Keyboard II
 }
 
 ApplyMappingsToKeyboard(kbdId, mappings) {
+    if kbdId <= 0
+        return
     ;tooltip % kbdId mappings[8][1] mappings[8][2]    
     for index, mapping in getKeyboardMappings() {
         MapKeyAtoB(mapping[1], mapping[2], kbdId)
