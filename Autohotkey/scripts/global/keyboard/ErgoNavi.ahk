@@ -131,7 +131,7 @@ r::
     return
 
 s::
-    SendInput !d ; or ^l ;+^s ;(Vivaldi Quick Search)
+    SendInput ^l ; !d ; or ^l ;+^s ;(Vivaldi Quick Search)
     return
 
 t::
