@@ -18,16 +18,36 @@ Trackpad_Setup:
     return
 
 global trackpadLButtonDown := false
+global LButtonLocked := false
 MButtonEvent(tpId, state) {
     ;Tooltip MButtonEvent %state% %tpId%
 	if(state){
-        AHI.SendMouseButtonEvent(tpId, 0, 1) ; LButton down
         trackpadLButtonDown := true
+        IF (trackpadMButtonDown) {
+            lockLButton()
+        } Else {
+            If (LButtonLocked) {
+                unlockLButton()
+            }   
+        }
+        AHI.SendMouseButtonEvent(tpId, 0, 1) ; LButton down
 	}
     else {
-        AHI.SendMouseButtonEvent(tpId, 0, 0) ; LButton up
-        trackpadLButtonDown := false
+        If !LButtonLocked {
+            AHI.SendMouseButtonEvent(tpId, 0, 0) ; LButton up
+            trackpadLButtonDown := false
+        }
     }
+}
+
+lockLButton() {               
+    LButtonLocked := true
+    trackpadLButtonDown := false
+    trackpadMButtonDown := false
+}
+
+unlockLButton() {
+    LButtonLocked := false
 }
 
 global trackpadMButtonDown := false
@@ -37,18 +57,25 @@ RButtonEvent(tpId, state) {
         global downTime := A_TickCount
         ;AHI.SendMouseButtonEvent(trackpadId, 2, 1) ; MButton down
         trackpadMButtonDown := true
-        Start_MouseArrow(tpId)
-    } else {
-        Stop_MouseArrow()
-        ;AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
-        pressDuration := A_TickCount - downTime
-        noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
-        if (pressDuration < 200 && noKeyInputBetween) {
-            Send {MButton down}
-            Sleep 50
-            Send {MButton up}
+        IF (trackpadLButtonDown) {
+            lockLButton()
+        } Else {
+            unlockLButton()
         }
-        trackpadMButtonDown := false ; @TODO #bug sometimes this var doesn't get reset. Probably because no event is fired.
+        ;Start_MouseArrow(tpId)
+    } else {
+        ;Stop_MouseArrow()
+        ;AHI.SendMouseButtonEvent(trackpadId, 2, 0) ; MButton up
+        If !LButtonLocked {
+            pressDuration := A_TickCount - downTime
+            noKeyInputBetween := pressDuration <= A_TimeIdleKeyboard
+            if (pressDuration < 200 && noKeyInputBetween) {
+                Send {MButton down}
+                Sleep 50
+                Send {MButton up}
+            }
+            trackpadMButtonDown := false ; @TODO #bug sometimes this var doesn't get reset. Probably because no event is fired.
+        }
     }
 }
 
@@ -80,8 +107,8 @@ LButtonEvent(tpId, state) {
 SetupTrackpad(tpId) {
     if tpId <= 0
         return
-    AHI.SubscribeMouseButton(tpId, 2, true, Func("RButtonEvent").bind(tpId))
-    AHI.SubscribeMouseButton(tpId, 1, true, Func("MButtonEvent").bind(tpId))
+    AHI.SubscribeMouseButton(tpId, 2, true, Func("MButtonEvent").bind(tpId))
+    AHI.SubscribeMouseButton(tpId, 1, true, Func("RButtonEvent").bind(tpId))
     AHI.SubscribeMouseButton(tpId, 0, true, Func("LButtonEvent").bind(tpId))
     Setup_MouseScroll(tpId)
 }
