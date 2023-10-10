@@ -71,7 +71,7 @@ return
     @Desc: moves mouse cursor in center of active window, if it isn't already above it / within bounds
 */
 CenterMouseOnActiveWindow:
-    Sleep 50 ; wait for GUI
+    Sleep 100 ; wait for GUI
     activeWinId := WinExist("A")
     MouseGetPos,,, winIdUnderMouse
     if (activeWinId != winIdUnderMouse) { ; check if mouse above active window

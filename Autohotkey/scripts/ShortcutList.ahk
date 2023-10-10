@@ -19,7 +19,7 @@ ShortcutList_Setup:
     global TABSEARCH_sc = "!7"
     global PREVIOUSTAB_sc = "!8"
     global LATERTAB_sc = "!9"
-    global CLOSETAB_sc = "^w"
+    global CLOSETAB_sc = "^{F4}" ;"^w"
     global CLOSEWINDOW_sc = "!{F4}"
     global REOPENCLOSEDTAB_sc = "^+t"
     global RELOAD_sc = "^r"

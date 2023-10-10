@@ -109,7 +109,7 @@ a::
     return
 
 g::
-    MoveCursorToLeft()
+    ;MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
     }
@@ -160,12 +160,12 @@ y::
     return
 
 c::
-    MoveCursorToLeft()
+    ; MoveCursorToLeft()
     gosub AltTab
     return
 
 v::
-    MoveCursorToLeft()
+    ; MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
             SendInput {LAlt down}
         }

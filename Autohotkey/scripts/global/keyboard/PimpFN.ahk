@@ -30,13 +30,13 @@ $F7::LongPressCommand("F7", "{Media_Next}", "{F7}")
 $F8::LongPressCommand("F8", "!l", "{F8}")
 
 ;--------------------------------------------F9 - F12
-$F9::LongPressCommand("F9", "gosub Dictation", "{F9}")
+$F9::LongPressCommand("F9", "{F9}", "gosub Dictation")
 
-$F10::LongPressCommand("F10", "^l", "gosub TogglePresentationMode")
+$F10::LongPressCommand("F10", "{F10}", "gosub TogglePresentationMode")
 
-$F11::LongPressCommand("F11", "gosub ReadMode", "{F11}")
+$F11::LongPressCommand("F11", "{F11}", "gosub ReadMode")
 
-$F12::LongPressCommand("F12", "#^c", "{F12}")
+$F12::LongPressCommand("F12", "{F12}", "#^c")
 
 ;--------------------------------------------Home - Insert
 Home:: LongPressCommand("Home", "gosub ReadMode", "{Home}")
