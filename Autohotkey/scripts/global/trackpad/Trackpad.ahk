@@ -14,7 +14,9 @@ Trackpad_Setup:
     #Persistent
     SetupTrackpad(GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")) ; Lenovo X1 Yoga G3 Trackpad
     SetupTrackpad(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_01&Col01")) ; Lenovo Bluetooth TrackPoint Keyboard II
-    ;Setup_MouseArrow(trackpadId)
+    ; SetupTrackpad(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_6047&REV_0330&MI_00"))  
+
+    SetupTrackpad(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_6047&REV_0330&MI_01&Col01")) 
     return
 
 global trackpadLButtonDown := false

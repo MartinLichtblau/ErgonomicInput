@@ -31,6 +31,7 @@ getKeyboardMappings() {
 SetupAllKeyboards() {
     ApplyMappingsToKeyboard(GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_0071"), getKeyboardMappings()) ; Lenovo X1 Yoga G3 Keyboard
     ApplyMappingsToKeyboard(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_60EE&REV_0127&MI_00"), getKeyboardMappings()) ; Lenovo Bluetooth TrackPoint Keyboard II
+    ApplyMappingsToKeyboard(GetAhiDeviceIdByHandle("HID\VID_17EF&PID_6047&REV_0330&MI_00"), getKeyboardMappings()) ; Lenovo old TrackPoint Keyboard II
 }
 
 ApplyMappingsToKeyboard(kbdId, mappings) {
