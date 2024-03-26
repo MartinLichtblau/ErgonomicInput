@@ -74,7 +74,7 @@ ShellWinMessage(wParam, lParam, yParam, xParam) {
     ;WinGet, Process, ProcessName, ahk_id %lParam%
     ;WinGet, ActiveControlList, ControlList, ahk_id %lParam% ; rarely works nore explanatory if it does
     ;tooltip %yParam% %xParam% | wParam: %wParam% | lParam: %lParam% | PID: %Pid% | Title: %title% | Class: %class% | Process: %Process% | Controls: %ActiveControlList%, 0, 3000 ;, 20 ; tooltip NR. 20
-    if (wParam = 4 || wParam = 6 || wParam = 54 || wParam = 53) { ; remove wParam = 16 since it reacts to invisibles + remove  || wParam = 32772 (cause it centers cursor top left when switching desktops)
+    if (wParam = 4 || wParam = 16 || wParam = 54 || wParam = 53 || (wParam = 6)) { ; remove wParam = 16 since it reacts to invisibles + remove  || wParam = 32772 (cause it centers cursor top left when switching desktops)
         ; if (Title != "") {
             gosub CenterMouseOnActiveWindow
         ; }
@@ -167,12 +167,12 @@ sc163:: Autoscroll()
     tooltip  % GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")
     return
 
-
-#IF GetKeyState("u", "p")
-l::
-    ToggleLbutton()
-    return  
-#IF
+; Led to problems!?
+; #IF GetKeyState("u", "p")
+; l::
+;     ToggleLbutton()
+;     return  
+; #IF
 
 ToggleLbutton() {
     static LButtonDown := true

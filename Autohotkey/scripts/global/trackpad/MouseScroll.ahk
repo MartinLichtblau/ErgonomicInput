@@ -64,9 +64,11 @@ ms_MouseMovement(x, y) {
 ms_FixedAxisScrolling(x, y) {
     if(abs(y) >= abs(x)) { ; up/down
         if (y > 0) { ; @TODO write if to use better scrolling (postmw) for Chrome
-            PostMW(-y) ;MouseClick,WheelDown,,,%abs_xSum%,0,D,R ;
+            ;PostMW(-y) 
+            MouseClick,WheelDown,,,1,0,D,R ;
         } else {
-            PostMW(-y) ;MouseClick,WheelUp,,,%abs_xSum%,0,D,R ;
+            ;PostMW(-y) 
+            MouseClick,WheelUp,,,1,0,D,R ;
         }
     } else { ; right/left
         if (x > 0) {

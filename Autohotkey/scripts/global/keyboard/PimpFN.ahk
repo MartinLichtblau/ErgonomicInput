@@ -21,7 +21,7 @@ $F3::LongPressCommand("F3", "{Volume_Up 4}", "{F3}")
 $F4::LongPressCommand("F4", "gosub MuteTabsToggle", "{F4}")
 
 ;--------------------------------------------F5 - F8
-$F5::LongPressCommand("F5", "{Media_Prev}", "{F5}")
+$F5::LongPressCommand("F5", "{F5}", "{Media_Prev}")
 
 $F6::LongPressCommand("F6","{Media_Play_Pause}",  "{F6}")
 
