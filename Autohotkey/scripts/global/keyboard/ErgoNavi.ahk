@@ -32,10 +32,10 @@ $*MButton:: return
   return
 
 ;--------------------ARROW KEYS
-*n:: SendArrowKey("Up")
-*k:: SendArrowKey("Left")
-*e:: SendArrowKey("Right")
-*m:: SendArrowKey("Down")
+$*n:: SendArrowKey("Up")
+$*k:: SendArrowKey("Left")
+$*e:: SendArrowKey("Right")
+$*m:: SendArrowKey("Down")
 
 *i:: Home
 *o:: End
@@ -67,6 +67,10 @@ j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 
 ;--------------------------------------------LEFT HAND
 #if trackpadRButtonDown
+
+F1::
+    SendInput ^{F12}
+    return
 
 3::
     SendInput %LEFTDESKTOP_sc%
@@ -159,7 +163,7 @@ y::
     SendInput %GOBACK_sc% ;!{Left} ; %Browser_Back% %GOBACK_sc%
     return
 
-c::
+*c::
     ; MoveCursorToLeft()
     gosub AltTab
     return

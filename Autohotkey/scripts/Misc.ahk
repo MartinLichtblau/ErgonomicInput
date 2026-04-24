@@ -16,8 +16,8 @@ Misc_Setup:
     OnMessage(MsgNum, "ShellWinMessage")
     sendTabOnRelease := 1
     ;SetTimer, ChangePowerPlan, 10
-    global powerPlan := 1
-    global ActivateDVFS := true
+    ; global powerPlan := 1
+    ; global ActivateDVFS := true
     return
 
 
@@ -51,11 +51,11 @@ ChangePowerPlan() {
     return
 }
 
-^!1::
-    ActivateDVFS := !ActivateDVFS
-    tooltip DVFS %ActivateDVFS%
-    SetTimer, RemoveToolTip, -3000
-    return
+; ^!1::
+;     ActivateDVFS := !ActivateDVFS
+;     tooltip DVFS %ActivateDVFS%
+;     SetTimer, RemoveToolTip, -3000
+;     return
 
 
 
@@ -73,9 +73,11 @@ ShellWinMessage(wParam, lParam, yParam, xParam) {
     ;WinGet, Pid, PID, ahk_id %lParam%
     ;WinGet, Process, ProcessName, ahk_id %lParam%
     ;WinGet, ActiveControlList, ControlList, ahk_id %lParam% ; rarely works nore explanatory if it does
-    ;tooltip %yParam% %xParam% | wParam: %wParam% | lParam: %lParam% | PID: %Pid% | Title: %title% | Class: %class% | Process: %Process% | Controls: %ActiveControlList%, 0, 3000 ;, 20 ; tooltip NR. 20
-    if (wParam = 4 || wParam = 16 || wParam = 54 || wParam = 53 || (wParam = 6)) { ; remove wParam = 16 since it reacts to invisibles + remove  || wParam = 32772 (cause it centers cursor top left when switching desktops)
+    ; tooltip %yParam% %xParam% | wParam: %wParam% | lParam: %lParam% | PID: %Pid% | Title: %title% | Class: %class% | Process: %Process% | Controls: %ActiveControlList%, 0, 3000 ;, 20 ; tooltip NR. 20
+    if ( wParam = 54 ) { ; remove wParam = 4 || wParam = 53  wParam = 16 since it reacts to invisibles + remove  || wParam = 32772 (cause it centers cursor top left when switching desktops)
+        ; wParam = 6 
         ; if (Title != "") {
+            
             gosub CenterMouseOnActiveWindow
         ; }
     }
@@ -144,7 +146,7 @@ PgDn::
     return
 
 ; Fn Key Press
-sc163:: Autoscroll()
+; sc163:: ToolTip, trstrst
 
 
 
@@ -156,16 +158,14 @@ sc163:: Autoscroll()
 ;*^#3:: Tooltip 3
 ;*#^4:: Tooltip 4
 
-
-
 ; ‒-------------- TEMP only
 ^!2:: 
     Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
     return
 
-^!3::
-    tooltip  % GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")
-    return
+; ^!3::
+;     tooltip  % GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")
+;     return
 
 ; Led to problems!?
 ; #IF GetKeyState("u", "p")
@@ -194,3 +194,7 @@ ToggleLbutton() {
 ^w::
 	SendInput %CLOSETAB_sc%
 	return
+
+
+
++^i::MouseSpy()
