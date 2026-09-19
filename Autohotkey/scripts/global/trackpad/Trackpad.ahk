@@ -12,7 +12,7 @@
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
-    ; SetupTrackpad(GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")) ; Lenovo X1 Yoga G3 Trackpad
+    SetupTrackpad(GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_030B")) ; Lenovo T14 TrackpadS
     SetupTrackpad(GetAhiDeviceIdByHandle("17EF&PID_60EE&REV_0127&MI_01&Col01")) ; Lenovo TrackPoint Keyboard RADIO
     SetupTrackpad(GetAhiDeviceIdByHandle("0217ef_PID&60e1_REV&0047&Col02")) ; Lenovo TrackPoint Keyboard BLUETOOTH 
     SetupTrackpad(GetAhiDeviceIdByHandle("VID_17EF&PID_6047&REV_0330&MI_01")) ; Lenovo TrackPoint Keyboard WIRED

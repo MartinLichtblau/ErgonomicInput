@@ -197,4 +197,4 @@ ToggleLbutton() {
 
 
 
-+^i::MouseSpy()
+; +^i::MouseSpy()
