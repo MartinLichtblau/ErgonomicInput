@@ -42,22 +42,6 @@ $F12::LongPressCommand("F12", "{F12}", "#^c")
 Home:: LongPressCommand("Home", "gosub ReadMode", "{Home}")
 
 End::LongPressCommand("End", "#a", "{End}") ; open quick Windows quick settings
-MoveCursorToLeft()
-
-;MoveCursorToShow()
-touchscreenId := AHI.GetMouseId(0x056A, 0x5146)
-AHI.SendMouseButtonEvent(touchscraeenId, 1, 1)
-AHI.SendMouseButtonEvent(touchscreenId, 1, 0)
-;MouseMove, 1, 50,R
-;DllCall("SetCursorPos", "int", 5, "int", 5)
-;AHI.SendMouseMove(trackpadId, 5, 5)
-Return
-
-MoveCursorToShow() ;Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk ;LongPressCommand("End", "#a", "{End}") ; open quick Windows quick settings
-; Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
-; LongPressCommand("End", "gosub OpenSoundSettings", "{End}")
-; MouseSpy()
-return
 
 Insert:: DllCall("LockWorkStation")
 
