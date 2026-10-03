@@ -107,7 +107,7 @@ Tab & PgDn::
     return
 $Tab::
     if sendTabOnRelease
-        SendInput {Tab} ;     AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 1) AHI.SendKeyEvent(kbdId, GetKeySC("Tab"), 0)
+        SendInput {Tab}
     sendTabOnRelease := 1
     return
 
@@ -157,15 +157,6 @@ PgDn::
 ; Exception handling for swith Desktop: if Win+Ctrl+3/4 is pressed, then do nothing
 ;*^#3:: Tooltip 3
 ;*#^4:: Tooltip 4
-
-; ‒-------------- TEMP only
-^!2:: 
-    Run %A_ScriptDir%\lib\AutoHotInterception\Monitor.ahk
-    return
-
-; ^!3::
-;     tooltip  % GetAhiDeviceIdByHandle("ACPI\VEN_LEN&DEV_009A")
-;     return
 
 ; Led to problems!?
 ; #IF GetKeyState("u", "p")
