@@ -27,7 +27,6 @@ DetectHiddenWindows, Off
     @Req: Includes must come after
     @Ref: https://jacksautohotkeyblog.wordpress.com/2017/10/10/how-to-write-easy-merge-autohotkey-scripts-technique-example/
 */
-GoSub, Ahi_Setup
 GoSub, Trackpad_Setup
 GoSub, SpecialKeys_Setup
 GoSub, ShortcutList_Setup
@@ -49,11 +48,6 @@ GoSub, Misc_Setup
 #Include %A_ScriptDir%\Misc.ahk
 #include %A_ScriptDir%\lib\AutoHotInterception\lib\AutoHotInterception.ahk
 return ; end of auto-execute section
-
-Ahi_Setup:
-    global AHI
-    AHI := new AutoHotInterception()
-    return
 
 /*
     @Title: ReloadAhk

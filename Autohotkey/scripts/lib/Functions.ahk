@@ -185,48 +185,15 @@ RestoreCursor() {
 
 SendArrowKey(keyName)
 {
-    if(keyName = "Right") {
-        keySc := 333
-    } else if(keyName = "Left") {
-        keySc := 331
-    } else if(keyName = "Down") {
-        keySc := 336
-    } else if(keyName = "Up") {
-        keySc := 328
-    }
-    AHI.SendKeyEvent(1, keySc, 1)
-    AHI.SendKeyEvent(1, keySc, 0)
-    ;Send {blind}{Right}
+    SendInput {Blind}{%keyName%}
 }
 
 MoveCursorToShow(){
-    touchscreenId := AHI.GetMouseId(0x056A, 0x5146)
-    ;AHI.SendMouseMoveAbsolute(touchscreenId, 30000, 30000)
-    ;SetSystemCursor("")
-    ;RestoreCursors()
-    AHI.SendMouseMove(touchscreenId, 4, 50)
+    MouseMove, 4, 50,, R
     Sleep 1000
-
-    AHI.SendMouseButtonEvent(touchscreenId, 0, 1) ;SendInput {LButton Down}
+    SendInput {LButton Down}
     Sleep 100 ; Essential, or click won't be recognized
-    AHI.SendMouseButtonEvent(touchscreenId, 0, 0) ;SendInput {LButton Up}
-    ;AHI.SendMouseMove(trackpadId, 1, -100)
-    ;AHI.SendMouseMove(trackpadId, 1, 100)
-    ;MouseMove, 0,100,, R
-    ;Sleep 10
-    ;MouseMove, 0,-100,, R
-    ;SendInput {LButton}
-    ;MouseGetPos,,, WinUMID
-    ;tooltip %WinUMID%
-    ;WinActivate, ahk_id %WinUMID%
-
-        ;if(%A_Cursor% = Unknown){
-        ;MouseMove, 0,-1,, R ; move cursor up 1px, only to make it show up, in case touch was shown before.
-        ;SetSystemCursor("")
-        ;sleep 1000
-        ;SendInput {LButton}
-        ; DllCall("ShowCursor", Int,1)
-        ;}
+    SendInput {LButton Up}
 }
 
 MoveCursorToLeft(){
@@ -264,28 +231,3 @@ Autoscroll() {
 }
 
 
-GetAhiDeviceIdByHandle(handle) {
-    for dix, device in AHI.GetDeviceList() {
-        If InStr(device.Handle, handle) {
-            return device.id
-        }
-    }
-    return 0
-}
-
-/*
-GetAhiDeviceIdsByHandle(deviceHandles) {
-    DeviceList := AHI.GetDeviceList()
-    FoundDeviceIds := {}
-    for dix, device in DeviceList {
-        for hix, handle in deviceHandles {
-            If InStr(device.Handle, handle) {
-                ;Tooltip % device.id trackpadHandle
-                FoundDeviceIds.push(device.id)
-                ;Tooltip % TrackpadIdList.Length()
-            }
-        }
-    }
-    return TrackpadIdList
-}
-*/
