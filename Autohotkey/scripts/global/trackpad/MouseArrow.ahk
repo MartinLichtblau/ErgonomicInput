@@ -7,7 +7,7 @@
 #Persistent
 
 #Include %A_ScriptDir%\lib\Functions.ahk
-Global mouseId, ma_xSum, ma_ySum, ma_abs_xSum, ma_abs_ySum, ma_runflag, ma_clickStride, ma_waitForMovementPause, ma_moveDistThreshold, ma_HomeEndThreshold, ma_pauseTimeThreshold, ma_mouseMoveCount
+Global mouseId, ma_xSum, ma_ySum, ma_abs_xSum, ma_abs_ySum, ma_runflag, ma_clickStride, ma_waitForMovementPause, ma_moveDistThreshold, ma_HomeEndThreshold, ma_pauseTimeThreshold, ma_mouseMoveCount, ma_anchorX, ma_anchorY, ma_lastMouseEvent
 return
 
 Setup_MouseArrow(mId) {
@@ -33,18 +33,23 @@ ma_ResetRuntimeVars() {
 
 Start_MouseArrow(mId) {
     ;Tooltip Start_MouseArrow
+    global ma_runflag, ma_anchorX, ma_anchorY, ma_lastMouseEvent
+    if (ma_runflag)
+        return
     ; SetSystemCursor("IDC_IBEAM")
     Setup_MouseArrow(mId)
+    CoordMode, Mouse, Screen
+    MouseGetPos, ma_anchorX, ma_anchorY
     ma_runflag := true
     ma_ResetRuntimeVars()
-    AHI.SubscribeMouseMoveRelative(mouseId, true, Func("MouseArrowEvent"))
+    ma_lastMouseEvent := A_TickCount
+    SetTimer, ma_PollMouseMovement, 10
 }
 
 Stop_MouseArrow() {
     ;Tooltip Stop_MouseArrow
+    SetTimer, ma_PollMouseMovement, Off
     ma_runflag := false
-    ;AHI.SubscribeMouseMoveRelative(mouseId, false, Func("MouseArrowEvent"))
-    AHI.UnsubscribeMouseMoveRelative(mouseId)
     ma_ResetRuntimeVars()
     ; setTimer RestoreCursors, -100
 }
@@ -54,6 +59,17 @@ ma_ResetXY:
     ma_ySum := 0
     ma_abs_xSum := 0
     ma_abs_ySum := 0
+    return
+
+ma_PollMouseMovement:
+    CoordMode, Mouse, Screen
+    MouseGetPos, currentX, currentY
+    movementX := currentX - ma_anchorX
+    movementY := currentY - ma_anchorY
+    if (movementX || movementY)
+        DllCall("SetCursorPos", "Int", ma_anchorX, "Int", ma_anchorY)
+    if (movementX || movementY)
+        MouseArrowEvent(movementX, movementY)
     return
 
 ; @Desc: run in parallel since it's a function
@@ -72,13 +88,12 @@ ExitOnInput_MouseArrow() {
         ; DIRECTION and more
 MouseArrowEvent(x, y){
     ;Tooltip MouseArrowEvent
-    static timeOfLastMouseEvent
     if(!ma_runflag)
         return ; Exit
 
     ; if user paused mouse movement for T then reset XY, so it starts fresh and not with e.g. x=29.
-    timeDiffBetweenMoves  := A_TickCount-timeOfLastMouseEvent
-    timeOfLastMouseEvent := A_TickCount ; timeOfLastMouseEvent becomes time of current MouseEvent
+    timeDiffBetweenMoves  := A_TickCount-ma_lastMouseEvent
+    ma_lastMouseEvent := A_TickCount
     if(timeDiffBetweenMoves > ma_pauseTimeThreshold) {
         movementPaused := true
         ma_ResetRuntimeVars() ; @TODO all dirty, this even more

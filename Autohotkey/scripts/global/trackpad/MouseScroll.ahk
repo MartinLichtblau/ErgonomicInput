@@ -10,35 +10,43 @@ ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
 #Include %A_ScriptDir%\lib\Functions.ahk
-Global ms_xSum, ms_ySum, ms_movementThreshold, ms_runflag, ms_isCursorChanged, output_stepSize
+Global ms_runflag, ms_isCursorChanged, output_stepSize, ms_anchorX, ms_anchorY, ms_verticalRemainder, ms_horizontalRemainder
 return
 
 
 
 
-Setup_MouseScroll(mId) {
+Setup_MouseScroll() {
     ;Tooltip Setup_MouseScroll
-    ms_InitVars(mId)
+    ms_InitVars()
 }
 
-ms_InitVars(mId) {
+ms_InitVars() {
+    global ms_runflag, ms_verticalRemainder, ms_horizontalRemainder
     ms_runflag := false
-    ms_movementThreshold := 1
+    ms_verticalRemainder := 0
+    ms_horizontalRemainder := 0
 }
 
 
-Start_MouseScroll(tpId) {
+Start_MouseScroll() {
     ;Tooltip MS_Start
-    SetSystemCursor("IDC_SIZEALL")
+    global ms_runflag, ms_anchorX, ms_anchorY, ms_verticalRemainder, ms_horizontalRemainder
+    if (ms_runflag)
+        return
+    CoordMode, Mouse, Screen
+    MouseGetPos, ms_anchorX, ms_anchorY
+    ms_verticalRemainder := 0
+    ms_horizontalRemainder := 0
+    SetSystemCursor("")
     ms_runflag := true
-    AHI.SubscribeMouseMoveRelative(tpId, true, Func("ms_MouseMovement"))
+    SetTimer, ms_PollMouseMovement, 10
 }
 
-Stop_MouseScroll(tpId) {
+Stop_MouseScroll() {
     ;Tooltip Stop_MouseScroll
+    SetTimer, ms_PollMouseMovement, Off
     ms_runflag := false
-    ; AHI.SubscribeMouseMoveRelative(mouseId, false, Func("ms_MouseMovement"))
-    AHI.UnsubscribeMouseMoveRelative(tpId)
     setTimer RestoreCursor, -100
 }
 
@@ -48,12 +56,20 @@ ms_ExitOnInput() {
     ;Stop_MouseScroll()
 }
 
-ms_MouseMovement(x, y) {
-    if(ms_runflag) {
-        ;Tooltip ms_FixedAxisScrolling %x% %y%
-        ms_FixedAxisScrolling(1.5*x, 2.2*y) ;ms_FixedAxisScrolling(1.1**x, 1.3**y)
+ms_PollMouseMovement:
+    CoordMode, Mouse, Screen
+    MouseGetPos, currentX, currentY
+    movementX := currentX - ms_anchorX
+    movementY := currentY - ms_anchorY
+    if (movementX || movementY)
+        DllCall("SetCursorPos", "Int", ms_anchorX, "Int", ms_anchorY)
+    if (movementX || movementY)
+        ms_MouseMovement(movementX, movementY)
+    return
 
-    }
+ms_MouseMovement(x, y) {
+    if (ms_runflag)
+        ms_FixedAxisScrolling(1.5 * x, 2.2 * y)
 }
 
 /*
@@ -79,47 +95,32 @@ ms_FixedAxisScrolling(x, y) {
     }
     ;Tooltip i=%output_stepSize% | ms_xSum: %ms_xSum% | ms_ySum: %ms_ySum% | abs_xSum: %abs_xSum% | abs_ySum: %abs_ySum% ;top left is minus for x and y
 }
+; ms_FixedAxisScrolling(x, y) {
+;     global ms_verticalRemainder, ms_horizontalRemainder
+;     if (Abs(y) >= Abs(x)) { ; up/down
+;         ms_verticalRemainder += -y * 0.1
+;         wheelDelta := ms_verticalRemainder >= 0 ? Floor(ms_verticalRemainder) : Ceil(ms_verticalRemainder)
+;         if (wheelDelta) {
+;             PostMW(wheelDelta)
+;             ms_verticalRemainder -= wheelDelta
+;         }
+;     } else { ; right/left
+;         ms_horizontalRemainder += x * 0.1
+;         wheelDelta := ms_horizontalRemainder >= 0 ? Floor(ms_horizontalRemainder) : Ceil(ms_horizontalRemainder)
+;         if (wheelDelta) {
+;             PostMW(wheelDelta, true)
+;             ms_horizontalRemainder -= wheelDelta
+;         }
+;     }
+; }
 
-PostMW(delta)
+PostMW(delta, horizontal := false)
 { ;http://msdn.microsoft.com/en-us/library/windows/desktop/ms645617(v=vs.85).aspx
   CoordMode, Mouse, Screen
   MouseGetPos, x, y
   Modifiers := 0x8*GetKeyState("ctrl") | 0x1*GetKeyState("lbutton") | 0x10*GetKeyState("mbutton")
               |0x2*GetKeyState("rbutton") | 0x4*GetKeyState("shift") | 0x20*GetKeyState("xbutton1")
               |0x40*GetKeyState("xbutton2")
-  PostMessage, 0x20A, delta << 16 | Modifiers, y << 16 | x ,, A
+  PostMessage, % horizontal ? 0x20E : 0x20A, delta << 16 | Modifiers, y << 16 | x ,, A
 }
 
-/*
-    @Title: FreePlaneScroll
-    @Desc: scrolls in any direction, i.e. not bound to straight axis movements.
-    #note some apps don't allow such movements and will only respond to axial scrolls in a row, e.g. gChrome
-*/
-/*
-ms_FreePlaneScrolling(x, y) {
-    ms_xSum := ms_xSum + (x*x) ; quadratic increase
-    ms_ySum := ms_ySum + (y*y) ; quadratic increase
-    abs_xSum := abs(ms_xSum)
-    abs_ySum := abs(ms_ySum)
-
-    if(abs_xSum > ms_movementThreshold || abs_ySum > ms_movementThreshold) {
-        if(abs_ySum >= abs_xSum) { ; up/down
-            if (ms_ySum > 0) {
-                AHI.SendMouseButtonEvent(mouseId, 5, -1) ; Wheel Down
-                ms_ySum := 0
-            } else {
-                AHI.SendMouseButtonEvent(mouseId, 5, 1) ; Wheel Up
-                ms_ySum := 0
-            }
-        } else { ; right/left
-            if (ms_xSum > 0) {
-                AHI.SendMouseButtonEvent(mouseId, 6, 1) ; Wheel Right
-                ms_xSum := 0
-            } else {
-                AHI.SendMouseButtonEvent(mouseId, 6, -1) ; Wheel Left
-                ms_xSum := 0
-            }
-        }
-    }
-    ;Tooltip i=%i% | x: %x%  y: %y% | ms_ySum: %ms_ySum% | ms_xSum: %ms_xSum% ;top left is minus for x and y
-*/

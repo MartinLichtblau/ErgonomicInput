@@ -13,8 +13,8 @@ Process, priority,, Realtime
 SetBatchLines -1
 ListLines Off
 ;#KeyHistory 20 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
-;#InstallKeybdHook
-;#InstallMouseHook
+#InstallKeybdHook
+#InstallMouseHook
 SetKeyDelay 0 ; , -1 ;so that also the Send commands are instantaneous (it's even possible to set the press duration)
 	; but then in some scripts you need to add delays manually (mostly if interacts with UI)
 SetMouseDelay, 0
@@ -46,7 +46,6 @@ GoSub, Misc_Setup
 #Include %A_ScriptDir%\global\keyboard\ErgoNavi.ahk
 #Include %A_ScriptDir%\context-sensitive\BrowserOnly.ahk
 #Include %A_ScriptDir%\Misc.ahk
-#include %A_ScriptDir%\lib\AutoHotInterception\lib\AutoHotInterception.ahk
 return ; end of auto-execute section
 
 /*
