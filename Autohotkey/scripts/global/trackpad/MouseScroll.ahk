@@ -22,8 +22,9 @@ Setup_MouseScroll() {
 }
 
 ms_InitVars() {
-    global ms_runflag, ms_verticalRemainder, ms_horizontalRemainder
+    global ms_runflag, ms_isCursorChanged, ms_verticalRemainder, ms_horizontalRemainder
     ms_runflag := false
+    ms_isCursorChanged := false
     ms_verticalRemainder := 0
     ms_horizontalRemainder := 0
 }
@@ -31,23 +32,27 @@ ms_InitVars() {
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
-    global ms_runflag, ms_anchorX, ms_anchorY, ms_verticalRemainder, ms_horizontalRemainder
+    global ms_runflag, ms_anchorX, ms_anchorY, ms_isCursorChanged, ms_verticalRemainder, ms_horizontalRemainder
     if (ms_runflag)
         return
     CoordMode, Mouse, Screen
     MouseGetPos, ms_anchorX, ms_anchorY
     ms_verticalRemainder := 0
     ms_horizontalRemainder := 0
-    SetSystemCursor("")
+    ms_isCursorChanged := false
     ms_runflag := true
     SetTimer, ms_PollMouseMovement, 10
 }
 
 Stop_MouseScroll() {
     ;Tooltip Stop_MouseScroll
+    global ms_runflag, ms_isCursorChanged
     SetTimer, ms_PollMouseMovement, Off
     ms_runflag := false
-    setTimer RestoreCursor, -100
+    if (ms_isCursorChanged) {
+        SetTimer, RestoreCursor, -100
+        ms_isCursorChanged := false
+    }
 }
 
 ; @Desc: run in parallel since it's a function
@@ -61,10 +66,14 @@ ms_PollMouseMovement:
     MouseGetPos, currentX, currentY
     movementX := currentX - ms_anchorX
     movementY := currentY - ms_anchorY
-    if (movementX || movementY)
+    if (movementX || movementY) {
+        if (!ms_isCursorChanged) {
+            SetSystemCursor("")
+            ms_isCursorChanged := true
+        }
         DllCall("SetCursorPos", "Int", ms_anchorX, "Int", ms_anchorY)
-    if (movementX || movementY)
         ms_MouseMovement(movementX, movementY)
+    }
     return
 
 ms_MouseMovement(x, y) {

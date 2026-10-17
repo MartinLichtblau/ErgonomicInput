@@ -60,9 +60,6 @@ sc019:: LongPressCommand("sc019", "{AppsKey}", SEARCH_sc) ; sc019 = ö
 
 j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 
-
-; Shift::SendInput {Enter}
-
 #if
 
 ;--------------------------------------------LEFT HAND
