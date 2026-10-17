@@ -14,7 +14,8 @@ ErgoNavi_Setup:
     return
 
 ;--------------------------------------------RIGHT HAND
-#if trackpadMButtonDown
+#IF GetKeyState("RButton", "P")
+
 $*MButton:: return
 
 ;--------------------SPECIAL KEYS
@@ -60,10 +61,13 @@ sc019:: LongPressCommand("sc019", "{AppsKey}", SEARCH_sc) ; sc019 = ö
 
 j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 
-#if
+#IF
+
+
+
 
 ;--------------------------------------------LEFT HAND
-#if trackpadRButtonDown
+#IF GetKeyState("LButton", "P")
 
 F1::
     SendInput ^{F12}
@@ -179,7 +183,7 @@ Space::
     gosub AltTab
     return
 
-#if
+#IF
 
 ~Ctrl & w::
    LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc)

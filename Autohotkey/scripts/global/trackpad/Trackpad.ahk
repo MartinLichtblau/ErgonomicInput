@@ -18,11 +18,10 @@ global trackpadMiddleDownTime := 0
 global trackpadRightDownTime := 0
 
 $*MButton::
-    if (trackpadMButtonDown) {
-        LButtonLocked := true
-        trackpadMButtonDown := false
-    } else if (LButtonLocked) {
+    if (LButtonLocked) {
         LButtonLocked := false
+        SendInput {Blind}{LButton up}
+        return
     }
     SendInput {Blind}{LButton down}
     return
@@ -32,15 +31,19 @@ $*MButton Up::
         SendInput {Blind}{LButton up}
     return
 
+; Either press order locks left-click until the next middle-button click.
+RButton & MButton::
+MButton & RButton::
+    LButtonLocked := true
+    Stop_MouseScroll()
+    SendInput {Blind}{LButton down}
+    return
+
 $*RButton::
+    if (LButtonLocked)
+        return
     trackpadMiddleDownTime := A_TickCount
     trackpadMButtonDown := true
-    if (GetKeyState("MButton", "P")) {
-        LButtonLocked := true
-        trackpadMButtonDown := false
-    } else {
-        LButtonLocked := false
-    }
     Start_MouseScroll()
     return
 
