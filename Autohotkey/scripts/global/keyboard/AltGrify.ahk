@@ -12,7 +12,7 @@ AltGrify_Setup:
     #Include %A_ScriptDir%\lib\Functions.ahk
     return
 
-#IF !trackpadMButtonDown AND !trackpadRButtonDown
+#If !GetKeyState("LButton", "P") AND !GetKeyState("RButton", "P")
 
 ;--------------------------------------------Row2 / Number Row
 $2::ReplaceOnLongPress("2", "{U+00B2}") ; U+00B2 = "²"

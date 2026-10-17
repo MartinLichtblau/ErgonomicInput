@@ -17,7 +17,7 @@ BrowserTricks_Setup:
 ;GroupAdd, BrowserGroup, ahk_exe Chrome.exe
 ;GroupAdd, BrowserGroup, ahk_exe vivaldi.exe
 ;#IfWinActive ahk_group BrowserGroup
-#If (!trackpadRButtonDown && !trackpadMButtonDown) && (WinActive("ahk_exe Chrome.exe") || WinActive("ahk_exe vivaldi.exe") || WinActive("ahk_exe msedge.exe")) ; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
+#If (!GetKeyState("LButton", "P") && !GetKeyState("RButton", "P")) && (WinActive("ahk_exe Chrome.exe") || WinActive("ahk_exe vivaldi.exe") || WinActive("ahk_exe msedge.exe")) ; start of IfWinActive condition, for me it didn't work with ahk_class so i changed it to ahk_exe
 ; Copy link of notion block, making it globally accessible and enabling transclusion
 +^g::
     SendInput {/}copy

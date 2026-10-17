@@ -33,7 +33,7 @@ ChangePowerPlan() {
     ;tooltip %A_Cursor%
     ;BlockInput, On
     ;Sleep 10
-    if (A_TimeIdlePhysical < 3000 || trackpadRButtonDown || trackpadMButtonDown) {
+    if (A_TimeIdlePhysical < 3000 || GetKeyState("LButton", "P") || GetKeyState("RButton", "P")) {
         ;tooltip A_TimeIdlePhysical %A_TimeIdlePhysical%
         if (powerPlan != 1){
             SendInput +!1

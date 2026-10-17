@@ -10,7 +10,7 @@ ListLines Off
 ;#KeyHistory 0 ;set it to 0/off if you don't use functions that need it, e.g. A_PriorKey
 
 #Include %A_ScriptDir%\lib\Functions.ahk
-Global ms_runflag, ms_isCursorChanged, output_stepSize, ms_anchorX, ms_anchorY, ms_verticalRemainder, ms_horizontalRemainder
+Global ms_runflag, ms_isCursorChanged, output_stepSize, ms_anchorX, ms_anchorY, ms_verticalRemainder, ms_horizontalRemainder, ms_xDirection, ms_yDirection, ms_xDirectionTime, ms_yDirectionTime
 return
 
 
@@ -23,22 +23,32 @@ Setup_MouseScroll() {
 
 ms_InitVars() {
     global ms_runflag, ms_isCursorChanged, ms_verticalRemainder, ms_horizontalRemainder
+    global ms_xDirection, ms_yDirection, ms_xDirectionTime, ms_yDirectionTime
     ms_runflag := false
     ms_isCursorChanged := false
     ms_verticalRemainder := 0
     ms_horizontalRemainder := 0
+    ms_xDirection := 0
+    ms_yDirection := 0
+    ms_xDirectionTime := 0
+    ms_yDirectionTime := 0
 }
 
 
 Start_MouseScroll() {
     ;Tooltip MS_Start
     global ms_runflag, ms_anchorX, ms_anchorY, ms_isCursorChanged, ms_verticalRemainder, ms_horizontalRemainder
+    global ms_xDirection, ms_yDirection, ms_xDirectionTime, ms_yDirectionTime
     if (ms_runflag)
         return
     CoordMode, Mouse, Screen
     MouseGetPos, ms_anchorX, ms_anchorY
     ms_verticalRemainder := 0
     ms_horizontalRemainder := 0
+    ms_xDirection := 0
+    ms_yDirection := 0
+    ms_xDirectionTime := A_TickCount
+    ms_yDirectionTime := A_TickCount
     ms_isCursorChanged := false
     ms_runflag := true
     SetTimer, ms_PollMouseMovement, 10
@@ -77,7 +87,29 @@ ms_PollMouseMovement:
     return
 
 ms_MouseMovement(x, y) {
-    if (ms_runflag)
+    global ms_xDirection, ms_yDirection, ms_xDirectionTime, ms_yDirectionTime
+    if (!ms_runflag)
+        return
+
+    now := A_TickCount
+    if (x) {
+        direction := x > 0 ? 1 : -1
+        if (!ms_xDirection || direction = ms_xDirection || now - ms_xDirectionTime >= 80) {
+            ms_xDirection := direction
+            ms_xDirectionTime := now
+        } else
+            x := 0
+    }
+    if (y) {
+        direction := y > 0 ? 1 : -1
+        if (!ms_yDirection || direction = ms_yDirection || now - ms_yDirectionTime >= 80) {
+            ms_yDirection := direction
+            ms_yDirectionTime := now
+        } else
+            y := 0
+    }
+
+    if (x || y)
         ms_FixedAxisScrolling(1.5 * x, 2.2 * y)
 }
 

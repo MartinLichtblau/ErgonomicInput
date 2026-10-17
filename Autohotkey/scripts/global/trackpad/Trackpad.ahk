@@ -8,14 +8,11 @@
 Trackpad_Setup:
     #SingleInstance force
     #Persistent
+    global LButtonLocked := false
+    global trackpadMiddleDownTime := 0
+    global trackpadRightDownTime := 0
     Setup_MouseScroll()
     return
-
-global trackpadMButtonDown := false
-global trackpadRButtonDown := false
-global LButtonLocked := false
-global trackpadMiddleDownTime := 0
-global trackpadRightDownTime := 0
 
 $*MButton::
     if (LButtonLocked) {
@@ -43,7 +40,6 @@ $*RButton::
     if (LButtonLocked)
         return
     trackpadMiddleDownTime := A_TickCount
-    trackpadMButtonDown := true
     Start_MouseScroll()
     return
 
@@ -55,12 +51,10 @@ $*RButton Up::
         Sleep 50
         Send {MButton up}
     }
-    trackpadMButtonDown := false
     return
 
 $*LButton::
     trackpadRightDownTime := A_TickCount
-    trackpadRButtonDown := true
     Start_MouseScroll()
     return
 
@@ -72,5 +66,4 @@ $*LButton Up::
         SendInput {Blind}{RButton down}{RButton up}
     else if (GetKeyState("LCtrl"))
         SendInput {LCtrl up}
-    trackpadRButtonDown := false
     return
