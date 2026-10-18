@@ -6,11 +6,6 @@
     @Recommendations: remove AltGr functionality of keyboard layout since you use this instead
     @Maturity:5
 */
-AltGrify_Setup:
-    #SingleInstance force
-    #Persistent
-    #Include %A_ScriptDir%\lib\Functions.ahk
-    return
 
 #If !GetKeyState("LButton", "P") AND !GetKeyState("RButton", "P")
 

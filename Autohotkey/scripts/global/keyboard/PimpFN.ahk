@@ -4,12 +4,6 @@
     @Requirements: set F-Keys to default F1-12 in Bios or OS, not the computer specific functions
     #Maturity:5
 */
-PimpFN_setup:
-    #SingleInstance force
-    #Persistent
-    #Include %A_ScriptDir%\lib\Commands.ahk
-    #Include %A_ScriptDir%\lib\Functions.ahk
-    return
 
 ;--------------------------------------------F1 - F4
 $F1::LongPressCommand("F1", "{Volume_Mute}", "{F1}")

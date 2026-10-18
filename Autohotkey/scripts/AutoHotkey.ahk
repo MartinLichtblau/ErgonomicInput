@@ -40,12 +40,18 @@ GoSub, Misc_Setup
 */
 #Include %A_ScriptDir%\ShortcutList.ahk
 #Include %A_ScriptDir%\global\keyboard\SpecialKeys.ahk
+
 #Include %A_ScriptDir%\global\trackpad\Trackpad.ahk
+#Include %A_ScriptDir%\global\trackpad\MouseScroll.ahk
+
 #Include %A_ScriptDir%\global\keyboard\AltGrify.ahk
 #Include %A_ScriptDir%\global\keyboard\PimpFN.ahk
 #Include %A_ScriptDir%\global\keyboard\ErgoNavi.ahk
 #Include %A_ScriptDir%\context-sensitive\BrowserOnly.ahk
 #Include %A_ScriptDir%\Misc.ahk
+
+#Include %A_ScriptDir%\lib\Commands.ahk
+#Include %A_ScriptDir%\lib\Functions.ahk
 return ; end of auto-execute section
 
 /*

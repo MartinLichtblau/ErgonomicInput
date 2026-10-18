@@ -1,9 +1,6 @@
 /*
 
 */
-#SingleInstance force
-#Persistent
-return
 
 
 /*

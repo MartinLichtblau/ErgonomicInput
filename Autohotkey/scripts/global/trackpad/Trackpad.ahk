@@ -2,16 +2,12 @@
     @Title: Trackpad
     @Desc: Map the trackpad buttons to clicks and mouse scrolling.
 */
-#Include %A_ScriptDir%\lib\Commands.ahk
-#Include %A_ScriptDir%\global\trackpad\MouseScroll.ahk
 
 Trackpad_Setup:
-    #SingleInstance force
-    #Persistent
     global LButtonLocked := false
     global trackpadMiddleDownTime := 0
     global trackpadRightDownTime := 0
-    Setup_MouseScroll()
+    Gosub, Setup_MouseScroll
     return
 
 $*MButton::

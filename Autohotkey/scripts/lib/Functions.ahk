@@ -1,7 +1,3 @@
-#SingleInstance force
-#Persistent
-return
-
 /*
     @Desc: shows relevant and often needed integrated A_variables
 */

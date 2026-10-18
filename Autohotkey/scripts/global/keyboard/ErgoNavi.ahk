@@ -5,13 +5,6 @@
     @ModifierKeys: MButton, RButton
     @Maturity:6
 */
-ErgoNavi_Setup:
-    #SingleInstance force
-    #Persistent
-    ;Process,priority,,High
-    #Include %A_ScriptDir%\lib\Commands.ahk
-    #Include %A_ScriptDir%\lib\Functions.ahk
-    return
 
 ;--------------------------------------------RIGHT HAND
 #IF GetKeyState("RButton", "P")

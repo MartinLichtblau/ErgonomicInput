@@ -5,8 +5,6 @@
 */
 
 SpecialKeys_Setup:
-    #SingleInstance force
-    #Persistent
     spaceShiftDown := false
     return
 

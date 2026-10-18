@@ -7,13 +7,6 @@
 #Include %A_ScriptDir%\lib\WinClip.ahk
 wc := new WinClip
 
-BrowserTricks_Setup:
-    #SingleInstance force
-    #Persistent
-    #Include %A_ScriptDir%\lib\Commands.ahk
-    return
-
-
 ;GroupAdd, BrowserGroup, ahk_exe Chrome.exe
 ;GroupAdd, BrowserGroup, ahk_exe vivaldi.exe
 ;#IfWinActive ahk_group BrowserGroup
