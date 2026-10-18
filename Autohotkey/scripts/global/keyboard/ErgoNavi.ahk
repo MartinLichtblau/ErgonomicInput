@@ -33,10 +33,10 @@ $*MButton:: return
   return
 
 ;--------------------ARROW KEYS
-$*n:: SendArrowKey("Up")
-$*k:: SendArrowKey("Left")
-$*e:: SendArrowKey("Right")
-$*m:: SendArrowKey("Down")
+*n:: SendArrowKey("Up")
+*k:: SendArrowKey("Left")
+*e:: SendArrowKey("Right")
+*m:: SendArrowKey("Down")
 
 *i:: Home
 *o:: End
@@ -69,11 +69,11 @@ j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 ;--------------------------------------------LEFT HAND
 #IF GetKeyState("LButton", "P")
 
-F1::
+*F1::
     SendInput ^{F12}
     return
 
-3::
+*3::
     SendInput %LEFTDESKTOP_sc%
     ;Keywait, 3
     return
@@ -87,33 +87,33 @@ F1::
     return
     */
 
-4::
+*4::
     SendInput %RIGHTDESKTOP_sc%
     ;Keywait, 4
     return
 
-5:: SendInput %WINVIEW_sc%
+*5:: SendInput %WINVIEW_sc%
 
-w::
+*w::
     LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
 
-q::return
+*q::return
 
 
-f::
+*f::
     LongPressCommand("f", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
 
-a::
-    if WinActive("ahk_exe explorer.exe") {  
+*a::
+    if WinActive("ahk_exe explorer.exe") || WinActive("ahk_exe notepad.exe") {
         SendInput ^+{Tab}
     } else {
         SendInput %LEFTTAB_sc% ;LongPressCommand("s", LEFTTAB_sc, "^1")
     } 
     return
 
-g::
+*g::
     ;MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
@@ -122,11 +122,11 @@ g::
     return
     ; OpenTabWOSelection("g") ; LongPressCommand("g", "^t", "^n")
 
-p::
+*p::
     goto SearchBookmarks
     return
 
-$*r::
+*r::
     if (!GetKeyState("LCtrl")) {
       SendInput {LCtrl down}
     }
@@ -135,19 +135,19 @@ $*r::
     SendInput ^+r
     return
 
-s::
+*s::
     SendInput ^l ; !d ; or ^l ;+^s ;(Vivaldi Quick Search)
     return
 
-t::
-    if WinActive("ahk_exe explorer.exe") {  
+*t::
+    if WinActive("ahk_exe explorer.exe") || WinActive("ahk_exe notepad.exe") {
         SendInput ^{Tab}
     } else {
         SendInput %RIGHTTAB_sc% ;LongPressCommand("t", RIGHTTAB_sc, "^9")
     } 
     return
 
-d::
+*d::
     ; MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
         SendInput {LAlt down}
@@ -156,11 +156,11 @@ d::
     return
 
 
-z::
+*z::
     SendInput %GOFORWARD_sc% ;!{Right} ; Browser_Forward ;%GOFORWARD_sc%
     return
 
-y::
+*y::
     SendInput %GOBACK_sc% ;!{Left} ; %Browser_Back% %GOBACK_sc%
     return
 
@@ -169,7 +169,7 @@ y::
     gosub AltTab
     return
 
-v::
+*v::
     ; MoveCursorToLeft()
     if (!GetKeyState("LAlt")) {
             SendInput {LAlt down}
@@ -177,9 +177,9 @@ v::
         SendInput 8
         return
 
-x::Esc
+*x::Esc
 
-Space::
+*Space::
     gosub AltTab
     return
 
