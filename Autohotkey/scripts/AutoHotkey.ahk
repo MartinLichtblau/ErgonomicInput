@@ -64,18 +64,3 @@ ReloadAhk() {
 	Reload
 	return
 }
-
-/*
-    @Title: AhkKeyhistory
-    @Desc: open Autohotkey keyhistory
-*/
-;*Insert:: KeyHistory
-$^r::
-	KeyWait, r, T0.3
-	If ErrorLevel {  
-		KeyHistory
-	} Else {
-		SendInput ^r
-	}
-	KeyWait, r,
-    return

@@ -126,7 +126,7 @@ p::
     goto SearchBookmarks
     return
 
-r::
+$*r::
     if (!GetKeyState("LCtrl")) {
       SendInput {LCtrl down}
     }
