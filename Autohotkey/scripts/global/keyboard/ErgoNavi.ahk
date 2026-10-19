@@ -87,7 +87,7 @@ j:: OpenTabWOSelection("j") ; LongPressCommand("j", "^t", "^n")
 
 *5:: SendInput %WINVIEW_sc%
 
-*w::
+$*w::
     LongPressCommand("w", CLOSETAB_sc, CLOSEWINDOW_sc) ; LongPressCommand("x", REOPENCLOSEDTAB_sc, RELOAD_sc)
     return
 

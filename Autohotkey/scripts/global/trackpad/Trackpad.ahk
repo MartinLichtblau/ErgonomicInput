@@ -24,6 +24,10 @@ $*MButton Up::
         SendInput {Blind}{LButton up}
     return
 
+#If GetKeyState("MButton", "P")
+$*x::SendInput {Blind}{LButton up}
+#If
+
 ; Either press order locks left-click until the next middle-button click.
 RButton & MButton::
 MButton & RButton::
